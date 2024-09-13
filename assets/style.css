@@ -1,0 +1,209 @@
+style.css
+.sidebar {
+    height: 100vh; /* Full height */
+    position: fixed; /* Fixed, to stay in place during page scroll */
+    right: 0; /* Align to the right side */
+    top: 0; /* Align to the top */
+    overflow-x: hidden; /* Hide horizontal overflow */
+    transition: width 0.5s; /* Smooth transition for width */
+}
+
+.sidebar-collapsed {
+    width: 50px; /* Width of the sidebar when collapsed */
+}
+
+.sidebar-expanded {
+    width: 250px; /* Width of the sidebar when expanded */
+}
+
+.content-container {
+    transition: margin-right 0.5s; /* Smooth transition for margin */
+    /* Other styling for content */
+}
+
+.content-container-expanded {
+    margin-right: 250px; /* Adjust the margin to match the expanded sidebar */
+}
+
+.radio-group {
+    padding-left: 0px; /* Adjust the padding to move the group to the left */
+}
+
+/* Specific styles for your toggle */
+.btn-check:checked + .btn-outline-primary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.custom-textarea {
+    border-radius: 10px !important;
+    border: 1px solid #CCCCCC;
+}
+
+/* In your CSS file (e.g., assets/main.css) */
+.node-tooltip {
+    background-color: #fff;
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    font-size: 12px;
+    padding: 5px;
+    z-index: 9999; /* Ensure tooltip is displayed above other elements */
+    display: none; /* Initially hidden */
+}
+
+.node:hover .node-tooltip {
+    display: block;
+}
+
+.custom-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.custom-switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.custom-switch-input:checked + .slider {
+    background-color: #2196F3;
+}
+
+.custom-switch-input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.custom-switch-input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.top-bar {
+    background-color: #007bff; /* Primary color */
+    height: 50px; /* Increased height for better visibility */
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensures it's above other content */
+}
+
+.content-wrapper {
+    margin-top: 60px; /* Adjusted margin to leave space below the top bar */
+    padding: 20px;
+}
+
+.video-wrapper {
+    position: relative; /* Relative positioning for the video container */
+    z-index: 1; /* Ensure it's above the blue bar */
+}
+
+.video-embed {
+    width: 100%;
+    height: 400px; /* Adjust height as needed */
+    position: absolute;
+    top: -200px; /* Adjust this value to position the video above the blue bar */
+    z-index: 2; /* Ensure the video is above other content */
+}
+.nav-yellow {
+    background-color: #516395 !important;  /* Set background color to yellow */
+}
+/* Example to remove colored box around selected icons */
+.selected-icon {
+    box-shadow: none !important; /* Remove any box shadow */
+    border: none !important; /* Remove any border */
+    /* Add other necessary styles to customize further */
+}
+
+.nav-primary .nav-link.active {
+    background-color: #516395 !important; /* Your custom color */
+    color: white!important; /* Custom text color if needed */
+}
+
+/* assets/styles.css */
+.outer-div {
+    position: relative;
+    height: 320px; /* Adjust height as needed */
+    overflow: hidden;
+    width: 100%; /* Full width of the container */
+}
+
+.inner-div {
+    width: 100%;
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 15px; /* Adjust padding to ensure no content is hidden */
+}
+
+#likert-scales-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+#likert-scales-container::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+#likert-scales-container::-webkit-scrollbar-thumb {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+#likert-scales-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+/* assets/styles.css */
+
+/* .blur {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+}
+
+.no-blur {
+    filter: none;
+    transition: filter 0.3s ease;
+} */
+
+.darken {
+    background-color: rgba(0, 0, 0, 0.534);  /* Semi-transparent black overlay */
+    transition: background-color 0.3s ease;
+}
+
+.no-darken {
+    background-color: transparent;  /* Normal background */
+    transition: background-color 0.3s ease;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5); /* Same overlay for both modals */
+}
