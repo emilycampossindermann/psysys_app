@@ -267,6 +267,7 @@ def apply_centrality_size_styles(type, stylesheet, elements):
 
 # Function: Set node sizing scheme 
 def node_sizing(chosen_scheme, graph_data, severity_scores):
+    print(severity_scores)
     elements = graph_data['elements']
     stylesheet = graph_data['stylesheet']
     default_style = [{'selector': 'node','style': {'background-color': '#9CD3E1', 'label': 'data(label)'}},
@@ -341,3 +342,8 @@ def apply_uniform_style(elements, severity_scores, uniform_color, stylesheet):
             stylesheet.append(uniform_style)
 
     return stylesheet
+
+# Function: Find feedback loops 
+
+# Function: Find most central factor in the map 
+

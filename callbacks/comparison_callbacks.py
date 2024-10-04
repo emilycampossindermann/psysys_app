@@ -1,5 +1,6 @@
 import dash, json, base64, re
 import plotly.graph_objects as go
+import numpy as np
 
 from app import app
 from dash import dcc, Input, Output, State, ALL, MATCH, callback_context
@@ -10,9 +11,9 @@ from functions.descriptive_plots import (current_centrality_plot, prepare_graph_
 #                        apply_uniform_style)
 
 # Callback - NETWORK COMPARISON: Network comparison file upload
-def upload_tracking_graph(contents, existing_marks, current_max, current_value, graph_data, map_store, track_data, stylesheet):
+def upload_tracking_graph(contents, existing_marks, current_max, current_value, graph_data, map_store, track_data, stylesheet, edge_data):
     new_elements = graph_data
-    print("triggered_upload")
+    filename = None
     if contents:
 
         content_type, content_string = contents.split(',')
@@ -24,7 +25,12 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
         style = data.get('stylesheet', [])
         #edge_strength = data.get['edge-data', []]
 
-        severity = data.get('severity-scores', [])
+        severity = data.get('severity-scores', {})
+        annotations = data.get('annotations', [])
+        print(annotations)
+        print("HERE")
+        print(edge_data)
+
         stylesheet_new = stylesheet
 
         # Extract filename from the contents object
@@ -53,12 +59,16 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
                 track_data['timeline-marks'] = existing_marks
 
                 map_store[filename] = {'elements': new_elements, 
-                                       'stylesheet': style}
+                                       'stylesheet': style,
+                                       'severity': data.get('severity-scores', {}),
+                                       'annotations': annotations,
+                                       'edge-data': edge_data}
+                
+                print(filename)
 
+        return existing_marks, current_value, current_value, new_elements, map_store, track_data, filename
 
-        return existing_marks, current_value, current_value, new_elements, map_store, track_data
-
-    return existing_marks, current_max, current_value, new_elements, map_store, track_data
+    return existing_marks, current_max, current_value, new_elements, map_store, track_data, filename
 
 # Callback - NETWORK COMPARISON: Network comparison timeline navigation
 # When user navigates across timeline
@@ -66,12 +76,14 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
 # Feed in this file into dummy cytoscape 
 def update_cytoscape_elements(selected_value, marks, comparison_data, session_data, severity_scores):
     selected_date = None
+    filename = None
     
     if comparison_data is not None:
         label = marks.get(str(selected_value))  # Fetch label based on the slider's value
 
         if label in comparison_data:  # Check if the label exists in comparison_data keys
             selected_date = label
+            filename = label
 
         if selected_date is not None:
             if selected_date != "PsySys":
@@ -81,16 +93,19 @@ def update_cytoscape_elements(selected_value, marks, comparison_data, session_da
                 elements = comparison_data[selected_date]['elements']
                 stylesheet = apply_severity_size_styles("Severity", session_data['stylesheet'], severity_scores, session_data['stylesheet'])
 
-            return elements, stylesheet
+            return elements, stylesheet, filename
 
-    return [], []
+    return [], [], filename
 
 # Callback - NETWORK COMPARISON: Populate tracking graph with PsySys map
 def update_track(session_data, track_data, map_store):
     track_data['elements'] = session_data['elements']
     track_data['stylesheet'] = session_data['stylesheet']
 
-    map_store['PsySys'] = {'elements': session_data['elements'], 'stylesheet': session_data['stylesheet']}
+    map_store['PsySys'] = {'elements': session_data['elements'], 
+                           'stylesheet': session_data['stylesheet'],
+                           'severity': session_data.get('severity', {})
+                           }
     
     return track_data, map_store
 
@@ -178,7 +193,99 @@ def update_plotting_mode(current_clicks, overall_clicks, current_mode):
 
     return new_mode, new_mode == 'current', new_mode == 'overall'
 
-# Callback- NETWORK COMPARISON: Create centrality plot
+# Callback - NETWORK COMPARISON: Create centrality plot
+# def update_graph(selected_map, current_mode, comparison_data, track_data, marks):
+#     if current_mode == "current":
+#         if selected_map is None or comparison_data is None or marks is None:
+#             return go.Figure()  # Return an empty figure if no data is available
+        
+#         fig = current_centrality_plot(track_data, comparison_data, selected_map, marks)
+        
+#         if fig:
+#             return fig
+        
+#         return go.Figure()
+    
+#     else: 
+#         x, y = prepare_graph_data(comparison_data)
+
+#         # Check if 'PsySys' is in marks
+#         if 'PsySys' not in marks.values():
+#             # Filter out 'PsySys' related data from x and y
+#             if "PsySys" in x:
+#                 index_to_remove = x.index("PsySys")
+#                 del x[index_to_remove]
+#                 del y[-1]
+#             else: 
+#                 pass
+
+#         # If x is empty after filtering, return an empty figure
+#         new_x_labels = []
+        
+#         # Convert x labels to sequential 'map 1', 'map 2', ..., 'map n'
+#         if x: 
+#             new_x_labels = [f'map {i+1}' for i in range(len(x))]
+
+#         # Extract unique network elements (keys from dictionaries in y)
+#         all_elements = set()
+#         for network_dict in y:
+#             if isinstance(network_dict, dict):
+#                 all_elements.update(network_dict.keys())
+
+#         fig = go.Figure()
+        
+#         # Add a trace for each network element
+#         for element in all_elements:
+#             element_values = []
+#             for network_dict in y:
+#                 element_values.append(network_dict.get(element, None))  # Use None for missing values
+            
+#             # Introduce jitter to x positions to avoid overlap
+#             jitter = np.random.uniform(-0.05, 0.05, size=len(new_x_labels))  # Adjust the jitter size as needed
+#             jittered_x = [i + jitter[i] for i in range(len(new_x_labels))]
+            
+#             fig.add_trace(go.Scatter(
+#                 #x=new_x_labels,  # Use new sequential labels for x-axis
+#                 x = jittered_x,
+#                 y=element_values,
+#                 mode='lines+markers',
+#                 name=element
+#             ))
+            
+#         # Update the layout of the plot
+#         fig.update_layout(
+#             title={
+#                 'text': 'Severity Comparison',
+#                 'y': 0.92,  # Adjust the vertical position of the title
+#                 'x': 0.5,
+#                 'xanchor': 'center',
+#                 'yanchor': 'top'
+#             },
+#             yaxis_title='Severity',
+#             template='plotly_white',
+#             width=420,  # Set a wider width for the plot
+#             height=450,  # Adjust height as needed
+#             margin={'l': 20, 'r': 20, 't': 100, 'b': 5},  # Adjust margins to fit labels
+#             xaxis=dict(
+#                 tickmode='array',  # Specify custom tick values
+#                 tickvals=list(range(len(new_x_labels))),  # Use positions as tick values
+#                 ticktext=new_x_labels,  # Set the custom tick labels to be the new sequential labels
+#                 tickangle=-45  # Rotate tick labels for better fit
+#             ),
+#             yaxis=dict(
+#                 domain=[0.1, 0.75]  # Adjusts the y-axis to start at 20% of the figure height and end at 100%
+#             ),
+#             legend=dict(
+#                 orientation='h',  # Set the legend to horizontal
+#                 yanchor='bottom',  # Anchor to the bottom of the legend box
+#                 y=0.8,  # Position it slightly above the plot
+#                 xanchor='center',  # Center the legend horizontally
+#                 x=0.5  # Set it in the middle of the plot
+#             )
+#         )
+
+#         return fig
+
 def update_graph(selected_map, current_mode, comparison_data, track_data, marks):
     if current_mode == "current":
         if selected_map is None or comparison_data is None or marks is None:
@@ -189,23 +296,33 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks)
         if fig:
             return fig
         
-        return go.Figure() 
+        return go.Figure()
     
-    else: 
-
-        x, y = prepare_graph_data(comparison_data)
+    else:
+        # Check if comparison_data is empty
+        if not comparison_data:
+            return go.Figure()  # Return an empty figure if comparison_data is empty
+        
+        # Try to call prepare_graph_data and catch potential KeyError
+        try:
+            x, y = prepare_graph_data(comparison_data)
+        except KeyError as e:
+            return go.Figure()
 
         # Check if 'PsySys' is in marks
         if 'PsySys' not in marks.values():
             # Filter out 'PsySys' related data from x and y
             if "PsySys" in x:
                 index_to_remove = x.index("PsySys")
-
                 del x[index_to_remove]
                 del y[-1]
-            
-            else: 
-                pass
+
+        # If x is empty after filtering, prepare for no x labels
+        if not x:
+            new_x_labels = []
+        else:
+            # Convert x labels to sequential 'map 1', 'map 2', ..., 'map n'
+            new_x_labels = [f'map {i+1}' for i in range(len(x))]
 
         # Extract unique network elements (keys from dictionaries in y)
         all_elements = set()
@@ -214,28 +331,59 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks)
                 all_elements.update(network_dict.keys())
 
         fig = go.Figure()
-        
+
         # Add a trace for each network element
         for element in all_elements:
             element_values = []
             for network_dict in y:
                 element_values.append(network_dict.get(element, None))  # Use None for missing values
             
+            # Introduce jitter to x positions to avoid overlap
+            jitter = np.random.uniform(-0.05, 0.05, size=len(new_x_labels))
+            jittered_x = [i + jitter[i] for i in range(len(new_x_labels))]
+            
             fig.add_trace(go.Scatter(
-                x=x,  # Network labels (e.g., timestamps)
-                #y=adjust_duplicates(element_values),
+                x=jittered_x if new_x_labels else [],  # Use jittered x only if labels are present
                 y=element_values,
                 mode='lines+markers',
                 name=element
             ))
-            
+
+        # Update the layout of the plot
         fig.update_layout(
-            title='Overall Factor Influence',
-            #xaxis_title='Network',
-            yaxis_title='Average Connectedness',
+            title={
+                'text': 'Severity Comparison',
+                'y': 0.92,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            yaxis_title='Severity',
             template='plotly_white',
+            width=420,
+            height=450,
+            margin={'l': 20, 'r': 20, 't': 100, 'b': 5},
+            xaxis=dict(
+                showticklabels=bool(new_x_labels),  # Show ticks only if labels exist
+                tickmode='array',
+                tickvals=list(range(len(new_x_labels))),
+                ticktext=new_x_labels,
+                tickangle=-45
+            ),
+            yaxis=dict(
+                domain=[0.1, 0.75]
+            ),
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=0.8,
+                xanchor='center',
+                x=0.5
+            )
         )
+
         return fig
+
     
 # Callback: Open plot information modal 
 def plot_info(n_clicks, is_open):
@@ -254,7 +402,7 @@ def populate_plot_modal(current_mode):
     if current_mode == 'current':
         return 'The figure shows the number of in-coming and out-going links for each factor in the map. Factors with many out-going links have a lot of influence on the map. Factors with many in-coming links are strongly influenced by the other factors in the map.'
     elif current_mode == 'overall':
-        return 'The figure shows the average influence (combination of in-coming and out-gonig links) for each factor in each of the included maps. Here you can examine how the factors influence change across the maps.'
+        return 'The figure shows the factor severity scores over the uploaded mental-health maps.'
 
 # Callback - NETWORK COMPARISON: Toggle uniform style for network maps
 def update_stylesheet_02(uniform_switch, selected_value, marks, comparison_data, session_data, severity_scores):
@@ -268,6 +416,7 @@ def update_stylesheet_02(uniform_switch, selected_value, marks, comparison_data,
 
         if selected_date is not None:
             elements = comparison_data[selected_date]['elements']
+            severity_scores = comparison_data[selected_date].get('severity', None)
             stylesheet = comparison_data[selected_date].get('stylesheet', [])
 
             if uniform_switch and 0 in uniform_switch:  # Uniform switch is on
@@ -284,29 +433,133 @@ def update_stylesheet_02(uniform_switch, selected_value, marks, comparison_data,
     return [], []
 
 # Show annotations modal when clicking on edge or node
-def display_annotation_modal(tapNodeData, tapEdgeData, annotation_data, is_open):
-    print("triggered_annotation_show")
+# def display_annotation_nodes(tapNodeData, map_store, filename, is_open):
+#     print(filename)
+#     ctx = callback_context
+#     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]  # Identify which input triggered the callback
+
+#     # Check if the filename exists in the map_store
+#     if filename not in map_store:
+#         print("Filename not found in map_store.")
+#         return False, "No annotation data available."
+
+#     # Retrieve node and edge annotations from the map_store
+#     node_annotations = map_store[filename].get('annotations', {})
+
+#     # Check what triggered the callback
+#     if triggered_id == 'track-graph':
+#         # Determine if an edge was clicked
+#         if tapNodeData:
+#             node_id = tapNodeData['id']
+#             # Fetch the annotation for the clicked node from the annotations store
+#             node_annotation = node_annotations.get(node_id, "No annotation for this factor.")
+#             return True, f"{node_annotation}"  # Open modal and display annotation
+
+#     # If no element is clicked, close the modal or keep it closed
+#     return False, dash.no_update
+
+def display_annotation_nodes(tapNodeData, map_store, filename, is_open):
+    print(filename)
     ctx = callback_context
     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]  # Identify which input triggered the callback
 
-    # Determine if a node or edge was clicked
-    if tapNodeData:
-        print("it's a node")
-        node_id = tapNodeData['id']
-        # Fetch the annotation for the clicked node from the annotation store
-        # annotation = annotation_data.get('nodes', {}).get(node_id, "No annotation for this node.")
-        return True, f"{annotation_data.get(node_id, {})}"  # Open modal and display annotation
+    # Check if the filename exists in the map_store
+    if filename not in map_store:
+        print("Filename not found in map_store.")
+        return False, "No annotation data available."
 
-    elif tapEdgeData:
-        print("it's an edge")
-        edge_id = tapEdgeData['id']
-        # Fetch the annotation for the clicked edge from the annotation store
-        annotation = annotation_data.get('edges', {}).get(edge_id, "No annotation for this edge.")
-        return True, f"Edge Annotation: {annotation}"  # Open modal and display annotation
+    # Retrieve node annotations from the map_store
+    node_annotations = map_store[filename].get('annotations', {})
+
+    # Check what triggered the callback
+    if triggered_id == 'track-graph':
+        # Determine if a node was clicked
+        if tapNodeData:
+            print("it's a node")
+            node_id = tapNodeData['id']
+            # Fetch the annotation for the clicked node from the annotations store
+            node_annotation = node_annotations.get(node_id, "No annotation for this factor.")
+            
+            # If the annotation is empty or not present, use the default message
+            if not node_annotation:
+                node_annotation = "No annotation for this factor."
+                
+            return True, f"{node_annotation}"  # Open modal and display annotation
 
     # If no element is clicked, close the modal or keep it closed
     return False, dash.no_update
 
+# def display_annotation_edges(tapEdgeData, map_store, filename, is_open):
+#     print(filename)
+#     ctx = callback_context
+#     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]  # Identify which input triggered the callback
+
+#     # Check if the filename exists in the map_store
+#     if filename not in map_store:
+#         print("Filename not found in map_store.")
+#         return False, "No annotation data available."
+
+#     # Retrieve node and edge annotations from the map_store
+#     node_annotations = map_store[filename].get('annotations', {})
+#     edge_annotations = map_store[filename].get('edge-data', {})
+
+#     # Check what triggered the callback
+#     if triggered_id == 'track-graph':
+#         # Determine if an edge was clicked
+#         if tapEdgeData:
+#             print("it's an edge")
+#             # Construct the edge ID using the 'source' and 'target' from tapEdgeData
+#             source = tapEdgeData['source']
+#             target = tapEdgeData['target']
+#             edge_id = f"edge_{source}_{target}"
+            
+#             edge_id = tapEdgeData['id']
+
+#             # Fetch the annotation for the clicked edge from the edge-data store
+#             edge_annotation = edge_annotations.get(edge_id, {}).get('annotation', "No annotation for this connection.")
+#             return True, f"{edge_annotation}"  # Open modal and display annotation
+
+#     # If no element is clicked, close the modal or keep it closed
+#     return False, dash.no_update
+
+def display_annotation_edges(tapEdgeData, map_store, filename, is_open):
+    print(filename)
+    ctx = callback_context
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]  # Identify which input triggered the callback
+
+    # Check if the filename exists in the map_store
+    if filename not in map_store:
+        print("Filename not found in map_store.")
+        return False, "No annotation data available."
+
+    # Retrieve edge annotations from the map_store
+    edge_annotations = map_store[filename].get('edge-data', {})
+
+    # Check what triggered the callback
+    if triggered_id == 'track-graph':
+        # Determine if an edge was clicked
+        if tapEdgeData:
+            print("it's an edge")
+            # Construct the edge ID using the 'source' and 'target' from tapEdgeData
+            source = tapEdgeData['source']
+            target = tapEdgeData['target']
+            edge_id = f"edge_{source}_{target}"
+            
+            # If the edge ID from `tapEdgeData` is different, use that instead
+            edge_id = tapEdgeData.get('id', edge_id)
+
+            # Fetch the annotation for the clicked edge from the edge-data store
+            edge_data = edge_annotations.get(edge_id, {})
+            edge_annotation = edge_data.get('annotation', "No annotation for this connection.")
+
+            # If the annotation is empty or not present, use the default message
+            if not edge_annotation:
+                edge_annotation = "No annotation for this connection."
+                
+            return True, f"{edge_annotation}"  # Open modal and display annotation
+
+    # If no element is clicked, close the modal or keep it closed
+    return False, dash.no_update
 
 def register_comparison_callbacks(app):
 
@@ -316,7 +569,8 @@ def register_comparison_callbacks(app):
         Output('timeline-slider', 'value'),
         Output('track-graph', 'elements'),
         Output('comparison', 'data'),
-        Output('track-map-data', 'data')],
+        Output('track-map-data', 'data'),
+        Output('current-filename-store', 'data')],
         Input('upload-graph-tracking', 'contents'), 
         [State('timeline-slider', 'marks'), 
         State('timeline-slider', 'max'),
@@ -324,12 +578,14 @@ def register_comparison_callbacks(app):
         State('track-graph', 'elements'),
         State('comparison', 'data'),
         State('track-map-data', 'data'),
-        State('track-graph', 'stylesheet')]
+        State('track-graph', 'stylesheet'),
+        State('edge-data', 'data')]
     )(upload_tracking_graph)
 
     app.callback(
         [Output('track-graph', 'elements', allow_duplicate=True),
-        Output('track-graph', 'stylesheet')],
+        Output('track-graph', 'stylesheet'),
+        Output('current-filename-store', 'data', allow_duplicate=True)],
         [Input('timeline-slider', 'value')],
         [State('timeline-slider', 'marks'),
         State('comparison', 'data'),
@@ -424,8 +680,19 @@ def register_comparison_callbacks(app):
     app.callback(
         [Output('modal-annotation', 'is_open'),  # Controls modal visibility
          Output('modal-notes', 'children')],  # Updates modal content with annotation
-         [Input('track-graph', 'tapNodeData'), 
-          Input('track-graph', 'tapEdgeData')], 
-         [State('annotation-data', 'data'),  # State to access stored annotations
+         [Input('track-graph', 'tapNodeData')], 
+         [State('comparison', 'data'),  # State to access stored annotations
+          State('current-filename-store', 'data'),
           State('modal-annotation', 'is_open')],  # State to check current modal status
-    )(display_annotation_modal)
+    )(display_annotation_nodes)
+
+    app.callback(
+        [Output('modal-annotation', 'is_open', allow_duplicate=True),  # Controls modal visibility
+         Output('modal-notes', 'children', allow_duplicate=True)],  # Updates modal content with annotation
+         [Input('track-graph', 'tapEdgeData')], 
+         [State('comparison', 'data'),  # State to access stored annotations
+          State('current-filename-store', 'data'),
+          State('modal-annotation', 'is_open')],  # State to check current modal status
+          prevent_initial_call=True
+    )(display_annotation_edges)
+    

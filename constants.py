@@ -7,7 +7,7 @@ factors = ["Loss of interest", "Feeling down", "Stress", "Worry", "Overthinking"
            "Breakup", "Problems at work", "Interpersonal problems"]
 
 # Initialize node color schemes
-node_color = ["Custom", "Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"]
+node_color = ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"]
 
 # Initialize node sizing schemes
 node_size = ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"] 

@@ -105,8 +105,8 @@ def open_node_edit_modal(tapNodeData, switch, severity_scores, annotations, edit
 #     return False, '', None, ''
 
 # Callback: Reset tabnodedata on mode switch
-def reset_node_data_on_click(switch):
-    return {}
+def reset_tap_data(switch):
+    return {}, {}
 
 # Callback: Update the annotation for the node
 def update_annotations(note_input, tapNodeData, annotations):
@@ -174,23 +174,9 @@ def open_edge_edit_modal(tapEdgeData, switch, edge_data):
 
     return False, '', 5, ''
 
-# def open_modal_on_edge_tap(tapEdgeData, switch, is_open, edge_data):
-#     # Check if the edge is tapped and the switch is not in state 0
-#     if tapEdgeData and 0 not in switch:
-#         print("Opening modal because an edge is tapped.")
-#         edge_id = tapEdgeData['id']
-
-#         # Retrieve the stored type for this edge, defaulting to None if not set
-#         edge_type = edge_data.get(edge_id, {}).get('type', None)
-        
-#         return True, edge_type  # Open the modal and set the dropdown to the current edge type
-
-#     return is_open, dash.no_update  # Keep the current state
-
 def open_modal_on_edge_tap(tapEdgeData, switch, is_open, edge_data):
     # Check if the edge is tapped and the switch is not in state 0
     if tapEdgeData and 0 not in switch:
-        print("Opening modal because an edge is tapped.")
         edge_id = tapEdgeData['id']
 
         # Retrieve the stored type for this edge, defaulting to 'Default' if not set
@@ -199,65 +185,6 @@ def open_modal_on_edge_tap(tapEdgeData, switch, is_open, edge_data):
         return True, edge_type  # Open the modal and set the dropdown to the current or default edge type
 
     return is_open, dash.no_update
-
-# def save_edge_changes_and_close_modal(save_clicks, tapEdgeData, strength, annotation, edge_data, edit_map_data, current_stylesheet, edge_type):
-    # ctx = callback_context
-    # triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-    # # Debugging output to check what triggers the callback
-    # print(f"Callback triggered by: {triggered_id}")
-
-    # # Initialize edge_data and edit_map_data
-    # if edge_data is None:
-    #     edge_data = {}
-    # if edit_map_data is None:
-    #     edit_map_data = {}
-
-    # stylesheet = current_stylesheet or []
-
-    # # Handle Save Button Click
-    # if triggered_id == 'edge-save-btn' and save_clicks and tapEdgeData:
-    #     print("Save button clicked, saving changes.")
-    #     edge_id = tapEdgeData['id']
-    #     # Update the edge data
-    #     edge_data[edge_id] = {
-    #         'strength': strength,
-    #         'annotation': annotation
-    #     }
-
-    #     # Update the stylesheet for the tapped edge
-    #     opacity = strength / 5  # Adjust opacity based on strength
-    #     if edge_type == 'amplifier':
-    #         color = '#C54B47'
-    #     elif edge_type == 'reliever':
-    #         color = '#004AAD'
-    #     else: 
-    #         color = '#999999'
-
-    #     tapped_edge_style = {
-    #         'selector': f'edge[id="{edge_id}"]',
-    #         'style': {
-    #             'opacity': opacity,
-    #             'line-color': color,
-    #             'target-arrow-color': color,
-    #             'source-arrow-color': color
-    #         }
-    #     }
-
-    #     # Create a new stylesheet with updated style for the tapped edge
-    #     new_stylesheet = [rule for rule in stylesheet if rule['selector'] != f'edge[id="{edge_id}"]']
-    #     new_stylesheet.append(tapped_edge_style)
-
-    #     # Save updated data in edit-map-data
-    #     edit_map_data['stylesheet'] = new_stylesheet
-    #     edit_map_data['edges'] = edge_data
-
-    #     # Close the modal after saving
-    #     return edge_data, new_stylesheet, edit_map_data, False
-
-    # # Default: keep the current modal state
-    # print("No relevant action, keeping modal state.")
-    # return edge_data, stylesheet, edit_map_data, dash.no_update
 
 def save_edge_changes_and_close_modal(save_clicks, tapEdgeData, strength, annotation, edge_data, edit_map_data, current_stylesheet, edge_type):
     ctx = callback_context
@@ -375,46 +302,118 @@ def limit_dropdown_edit_edge(edit_edge):
     return edit_edge
 
 # Callback: Add additional edge to graph
-def add_edge_output(n_clicks, new_edge, elements, edit_map_data, severity_scores, history):
+def add_edge_output(n_clicks, new_edge, elements, edit_map_data, severity_scores, history, edge_data):
     if n_clicks and new_edge and len(new_edge) == 2:
-
+        # Save current state to history
         history.append({
             'elements': elements.copy(),
             'edit_map_data': edit_map_data.copy(),
-            'severity_scores': severity_scores.copy()
+            'severity_scores': severity_scores.copy(),
+            'edge_data': edge_data.copy()  # Ensure to also copy edge_data to history
         })
 
         source, target = new_edge
+
+        # Initialize edge_data if it is None
+        if edge_data is None:
+            edge_data = {}
+
+        # Create a unique edge ID and add the new edge
+        edge_id = f"edge_{source}_{target}"  # Ensure a unique edge ID
+        if edge_id not in edge_data:
+            # Initialize new edge data with default values
+            edge_data[edge_id] = {
+                'strength': 3,  # Default strength
+                'annotation': '',  # Default annotation
+                'type': 'default'  # Default type
+            }
+
         # Assuming edit_map_data['edges'] is a list of edge dictionaries
         existing_edges = set(f"{e['data']['source']}->{e['data']['target']}" for e in elements if 'source' in e.get('data', {}))
 
-        add_edge(source, target, elements, existing_edges)
+        # Add the new edge to elements for visualization with a unique ID
+        elements.append({
+            'data': {
+                'id': edge_id,
+                'source': source,
+                'target': target
+            }
+        })
+        existing_edges.add(f"{source}->{target}")
 
-        edit_map_data['edges'] = [{'data': {'source': source, 'target': target}} for source, target in (edge.split('->') for edge in existing_edges)]
+        # Update edit_map_data with the new edges
+        edit_map_data['edges'] = [{'data': {'id': f"edge_{src}_{tgt}_{i}", 'source': src, 'target': tgt}}
+                                  for i, (src, tgt) in enumerate((edge.split('->') for edge in existing_edges))]
         edit_map_data['elements'] = elements
 
-    return elements, edit_map_data, history
+        # Explicitly update the stylesheet to ensure it includes the new edge
+        new_stylesheet = edit_map_data.get('stylesheet', [])
+        tapped_edge_style = {
+            'selector': f'edge[id="{edge_id}"]',
+            'style': {
+                'opacity': 0.6,  # Default opacity
+                'line-color': '#999999',  # Default color
+                'target-arrow-color': '#999999',
+                'source-arrow-color': '#999999'
+            }
+        }
+        new_stylesheet.append(tapped_edge_style)
+        edit_map_data['stylesheet'] = new_stylesheet
+
+        return elements, edit_map_data, history, edge_data
+
+    return elements, edit_map_data, history, edge_data
+
 
 # Callback: Delete existing edge from graph
-def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history):
-    if n_clicks and edge and len(edge) == 2:
+# def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history):
+#     if n_clicks and edge and len(edge) == 2:
 
+#         history.append({
+#             'elements': elements.copy(),
+#             'edit_map_data': edit_map_data.copy(),
+#             'severity_scores': severity_scores.copy()
+#         })
+
+#         source, target = edge
+
+#         existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
+
+#         delete_edge(source, target, elements, existing_edges)
+
+#         edit_map_data['edges'] = list(existing_edges)
+#         edit_map_data['elements'] = elements
+
+#     return elements, edit_map_data, history
+
+def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history, edge_data):
+    if n_clicks and edge and len(edge) == 2:
+        # Save current state to history
         history.append({
             'elements': elements.copy(),
             'edit_map_data': edit_map_data.copy(),
-            'severity_scores': severity_scores.copy()
+            'severity_scores': severity_scores.copy(),
+            'edge_data': edge_data.copy()  # Save edge_data in history for undo functionality
         })
 
         source, target = edge
 
-        existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
+        # Identify the edge ID (assuming the format used earlier in add_edge_output)
+        edge_id = f"edge_{source}_{target}"
 
+        # Remove the edge from elements and existing edges set
+        existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
         delete_edge(source, target, elements, existing_edges)
 
+        # Remove the edge from edge_data
+        if edge_id in edge_data:
+            del edge_data[edge_id]
+
+        # Update edit_map_data
         edit_map_data['edges'] = list(existing_edges)
         edit_map_data['elements'] = elements
 
-    return elements, edit_map_data, history
+    return elements, edit_map_data, history, edge_data
 
 # Callback: Listens to color scheme user input 
 def set_color_scheme(selected_scheme, stylesheet, edit_map_data, severity_scores):
@@ -425,7 +424,7 @@ def set_color_scheme(selected_scheme, stylesheet, edit_map_data, severity_scores
     # Update elements with the new stylesheet
     stylesheet = edit_map_data['stylesheet']
 
-    return stylesheet, edit_map_data
+    return stylesheet, edit_map_data, selected_scheme
 
 # Callback: Listens to node sizing user input 
 def set_node_sizes(selected_scheme, stylesheet, edit_map_data, severity_scores):
@@ -437,7 +436,7 @@ def set_node_sizes(selected_scheme, stylesheet, edit_map_data, severity_scores):
             stylesheet = edit_map_data['stylesheet']
         else:
             stylesheet = [] 
-        return stylesheet, edit_map_data
+        return stylesheet, edit_map_data, selected_scheme
     else:
         return dash.no_update
 
@@ -474,16 +473,8 @@ def update_severity_scores(severity_values, session_data, existing_severity_scor
 
     return existing_severity_scores
 
-# Callback: Update color_scheme dropdown value
-def update_color_scheme_dropdown(value):
-    return value
-
 # Callback: Update sizing_scheme dropdown value
 def update_custom_color_dropdown(value):
-    return value
-
-# Callback: Update sizing_scheme dropdown value
-def update_sizing_scheme_dropdown(value):
     return value
 
 # @app.callback(
@@ -493,7 +484,6 @@ def update_sizing_scheme_dropdown(value):
 # def update_edge_type(value):
 #     return value
 
-# NEW??
 def save_edge_type(n_clicks, edge_name, edge_type, edge_data):
     if n_clicks > 0 and edge_name and edge_type:
         # Initialize edge_data as a dictionary if it is None
@@ -506,7 +496,6 @@ def save_edge_type(n_clicks, edge_name, edge_type, edge_data):
 
     # Return the existing edge_data if no new data is to be saved
     return edge_data
-
 
 # Callback: Inspect node (highlight direct effects) upon clicking
 def update_stylesheet_01(tapNodeData, switch, edit_map_data, editing_mode):
@@ -631,7 +620,6 @@ def donation_modal(n_clicks, is_open):
 # Callback: Donation button functionality
 def donate_button_clicked(n_clicks, data, current_style, severity_scores, edge_data, annotations):
     if n_clicks:
-        print('yes')
         graph_data = format_export_data(data, current_style, severity_scores, edge_data, annotations)
         send_to_github(graph_data)
         return 'Thank you for your donation! Data sent to GitHub.'
@@ -662,53 +650,6 @@ def undo_last_action(n_clicks, history):
     # If history is empty, return current state (no change)
     return dash.no_update, dash.no_update, dash.no_update, dash.no_update, history
 
-# Callback: Handle mode switching - Extend mode - add edge by tap functionality (WORKING)
-# @app.callback(
-#     Output('editing-window', 'children'),
-#     [Input('editing-mode', 'data')],
-#     [State('edit-map-data', 'data'), State('color_scheme', 'data'), State('sizing_scheme', 'data')]
-# )
-# def update_mode(mode, edit_map_data, color_scheme_data, sizing_scheme_data):
-#     return create_editing_window(mode, edit_map_data, color_scheme_data, sizing_scheme_data)
-
-# @app.callback(
-#     [Output('my-mental-health-map', 'elements', allow_duplicate=True),
-#      #Output('edit-map-data', 'data', allow_duplicate=True),
-#      Output('selected-nodes', 'data')],
-#     [Input('my-mental-health-map', 'tapNode')],
-#     [State('my-mental-health-map', 'elements'),
-#      State('selected-nodes', 'data'),
-#      State('edit-map-data', 'data'),
-#      State('editing-mode', 'data')],
-#     prevent_initial_call=True
-# )
-# def update_graph(tapNode, elements, selected_nodes, edit_map_data, editing_mode):
-#     if editing_mode == 'mode-2':
-#         print(selected_nodes)
-#         if selected_nodes is None:
-#             selected_nodes = []
-
-#         # Handle click on a node
-#         if tapNode:
-#             node_id = tapNode['data']['id']
-#             if len(selected_nodes) == 1:
-#                 # Create an edge if there is already one selected node
-#                 source_node = selected_nodes[0]
-#                 existing_edges = set(f"{e['data']['source']}->{e['data']['target']}" for e in elements if 'source' in e.get('data', {}))
-                    
-#                 # Use the add_edge function
-#                 elements, existing_edges = add_edge(source_node, node_id, elements, existing_edges)
-#                 selected_nodes = []
-                
-#             else:
-#                 # Add the new node to the selection list
-#                 selected_nodes.append(node_id)
-
-#         return elements, selected_nodes
-    
-#     else:
-#         return elements, selected_nodes
-
 # Color in edges 
 def update_dropdown_on_edge_selection(edge_data, edge_data_store):
     if edge_data:
@@ -726,42 +667,6 @@ def save_edge_type(n_clicks, edge_data, selected_type, edge_data_store):
         edge_data_store[edge_id] = selected_type
         return edge_data_store
     return edge_data_store
-
-# @app.callback(
-#     Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
-#     Input('edge-type-dropdown', 'value'),
-#     State('my-mental-health-map', 'elements'),
-#     prevent_initial_call=True
-# )
-# def update_edge_styles(selected_type, elements):
-#     color_map = {
-#     'default': '#9CD3E1',  # Default color
-#     'amplifier': '#C54B47',  # Red
-#     'reliever': '#004AAD'   # Blue
-#     }
-
-#     print("Updating edge styles...")
-#     print("Selected type:", selected_type)
-    
-#     # Print elements to verify their structure
-#     print("Elements:", elements)
-    
-#     if selected_type:
-#         # Build the stylesheet for the selected type
-#         edge_styles = []
-#         for element in elements:
-#             if 'edge' in element['data']['id']:
-#                 edge_id = element['data']['id']
-#                 color = color_map.get(selected_type, '#9CD3E1')
-#                 edge_styles.append({
-#                     'selector': f'edge[id="{edge_id}"]',
-#                     'style': {'line-color': color}
-#                 })
-#         print("Generated edge styles:", edge_styles)
-#         return edge_styles
-
-#     # Return default style if no type is selected
-#     return [{'selector': 'edge', 'style': {'line-color': '#9CD3E1'}}]
 
 # Register the callbacks
 def register_editing_callbacks(app):
@@ -805,9 +710,10 @@ def register_editing_callbacks(app):
 
     app.callback(
         Output('my-mental-health-map', 'tapNodeData'),  
+        Output('my-mental-health-map', 'tapEdgeData'),
         Input('inspect-switch', 'value'), 
         prevent_initial_call=True
-    )(reset_node_data_on_click)
+    )(reset_tap_data)
 
     app.callback(
         Output('annotation-data', 'data'),
@@ -907,32 +813,37 @@ def register_editing_callbacks(app):
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('history-store', 'data', allow_duplicate=True)],
+        Output('history-store', 'data', allow_duplicate=True),
+        Output('edge-data', 'data', allow_duplicate=True)],
         [Input('btn-plus-edge', 'n_clicks')],
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
-        State('history-store', 'data')],
+        State('history-store', 'data'),
+        State('edge-data', 'data')],
         prevent_initial_call=True
     )(add_edge_output)
 
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('history-store', 'data', allow_duplicate=True)],
+        Output('history-store', 'data', allow_duplicate=True),
+        Output('edge-data', 'data', allow_duplicate=True)],
         [Input('btn-minus-edge', 'n_clicks')],
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
-        State('history-store', 'data')],
+        State('history-store', 'data'),
+        State('edge-data', 'data')],
         prevent_initial_call=True
     )(delete_edge_output)
 
     app.callback(
         [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
-        Output('edit-map-data', 'data', allow_duplicate=True)],
+        Output('edit-map-data', 'data', allow_duplicate=True),
+        Output('color_scheme', 'data')],
         [Input('color-scheme', 'value')],
         [State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
@@ -942,7 +853,8 @@ def register_editing_callbacks(app):
 
     app.callback(
         [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
-        Output('edit-map-data', 'data', allow_duplicate=True)],
+        Output('edit-map-data', 'data', allow_duplicate=True),
+        Output('sizing_scheme', 'data')],
         [Input('sizing-scheme', 'value')],
         [State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
@@ -964,19 +876,10 @@ def register_editing_callbacks(app):
     )(update_severity_scores)
 
     app.callback(
-        Output('color_scheme', 'data'),
-        Input('color-scheme', 'value')
-    )(update_color_scheme_dropdown)
-
-    app.callback(
         Output('custom-color', 'data'),
-        Input('custom-node-color', 'value')
+        Input('custom-node-color', 'value'),
+        prevent_initial_call=True
     )(update_custom_color_dropdown)
-
-    app.callback(
-        Output('sizing_scheme', 'data'),
-        Input('sizing-scheme', 'value')
-    )(update_sizing_scheme_dropdown)
 
     app.callback(
         Output('edge-data-store', 'data'),

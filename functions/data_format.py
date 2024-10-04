@@ -38,7 +38,8 @@ def format_export_data(data, current_style, severity_scores, edge_data, annotati
         'in-degrees': in_degrees,
         'out-in-ratio': out_in_ratio,
         'annotations': annotations,
-        'date': current_date
+        'date': current_date,
+        'severity': severity_scores
     }
     return exported_data
 

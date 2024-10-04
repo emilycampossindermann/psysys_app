@@ -138,6 +138,7 @@ app.layout = dbc.Container([
     dcc.Store(id='selected-nodes', data=[]), 
     dcc.Store(id='editing-mode', data=[]),
     dcc.Store(id='plot-mode', data=[]),
+    dcc.Store(id='current-filename-store', storage_type='session'),
     dcc.Store(id='session-data', data={
         'dropdowns': {
             'initial-selection': {'options':[{'label': factor, 'value': factor} for factor in factors], 'value': None},
@@ -168,7 +169,8 @@ app.layout = dbc.Container([
         'add-nodes': [],
         'add-edges': [],
         'stylesheet': stylesheet,
-        'annotations': []
+        'annotations': [],
+        'severity': {}
     }, storage_type='session'),
     dcc.Store(id='severity-scores', data={}, storage_type='session'),
     dcc.Store(id='annotation-data', data={}, storage_type='session'),
@@ -177,6 +179,7 @@ app.layout = dbc.Container([
     dcc.Store(id='track-map-data', data={
         'elements': [], 
         'stylesheet': stylesheet,
+        'severity': {},
         'timeline-marks': {0: 'PsySys'},
         'timeline-min': 0,
         'timeline-max': 0,
@@ -688,7 +691,7 @@ app.layout = dbc.Container([
 
 #         # Find the node in the stylesheet and update its color
 #         node_selector = f'node[id="{old_node_id}"]'
-#         node_style_updated = False
+#         node_stylesession_data_updated = False
 
 #         # if color_scheme == "Custom" and custom_color:
 #         #     # Correct the yellow color assignment

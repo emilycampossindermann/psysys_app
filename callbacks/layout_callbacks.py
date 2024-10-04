@@ -93,6 +93,8 @@ def update_session_data(n_clicks, json_values, session_data, current_step_data, 
 
     step = current_step_data.get('step')
     values = json.loads(json_values) if json_values else []
+    session_data['severity'] = severity_scores
+
 
     if len(values) == 1:
         if step == 1:

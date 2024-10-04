@@ -1,5 +1,7 @@
 from functions.map_style import calculate_degree_centrality
 import plotly.graph_objects as go
+import numpy as np
+import plotly as plt
 
 # Function: Create current centrality bar plot
 def current_centrality_plot(track_data, comparison_data, selected_map, marks):
@@ -47,8 +49,17 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                 # Update layout
                 fig.update_layout(
                     barmode='group',
-                    title='Factor Influence',
-                    #xaxis_title='Nodes',
+                    margin={'l': 20, 'r': 20, 't': 100, 'b': 5},
+                    title={
+                        'text': 'Factor Influence',
+                        'y': 0.92,  # Adjust the vertical position of the title
+                        'x': 0.5,
+                        'xanchor': 'center',
+                        'yanchor': 'top'
+                    },
+                    xaxis=dict(
+                        tickangle=-45  # Rotate tick labels for better fit
+                    ),
                     yaxis_title='Connections',
                     template='plotly_white',
                     yaxis=dict(
@@ -56,6 +67,13 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                     tick0=0,
                     dtick=1,  # Set the tick interval to 1 to show only whole numbers
                     tickformat='d'  # Ensure that the tick labels are displayed as integers
+                ),
+                legend=dict(
+                orientation='h',  # Set the legend to horizontal
+                yanchor='bottom',  # Anchor to the bottom of the legend box
+                y=1,  # Position it slightly above the plot
+                xanchor='center',  # Center the legend horizontally
+                x=0.5  # Set it in the middle of the plot
                 )
                 )
 
@@ -76,8 +94,12 @@ def prepare_graph_data(comparison_data):
     x = []
     y = []
     for network, data in comparison_data.items():
-        ratios = calculate_degree_ratios(data['elements'])
+        #ratios = calculate_degree_ratios(data['elements'])
+        # x.append(network)
+        #y.append(ratios)
+        severity = data.get('severity', {})
+
         x.append(network)
-        y.append(ratios)
+        y.append(severity)
 
     return x, y

@@ -690,7 +690,9 @@ def create_editing_window(mode, edit_map_data, color_scheme_data, sizing_scheme_
                                 dbc.ModalBody("Content explaining the color scheme will go here...", 
                                               id='modal-color-scheme-body')
                                 ], id="modal-color-scheme"),
-                    ], style={'display': 'flex', 
+                    ], 
+                    backdrop = 'False',
+                    style={'display': 'flex', 
                               'alignItems': 'center', 
                               'marginBottom': '10px'}),
 
@@ -911,7 +913,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                     dbc.ModalBody("Content explaining the color scheme will go here...", 
                                                                                   id='modal-color-scheme-body')
                                                                     ], 
-                                                                    id="modal-color-scheme",  
+                                                                    id="modal-color-scheme",
+                                                                    backdrop = "False", 
                                                                     style={"display": "flex", 
                                                                            "gap": "5px", 
                                                                            'zIndex':'8000'}),
@@ -1240,7 +1243,7 @@ def create_tracking_tab(track_data):
                 "position": "fixed",
                 "top": "0",
                 "left": "117px",
-                "zIndex": "500",  # Ensures it's above other content
+                "zIndex": "100",  # Ensures it's above other content
             },
         ),
         html.Br(),
@@ -1254,13 +1257,13 @@ def create_tracking_tab(track_data):
                             [
                                 dbc.NavItem(
                                     dbc.NavLink(
-                                        "Current", 
+                                        "Plot 1", 
                                         id="plot-current", 
                                         href="#", 
                                         active='exact')),
                                 dbc.NavItem(
                                     dbc.NavLink(
-                                        "Overall", 
+                                        "Plot 2", 
                                         id="plot-overall", 
                                         href="#", 
                                         active='exact')),
@@ -1302,8 +1305,8 @@ def create_tracking_tab(track_data):
                             style={'border': 'none',
                                    'color': 'grey', 
                                    'marginLeft':'373px', 
-                                   'marginTop': '422px',
-                                   'zIndex': '3000'}),
+                                   'marginTop': '417px',
+                                   'zIndex': '0'}),
                     dbc.Modal([
                         dbc.ModalHeader(
                             dbc.ModalTitle("Figure Info")),
@@ -1312,9 +1315,10 @@ def create_tracking_tab(track_data):
                             ], 
                             id="modal-plot", 
                             is_open=False, 
+                            backdrop = True, 
                             style={#"display": "flex", 
                                    #"gap": "5px", 
-                                   'zIndex': '5000'}),
+                                   'zIndex': '50000'}),
 
                 ], style={'display': 'flex', 
                           'alignItems': 'center', 
@@ -1327,7 +1331,7 @@ def create_tracking_tab(track_data):
                           'backgroundColor': 'white', 
                           'borderRadius': '15px', 
                           'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 
-                          'zIndex': '2000'}),
+                          'zIndex': '0'}),
                 
 
             ], style={'flex': '1'}),
@@ -1360,7 +1364,7 @@ def create_tracking_tab(track_data):
                             'width': '55.4%',
                             'height': '60vh',
                             'borderRadius': '15px',  # Round the edges of the graph window
-                            'zIndex': '1000',        # Bring it to the foreground
+                            'zIndex': '100',        # Bring it to the foreground
                             'backgroundColor': 'white',
                             'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)',  # Optional: Add a shadow for better foreground effect
                             "position": "fixed", 
@@ -1384,7 +1388,7 @@ def create_tracking_tab(track_data):
                           'width': '55%', 
                           'marginLeft': '-225px', 
                           'marginTop': '130px',
-                          'zIndex': '2000'}),
+                          'zIndex': '0'}),
 
                 html.Br(),
                 html.Div([
@@ -1419,7 +1423,7 @@ def create_tracking_tab(track_data):
                              'alignItems': 'center',
                              'marginLeft': '112px', 
                              'marginTop': '350px',
-                             'zIndex': '5000'}),
+                             'zIndex': '0'}),
 
             ], 
             style={'flex': '1'}),
@@ -1434,10 +1438,12 @@ def create_tracking_tab(track_data):
                 dbc.ModalBody("Annotation will go here...", 
                               id='modal-notes')
                               ], 
-                              id="modal-annotation",  
+                              id="modal-annotation", 
+                              is_open = False, 
+                              backdrop = True, 
                               style={"display": "flex", 
                                      "gap": "5px", 
-                                     'zIndex':'8000'}),
+                                     'zIndex':'3000'}),
         
     ],
     style={
@@ -1445,7 +1451,7 @@ def create_tracking_tab(track_data):
         "top": "225px",  # Adjust the top position as needed
         "left": "117px",
         "bottom": "0px",
-        "zIndex": "1500",  # Ensure this is higher than the top colored bar
+        "zIndex": "150",  # Ensure this is higher than the top colored bar
         "width": "100%",
         "backgroundColor": "#f0f0f0",  # Ensure all background underneath the top bar is #f0f0f0
     })
