@@ -40,6 +40,35 @@ def apply_uniform_color_styles(stylesheet):
     return stylesheet
 
 # Function: Apply severity color
+# def apply_severity_color_styles(type, stylesheet, severity_scores, default_style):
+#     # Check if severity_scores is not empty and valid
+#     if severity_scores and all(isinstance(score, (int, float)) for score in severity_scores.values()):
+#         if type == "Severity":
+#             max_severity = max(severity_scores.values())
+#             min_severity = min(severity_scores.values())
+#         elif type == "Severity (abs)":
+#             max_severity = 10
+#             min_severity = 1
+
+#         # Normalize and apply color based on severity
+#         for node_id, severity in severity_scores.items():
+#             normalized_severity = (severity - min_severity) / (max_severity - min_severity)
+#             r, g, b = get_color(normalized_severity)  # Assuming get_color is defined as before
+
+#             severity_style = {
+#                 'selector': f'node[id="{node_id}"]',
+#                 'style': {
+#                     'background-color': f'rgb({r},{g},{b})'
+#                 }
+#             }
+#             # Append the style for this node
+#             stylesheet.append(severity_style)
+
+#     elif severity_scores == {}:
+#         stylesheet = default_style
+
+#     return stylesheet
+
 def apply_severity_color_styles(type, stylesheet, severity_scores, default_style):
     # Check if severity_scores is not empty and valid
     if severity_scores and all(isinstance(score, (int, float)) for score in severity_scores.values()):
@@ -50,19 +79,34 @@ def apply_severity_color_styles(type, stylesheet, severity_scores, default_style
             max_severity = 10
             min_severity = 1
 
-        # Normalize and apply color based on severity
-        for node_id, severity in severity_scores.items():
-            normalized_severity = (severity - min_severity) / (max_severity - min_severity)
-            r, g, b = get_color(normalized_severity)  # Assuming get_color is defined as before
+        # Check if max_severity and min_severity are the same (avoid normalization)
+        if max_severity == min_severity:
+            # Apply the same color for all nodes (no normalization)
+            for node_id, severity in severity_scores.items():
+                r, g, b = get_color(1.0)  # Use a default value like 1.0 or any fixed color
 
-            severity_style = {
-                'selector': f'node[id="{node_id}"]',
-                'style': {
-                    'background-color': f'rgb({r},{g},{b})'
+                severity_style = {
+                    'selector': f'node[id="{node_id}"]',
+                    'style': {
+                        'background-color': f'rgb({r},{g},{b})'
+                    }
                 }
-            }
-            # Append the style for this node
-            stylesheet.append(severity_style)
+                # Append the style for this node
+                stylesheet.append(severity_style)
+        else:
+            # Normalize and apply color based on severity
+            for node_id, severity in severity_scores.items():
+                normalized_severity = (severity - min_severity) / (max_severity - min_severity)
+                r, g, b = get_color(normalized_severity)  # Assuming get_color is defined
+
+                severity_style = {
+                    'selector': f'node[id="{node_id}"]',
+                    'style': {
+                        'background-color': f'rgb({r},{g},{b})'
+                    }
+                }
+                # Append the style for this node
+                stylesheet.append(severity_style)
 
     elif severity_scores == {}:
         stylesheet = default_style

@@ -2,7 +2,7 @@ import dash, json
 
 from app import app
 from dash import html, Input, Output, State, ALL, MATCH
-from constants import factors, stylesheet, hidden_style, visible_style
+from constants import factors, stylesheet, hidden_style, visible_style, translations
 from functions.page_content import (generate_step_content, create_mental_health_map_tab, create_tracking_tab, 
                                     create_about)
 from functions.map_build import (map_add_factors, map_add_chains, map_add_cycles)
@@ -12,7 +12,7 @@ from functions.map_style import (graph_color)
 #                        create_mental_health_map_tab, create_tracking_tab, create_about)
 
 # Display the page & next/back button based on current step 
-def update_page_and_buttons(pathname, edit_map_data, current_step_data, session_data, color, sizing, 
+def update_page_and_buttons(pathname, edit_map_data, current_step_data, language, session_data, color, sizing, 
                             track_data, map_store, custom_color_data):
     
     step = current_step_data.get('step', 0)  # Default to step 0 if not found
@@ -23,41 +23,38 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, session_
     next_button_style = visible_style
     next_button_text = html.I(className="fas fa-solid fa-angle-right")
 
+    translation = translations.get(language, translations['en'])
+
     # Update content and button states based on the pathname and step
     if pathname == '/':
         # Check the step and update accordingly
         if step == 0:
-            content = generate_step_content(step, session_data)   
+            content = generate_step_content(step, session_data, translation)   
         elif step == 1:
-            content = generate_step_content(step, session_data)
+            content = generate_step_content(step, session_data, translation)
         elif 2 <= step <= 4:
-            content = generate_step_content(step, session_data)
+            content = generate_step_content(step, session_data, translation)
             back_button_style = visible_style            
             next_button_style = visible_style         
         elif step == 5:
-            content = generate_step_content(step, session_data)
+            content = generate_step_content(step, session_data, translation)
             back_button_style = visible_style           
             next_button_text = html.I(className="fas fa-solid fa-forward")      
 
     elif pathname == "/my-mental-health-map":
-        content = create_mental_health_map_tab(edit_map_data, color, sizing, custom_color_data)
+        content = create_mental_health_map_tab(edit_map_data, color, sizing, custom_color_data, translation)
         back_button_style = hidden_style
         next_button_style = hidden_style
 
     elif pathname == "/track-my-mental-health-map":
-        content = create_tracking_tab(track_data)
+        content = create_tracking_tab(track_data, translation)
         back_button_style = hidden_style
         next_button_style = hidden_style
 
     elif pathname == "/about":
-        content = create_about(app)
+        content = create_about(app, translation)
         back_button_style = hidden_style
         next_button_style = hidden_style
-
-    # elif pathname == "/blog":
-    #     content = def_blog_page()
-    #     back_button_style = hidden_style
-    #     next_button_style = hidden_style
 
     elif content is None:
         content = html.Div("Page not found")
@@ -154,7 +151,8 @@ def register_layout_callbacks(app):
         Output('next-button', 'children')],
         [Input('url', 'pathname'),
         Input('edit-map-data', 'data'),  
-        Input('current-step', 'data')],
+        Input('current-step', 'data'),
+        Input('language-dropdown', 'value')],
         [State('session-data', 'data'),
         State('color_scheme', 'data'),
         State('sizing_scheme', 'data'),

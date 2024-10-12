@@ -103,11 +103,49 @@ nav_col = dbc.Col(
             pills=True,
             className="nav-primary"
         ),
+        #html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
+        #html.Img(src="/assets/Amsterdamuniversitylogo.svg.png", style={"marginLeft": "20px", "width": "50px", "height": "auto", "marginTop": "20px"}),
     ],
     md=1,
     className="nav-yellow",  # Custom class for yellow background
     style={"position": "fixed", "top": "0", "left": "0", "height": "100vh", "overflowY": "auto", "zIndex": "2000"}
 )
+
+# Layout elements: Translation toggle
+translation_toggle = dbc.Col([
+    dcc.Dropdown(
+        id='language-dropdown',
+        className="custom-dropdown",
+        options=[
+            {'label': 'English', 'value': 'en'},
+            {'label': 'Deutsch', 'value': 'de'}
+        ],
+        value='en',  # Default to English
+        clearable=False,
+        style={'float': 'right', 'width': '100px', 'color': '#8793c9'}
+    )], 
+    md=1, 
+    style={'position': 'absolute', 
+           'top': '10px', 
+           'right': '50px',
+           'textAlign': 'left', 
+           'padding': '10px', 
+           'zIndex': '3000'})
+
+# Email toggle
+email_toggle = dbc.Col([
+    html.A(
+        html.I(className="fas fa-envelope", style={'fontSize': '30px', 'color': '#9AA6D6'}),
+        href="mailto:campos.sindermann@gmail.com?subject=Inquiry%20for%20PsySys%20App&",
+        style={
+            'position': 'absolute',
+            'top': '22px',
+            'right': '15px',
+            'textDecoration': 'none',
+            'zIndex': '5000'
+            }
+        )
+        ], md = 1)
 
 # Layout elements: Page content
 content_col = dbc.Col(
@@ -117,7 +155,7 @@ content_col = dbc.Col(
         button_group,
         buttons_map
     ],
-    md=10,
+    md=9,
 )
 
 # Stylesheet for network 
@@ -127,7 +165,7 @@ stylesheet = [{'selector': 'node','style': {'background-color': '#9CD3E1', 'labe
 
 # Define app layout
 app.layout = dbc.Container([
-    dbc.Row([nav_col, content_col]),
+    dbc.Row([nav_col,translation_toggle, content_col, email_toggle]),
     dcc.Store(id='history-store', data=[]),
     dcc.Store(id='current-step', data={'step': 0}, storage_type='session'),
     dcc.Store(id='color_scheme', data=None, storage_type='session'),

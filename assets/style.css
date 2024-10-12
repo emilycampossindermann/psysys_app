@@ -207,3 +207,14 @@ style.css
 .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.5); /* Same overlay for both modals */
 }
+/* Custom background color for the dropdown menu (already added) */
+
+/* Text color for the dropdown menu items (already added) */
+/* .custom-dropdown.Select-option {
+    color: white;  /* Adjust the text color of the dropdown options */
+/* } */ 
+
+/* Custom color for the currently selected value */
+/* .custom-dropdown.Select-value-label { */
+    /* color: #9AA6D6 !important;  Change this color to the lighter shade you want
+} */

@@ -46,7 +46,7 @@ def create_likert_scale(factor, initial_value=0):
              'margin': '0 auto'})
 
 # Function: Generate step content based on session data
-def generate_step_content(step, session_data):
+def generate_step_content(step, session_data, translation):
 
     common_style = {
         "backgroundColor": "#f0f0f0",
@@ -63,17 +63,27 @@ def generate_step_content(step, session_data):
                 [
                     html.Br(), 
                     html.Br(),
-                    html.H2("Welcome to PsySys.", 
-                            style={"fontFamily":"Gill sans", 
-                                   "fontWeight":"normal",
-                                   "color":"white", 
-                                   "marginLeft": 
-                                   "-1100px"}),
-                    html.H3("Dive into your mental health!",
-                            style={"fontFamily": "Gill sans", 
-                                   "fontWeight":"normal",
-                                   "color": "white", 
-                                   "marginLeft": "-1025px"}),
+                    html.Div(
+                        html.H2(translation['welcome_01'],
+                                style={"fontFamily": "Gill Sans", 
+                                    "fontWeight": "normal", 
+                                    "color": "white",
+                                    "marginTop": "-10px"}),
+                        style={"display": "flex", 
+                               "justifyContent": "flex-start", 
+                               "width": "100%", 
+                               "maxWidth": "500px"}
+                    ),
+                    html.Div(
+                        html.H3(translation['welcome_02'],
+                                style={"fontFamily": "Gill Sans", 
+                                    "fontWeight": "normal", 
+                                    "color": "white"}),
+                        style={"display": "flex", 
+                               "justifyContent": "flex-start", 
+                               "width": "100%", 
+                               "maxWidth": "500px"}
+                    ),
                     html.Br(), 
                     html.Br(), 
                     html.Br(), 
@@ -99,7 +109,8 @@ def generate_step_content(step, session_data):
             html.Div([
                 html.Div([
                     html.Iframe(
-                        src="https://www.youtube.com/embed/d8ZZyuESXcU?si=CYvKNlf17wnzt4iGrel=0&modestbranding=1",
+                        #src="https://www.youtube.com/embed/d8ZZyuESXcU?si=CYvKNlf17wnzt4iGrel=0&modestbranding=1",
+                        src=translation['video_link_intro'],
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
@@ -116,28 +127,28 @@ def generate_step_content(step, session_data):
                             style={"height": "6px"}),
                         html.Ol(
                             [
-                                html.Li("Everybody struggles from time to time", 
+                                html.Li(translation['title_block_01'], 
                                         style={"fontFamily": "Arial Black", 
                                                "color": "grey"}), 
-                                html.P("Learn about the variability & identify your personal factors", 
+                                html.P(translation['description_block_01'], 
                                        style={"font-size":"13px",
                                               "color": "grey"}),
-                                html.Li("Seeing the connections", 
+                                html.Li(translation['title_block_02'], 
                                         style={"fontFamily": "Arial Black",
                                                "color": "grey"}),
-                                html.P("Learn how your factors influence each other", 
+                                html.P(translation['description_block_02'], 
                                        style={"font-size":"13px",
                                               "color": "grey"}),
-                                html.Li("Vicious cycles", 
+                                html.Li(translation['title_block_03'], 
                                         style={"fontFamily": "Arial Black",
                                                "color": "grey"}),
-                                html.P("Understand why you might drift into a downward spiral", 
+                                html.P(translation['description_block_03'], 
                                        style={"font-size":"13px",
                                               "color": "grey"}),
-                                html.Li("Breaking out of the cycle", 
+                                html.Li(translation['title_block_04'], 
                                         style={"fontFamily": "Arial Black",
                                                "color": "grey"}),
-                                html.P("Detect promising areas for positive change", 
+                                html.P(translation['description_block_04'], 
                                        style={"font-size":"13px",
                                               "color": "grey"}),
                             ],
@@ -167,7 +178,6 @@ def generate_step_content(step, session_data):
         value = session_data['dropdowns']['initial-selection']['value']
         id = {'type': 'dynamic-dropdown', 
               'step': 1}
-        text = 'Select factors'
         return html.Div([
             html.Div(
                 [
@@ -209,7 +219,8 @@ def generate_step_content(step, session_data):
             html.Div([
                 html.Div([
                     html.Iframe(
-                        src="https://www.youtube.com/embed/ttLzT4U2F2I?si=xv1ETjdc1uGROZTo",
+                        #src="https://www.youtube.com/embed/ttLzT4U2F2I?si=xv1ETjdc1uGROZTo",
+                        src= translation['video_link_block_01'],
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
@@ -219,13 +230,14 @@ def generate_step_content(step, session_data):
                                "borderRadius": "15px", 
                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)"}
                     ),
-                    html.Br(), html.Br(),
+                    html.Br(), 
+                    html.Br(),
                ]),
                html.Div([
                     create_dropdown(id=id, 
                                     options=options, 
                                     value=value, 
-                                    placeholder="Select your personal factors"),
+                                    placeholder=translation['placeholder_dd_01']),
                     html.Br(),
                     html.Div(
                         id='likert-scales-container', 
@@ -298,7 +310,8 @@ def generate_step_content(step, session_data):
             html.Div([
                 html.Div([
                     html.Iframe(
-                        src="https://www.youtube.com/embed/stqJRtjIPrI?si=1MI5daW_ldY3aQz3",
+                        #src="https://www.youtube.com/embed/stqJRtjIPrI?si=1MI5daW_ldY3aQz3",
+                        src= translation['video_link_block_02'],
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000",
@@ -308,20 +321,21 @@ def generate_step_content(step, session_data):
                                "borderRadius": "15px", 
                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)"}
                     ),
-                    html.Br(), html.Br(),
+                    html.Br(), 
+                    html.Br(),
                ]),
                html.Div([
                     create_dropdown(id=id_chain1, 
                                     options=options, 
                                     value=value_chain1, 
-                                    placeholder="Select your factors that are causally connected"),
+                                    placeholder=translation['placeholder_dd_02']),
                     html.Br(),
                     create_dropdown(id=id_chain2, 
                                     options=options, 
                                     value=value_chain2, 
-                                    placeholder="Select your factors that are causally connected"),
+                                    placeholder=translation['placeholder_dd_02']),
                     html.Br(),
-                    html.P("Example: If you feel that normally worrying causes you to become less concentrated, select these factors in this order.", 
+                    html.P(translation['example_block_02'], 
                            style={'width': '70%', 
                                   'font-style': 'italic', 
                                   'color': 'grey'}),
@@ -350,8 +364,6 @@ def generate_step_content(step, session_data):
                      'step': 4}
         id_cycle2 = {'type': 'dynamic-dropdown', 
                      'step': 5}
-        text1 = 'Select two factors that reinforce each other'
-        text2 = 'Select three factors that reiforce each other'
         return html.Div([
             html.Div(
                 [
@@ -391,7 +403,7 @@ def generate_step_content(step, session_data):
             html.Div([
                 html.Div([
                     html.Iframe(
-                        src="https://www.youtube.com/embed/EdwiSp3BdKk?si=TcqeWxAlGl-_NUfx",
+                        src= translation['video_link_block_03'],
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
@@ -401,20 +413,21 @@ def generate_step_content(step, session_data):
                                "borderRadius": "15px", 
                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)"}
                     ),
-                    html.Br(), html.Br(),
+                    html.Br(), 
+                    html.Br(),
                ]),
                html.Div([
                     create_dropdown(id=id_cycle1, 
                                     options=options, 
                                     value=value_cycle1, 
-                                    placeholder="Select your factors that reinforce each other"),
+                                    placeholder=translation['placeholder_dd_03']),
                     html.Br(),
                     create_dropdown(id=id_cycle2, 
                                     options=options, 
                                     value=value_cycle2, 
-                                    placeholder="Select your factors that reinforce each other"),
+                                    placeholder=translation['placeholder_dd_03']),
                     html.Br(),
-                    html.P("Example: If you feel that that ruminating causes you to worry, which only worsens the rumination, select these factors.", 
+                    html.P(translation['example_block_03'], 
                            style={'width': '70%', 
                                   'font-style': 'italic', 
                                   'color': 'grey'}),
@@ -440,7 +453,6 @@ def generate_step_content(step, session_data):
         value_target = session_data['dropdowns']['target']['value']
         id = {'type': 'dynamic-dropdown', 
               'step': 6}
-        text = 'Select one factor'
         return html.Div([
             html.Div(
                 [
@@ -480,7 +492,7 @@ def generate_step_content(step, session_data):
             html.Div([
                 html.Div([
                     html.Iframe(
-                        src="https://www.youtube.com/embed/hwisVnJ0y88?si=OpCWAMaDwTThocO6",
+                        src=translation['video_link_block_04'],
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
@@ -497,7 +509,7 @@ def generate_step_content(step, session_data):
                     create_dropdown(id=id, 
                                     options=options, 
                                     value=value_target, 
-                                    placeholder="Select the factor you think is the most influential"),
+                                    placeholder=translation['placeholder_dd_04']),
                 ], style={"width": "46.5%",
                           "marginLeft": "20px", 
                           "marginTop":"-375px",
@@ -522,16 +534,27 @@ def generate_step_content(step, session_data):
             html.Div(
                 [
                     html.Br(), html.Br(),
-                    html.H2("You've completed PsySys.", 
-                            style={"fontFamily": "Gill sans", 
-                                   "fontWeight":"normal",
-                                   "color": "white", 
-                                   "marginLeft": "-1030px"}),
-                    html.H3("Explore your Mental-Health-Map!",
-                            style={"fontFamily": "Gill sans", 
-                                   "fontWeight":"normal",
-                                   "color": "white", 
-                                   "marginLeft": "-977px"}),
+                    html.Div(
+                        html.H2(translation['finish_01'],
+                                style={"fontFamily": "Gill Sans", 
+                                    "fontWeight": "normal", 
+                                    "color": "white",
+                                    "marginTop": "-10px"}),
+                                    style={"display": "flex", 
+                                           "justifyContent": "flex-start", 
+                                           "width": "100%",
+                                           "maxWidth": "500px"}
+                    ),
+                    html.Div(
+                        html.H3(translation['finish_02'],
+                                style={"fontFamily": "Gill Sans", 
+                                    "fontWeight": "normal", 
+                                    "color": "white"}),
+                                    style={"display": "flex", 
+                                           "justifyContent": "flex-start", 
+                                           "width": "100%",
+                                           "maxWidth": "500px"}
+                    ),
                     html.Br(), 
                     html.Br(), 
                     html.Br(), 
@@ -586,21 +609,21 @@ def generate_step_content(step, session_data):
                     ), 
                     html.Div([
                         html.Br(),
-                        html.P("Congratulations! You've completed PsySys and built your personalised mental-health-map. You can now load your map into the Edit tab and further tweak it to create the best representation of your mental health. Ask yourself:", 
+                        html.P(translation['feedback_text'], 
                                style={'width': '70%', 
                                       'color': 'grey'}),
                         html.Ul(
                             [
-                                html.Li("Are there personal factors or relations missing? ", 
+                                html.Li(translation['feedback_question_01'], 
                                         style={"color": "grey", 
                                                'font-style': 'italic'}),
-                                html.Li("Are some of the relationships stronger than others?", 
+                                html.Li(translation['feedback_question_02'], 
                                         style={"color": "grey", 
                                                'font-style': 'italic'}),
-                                html.Li("Is my most influential factor really that central in my map?", 
+                                html.Li(translation['feedback_question_03'], 
                                         style={"color": "grey", 
                                                'font-style': 'italic'}),
-                                html.Li("Which could be promising treatment targets in my map?", 
+                                html.Li(translation['feedback_question_04'], 
                                         style={"color": "grey", 
                                                'font-style': 'italic'}),
                             ],
@@ -627,142 +650,8 @@ def generate_step_content(step, session_data):
     else:
         return None
 
-# Function: Create Editing window
-def create_editing_window(mode, edit_map_data, color_scheme_data, sizing_scheme_data):
-    print(f"Creating editing window with mode: {mode}")
-    cytoscape_elements = edit_map_data.get('elements', [])
-    options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 
-                  'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
-    color_schemes = [{'label': color, 'value': color} for color in node_color]
-    sizing_schemes = [{'label': size, 'value': size} for size in node_size]
-    if mode == "mode-1": # Backup
-        return html.Div([
-                    html.Div([
-                        dbc.Input(id='edit-node', 
-                                  type='text', 
-                                  placeholder='Enter factor', 
-                                  style={'marginRight': '10px', 
-                                         'borderRadius': '10px'}),
-                        dbc.Button("➕", 
-                                   id='btn-plus-node', 
-                                   color="primary", 
-                                   style={'marginRight': '5px'}),
-                        dbc.Button("➖", 
-                                   id='btn-minus-node', 
-                                   color="danger")
-                    ], style={'display': 'flex', 
-                              'alignItems': 'right', 
-                              'marginBottom': '10px'}),
-
-                    html.Div([
-                        dcc.Dropdown(id='edit-edge', 
-                                     options=options_1, 
-                                     placeholder='Enter connection', 
-                                     multi=True, 
-                                     style={'width': '96%', 
-                                            'borderRadius': '10px'}),
-                        dbc.Button("➕", 
-                                   id='btn-plus-edge', 
-                                   color="primary", 
-                                   style={'marginRight': '5px'}),
-                        dbc.Button("➖", 
-                                   id='btn-minus-edge', 
-                                   color="danger"),
-                    ], style={'display': 'flex', 
-                              'alignItems': 'center', 
-                              'marginBottom': '10px'}),
-                
-                    html.Div([
-                        dcc.Dropdown(id='color-scheme', 
-                                     options=color_schemes, 
-                                     value=color_scheme_data, 
-                                     placeholder='Select a color scheme', 
-                                     multi=False, 
-                                     style={'width': '96%', 
-                                            'borderRadius': '10px'}),
-                        dbc.Button("❔", 
-                                   id='help-color', 
-                                   color="light", 
-                                   style={'marginRight': '0px'}),
-                        dbc.Modal([
-                            dbc.ModalHeader(
-                                dbc.ModalTitle("Color Scheme Information")),
-                                dbc.ModalBody("Content explaining the color scheme will go here...", 
-                                              id='modal-color-scheme-body')
-                                ], id="modal-color-scheme"),
-                    ], 
-                    backdrop = 'False',
-                    style={'display': 'flex', 
-                              'alignItems': 'center', 
-                              'marginBottom': '10px'}),
-
-                    html.Div([
-                        dcc.Dropdown(id='sizing-scheme', 
-                                     options=sizing_schemes, 
-                                     value=sizing_scheme_data, 
-                                     placeholder='Select a sizing scheme', 
-                                     multi=False, 
-                                     style={'width': '96%', 
-                                            'borderRadius': '10px'}),
-                        dbc.Button("❔", 
-                                   id='help-size', 
-                                   color="light", 
-                                   style={'marginRight': '0px'}),
-                        dbc.Modal([
-                            dbc.ModalHeader(
-                                dbc.ModalTitle("Sizing Scheme Information")),
-                                dbc.ModalBody("Content explaining the color scheme will go here...", 
-                                              id='modal-sizing-scheme-body')
-                                ], id="modal-sizing-scheme", 
-                                style={"display": "flex",
-                                       "gap": "5px"}),
-                    ], style={'display': 'flex', 
-                              'alignItems': 'center', 
-                              'marginBottom': '10px'}),
-                    html.Br(),
-
-                    html.Div([
-                        dbc.Checklist(options=[{"label": "Inspect", "value": 0}],
-                                    value=[1],
-                                    id="inspect-switch",
-                                    switch=True),
-                        dbc.Button("❔", 
-                                   id='help-inspect', 
-                                   color="light", 
-                                   style={'marginLeft': '10px'}),
-                        dbc.Modal([
-                            dbc.ModalHeader(
-                                dbc.ModalTitle("Inspection Mode")),
-                                dbc.ModalBody("Within this mode you can further inspect the consequences of a given factor. Just click on a factor to see its direct effects.", 
-                                              id='modal-inspect-body')
-                                ], id="modal-inspect"),
-                                ], style={'display': 'flex', 
-                                          'alignItems': 'center', 
-                                          'marginBottom': '10px'}),
-                    ])
-    elif mode == "mode-2":  # Extend
-        # Define the layout for "Extend" mode
-        return html.Div([
-            html.P("mode 2")
-        ])
-
-    elif mode == "mode-3":  # Delete
-        # Define the layout for "Delete" mode
-        return html.Div([
-            html.P("mode 3")
-        ])
-
-    elif mode == "mode-4":  # Configure
-        # Define the layout for "Configure" mode
-        return html.Div([
-            html.P("mode 4")
-        ])
-
-    else:
-        return html.Div("Invalid mode selected.")
-    
 # Function: Create my-mental-health-map editing tab
-def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme_data, custom_color_data):
+def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme_data, custom_color_data, translation):
     # Assuming 'edit_map_data' contains the Cytoscape elements
     cytoscape_elements = edit_map_data.get('elements', [])
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 
@@ -777,8 +666,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                     [
                                         html.Br(), 
                                         html.Br(),
-                                        html.Div(
-                                            style={"height": "17px"}),
+                                        html.Div(style={"height": "17px"}),
                                         html.Br(), 
                                         html.Br(), 
                                         html.Br(), 
@@ -840,7 +728,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                         html.Div([
                                                             dbc.Input(id='edit-node', 
                                                                       type='text', 
-                                                                      placeholder='Enter factor', 
+                                                                      placeholder=translation['placeholder_enter_factor'], 
                                                                       style={'marginRight': '10px', 
                                                                              'borderRadius': '10px'}),
                                                             dbc.Button([
@@ -863,12 +751,10 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                   'alignItems': 'right', 
                                                                   'marginBottom': '10px'}),
 
-                        
-
                                                         html.Div([
                                                             dcc.Dropdown(id='edit-edge', 
                                                                          options=options_1, 
-                                                                         placeholder='Enter connection', 
+                                                                         placeholder=translation['placeholder_enter_connection'], 
                                                                          multi=True, 
                                                                          style={'width': '96%', 
                                                                                 'borderRadius': '10px'}),
@@ -896,7 +782,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                             dcc.Dropdown(id='color-scheme', 
                                                                          options=color_schemes, 
                                                                          value=color_scheme_data, 
-                                                                         placeholder='Select a color scheme', 
+                                                                         placeholder=translation['placeholder_color_scheme'], 
                                                                          multi=False, 
                                                                          style={'width': '96%', 
                                                                                 'borderRadius': '10px'}),
@@ -909,8 +795,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                               'marginLeft':'8px'}),
                                                             dbc.Modal([
                                                                 dbc.ModalHeader(
-                                                                    dbc.ModalTitle("Color Scheme Information")),
-                                                                    dbc.ModalBody("Content explaining the color scheme will go here...", 
+                                                                    dbc.ModalTitle(translation['color_modal_title'])),
+                                                                    dbc.ModalBody("", 
                                                                                   id='modal-color-scheme-body')
                                                                     ], 
                                                                     id="modal-color-scheme",
@@ -927,7 +813,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                             dcc.Dropdown(id='sizing-scheme', 
                                                                          options=sizing_schemes, 
                                                                          value=sizing_scheme_data, 
-                                                                         placeholder='Select a sizing scheme', 
+                                                                         placeholder=translation['placeholder_sizing_scheme'], 
                                                                          multi=False,
                                                                          style={'width': '96%', 
                                                                                 'borderRadius': '10px'}),
@@ -940,8 +826,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                               'marginLeft':'8px'}),
                                                             dbc.Modal([
                                                                 dbc.ModalHeader(
-                                                                    dbc.ModalTitle("Sizing Scheme Information")),
-                                                                    dbc.ModalBody("Content explaining the color scheme will go here...", 
+                                                                    dbc.ModalTitle(translation['sizing_modal_title'])),
+                                                                    dbc.ModalBody("", 
                                                                                   id='modal-sizing-scheme-body')
                                                                     ], 
                                                                     id="modal-sizing-scheme", 
@@ -956,7 +842,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
 
                                                         html.Div([
                                                             dbc.Checklist(
-                                                                options=[{"label": "Inspect", "value": 0}],
+                                                                options=[{"label": html.Span(html.I(className="fas fa-magnifying-glass"),style={'color': '#8793c9'}), 
+                                                                          "value": 0}],
                                                                 value=[1],
                                                                 id="inspect-switch",
                                                                 switch=True),
@@ -970,8 +857,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                            'marginLeft':'8px'}),
                                                             dbc.Modal([
                                                                 dbc.ModalHeader(
-                                                                    dbc.ModalTitle("Inspection Mode")),
-                                                                    dbc.ModalBody("Within this mode you can further inspect the consequences of a given factor. Just click on a factor to see its direct effects.", 
+                                                                    dbc.ModalTitle(translation['inspect_modal_title'])),
+                                                                    dbc.ModalBody(translation['inspect_modal_text'], 
                                                                                   id='modal-inspect-body')
                                                                     ], 
                                                                     id="modal-inspect", 
@@ -1102,13 +989,13 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                     # Modal for node name & severity edit
                                     dbc.Modal([
                                         dbc.ModalHeader(
-                                        dbc.ModalTitle("Factor Information")),
+                                        dbc.ModalTitle(translation['factor_edit_title'])),
                                             dbc.ModalBody([
-                                                html.Div("Name:"),
+                                                html.Div(translation['factor_edit_name']),
                                                 dbc.Input(id='modal-node-name', 
                                                           type='text'),
                                                 html.Br(),
-                                                html.Div("Severity Score:"),
+                                                html.Div(translation['factor_edit_severity']),
                                                 dcc.Slider(id='modal-severity-score', 
                                                            min=0, 
                                                            max=10, 
@@ -1117,7 +1004,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                 #    html.Div("Color:"),
                                                 #    dcc.Dropdown(id='custom-node-color', options=["blue", "purple", "yellow", "green", "red", "orange"], value=None, placeholder='Select a custom color', multi=False, style={'width': '70%', 'borderRadius': '10px'}),
                                                 #    html.Br(),
-                                                html.Div("Notes:"),
+                                                html.Div(translation['note']),
                                                 dcc.Textarea(
                                                     id='note-input',
                                                     value='',
@@ -1132,7 +1019,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     )
                                                 ]),
                                                 dbc.ModalFooter(
-                                                    dbc.Button("Save Changes", 
+                                                    dbc.Button(translation['save_changes'], 
                                                                id="modal-save-btn", 
                                                                className="ms-auto", 
                                                                n_clicks=0))    
@@ -1144,27 +1031,29 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                     # Modal for edge info
                                     dbc.Modal([
                                         dbc.ModalHeader(
-                                            dbc.ModalTitle("Connection Information")),
+                                            dbc.ModalTitle(translation['connection_edit_title'])),
                                             dbc.ModalBody([
                                                 html.Div(id='edge-explanation'),
                                                 html.Br(),
-                                                html.Div("Strength of the relationship:"),
+                                                html.Div(translation['connection_edit_strength']),
                                                 dcc.Slider(id='edge-strength', 
                                                            min=1, 
                                                            max=5, 
                                                            step=1),
                                                 html.Br(),
-                                                html.Div("Type:"),
+                                                html.Div(translation['connection_types']),
                                                 dcc.Dropdown(id='edge-type-dropdown', 
                                                              options=[#{'label': 'Default', 'value': 'default'},
-                                                                      {'label': 'Amplifier', 'value': 'amplifier'},
-                                                                      {'label': 'Reliever', 'value': 'reliever'}],
+                                                                      {'label': translation['type_01'], 
+                                                                       'value': 'amplifier'},
+                                                                      {'label': translation['type_02'], 
+                                                                       'value': 'reliever'}],
                                                              placeholder='Select a custom color', 
                                                              multi=False, 
                                                              style={'width': '70%', 
                                                                     'borderRadius': '10px'}),
                                                 html.Br(),
-                                                html.Div("Notes:"),
+                                                html.Div(translation['note']),
                                                 dcc.Textarea(
                                                     id='edge-annotation',
                                                     value='',
@@ -1179,8 +1068,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     )
                                                 ]),
                                                 dbc.ModalFooter(
-                                                    dbc.Button(
-                                                        "Save Changes", 
+                                                    dbc.Button(translation['save_changes'], 
                                                         id="edge-save-btn", 
                                                         className="ms-auto", 
                                                         n_clicks=0))    
@@ -1192,11 +1080,11 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                     # Modal for Donation info
                                     dbc.Modal([
                                         dbc.ModalHeader(
-                                            dbc.ModalTitle("Data Donation")),
-                                            dbc.ModalBody("Here you can anonymously donate your map. Our aim is to continuously improve PsySys to provide scientifically backed content for our users. Therefore, it is imporant to analyze PsySys results to better understand its clinical value and potential use. By choosing to donate your map, you agree that your anonymized data can be used for research purposes.", 
+                                            dbc.ModalTitle(translation['donation_title'])),
+                                            dbc.ModalBody(translation['donation_info'], 
                                                           id = 'donation-info'),
                                             dbc.ModalFooter(
-                                                dbc.Button("Yes, I want to donate", 
+                                                dbc.Button(translation['donation_button'], 
                                                            id="donation-agree", 
                                                            className="ms-auto", 
                                                            n_clicks=0))    
@@ -1220,7 +1108,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
             })
 
 # Function: Create tracking tab
-def create_tracking_tab(track_data):
+def create_tracking_tab(track_data, translation):
 
     return html.Div(id='tracking-wrapper', className='no-blur', children=[
         html.Div(
@@ -1309,16 +1197,14 @@ def create_tracking_tab(track_data):
                                    'zIndex': '0'}),
                     dbc.Modal([
                         dbc.ModalHeader(
-                            dbc.ModalTitle("Figure Info")),
-                            dbc.ModalBody("Content explaining the color scheme will go here...", 
+                            dbc.ModalTitle(translation['plot_modal_title'])),
+                            dbc.ModalBody("", 
                                           id='modal-plot-body')
                             ], 
                             id="modal-plot", 
                             is_open=False, 
                             backdrop = True, 
-                            style={#"display": "flex", 
-                                   #"gap": "5px", 
-                                   'zIndex': '50000'}),
+                            style={'zIndex': '50000'}),
 
                 ], style={'display': 'flex', 
                           'alignItems': 'center', 
@@ -1354,9 +1240,6 @@ def create_tracking_tab(track_data):
                                 "minTemp": 1.0,
                                 'fit': True
                                 },
-                        # tapNodeData={'id': 'tapNodeData'},
-                        # tapNode={'data': 'tapNode'},
-                        # tapEdge={'data': 'tapEdge'},
                         zoom=1,
                         pan={'x': 200, 'y': 200},
                         stylesheet=track_data['stylesheet'],
@@ -1369,7 +1252,6 @@ def create_tracking_tab(track_data):
                             'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)',  # Optional: Add a shadow for better foreground effect
                             "position": "fixed", 
                             "marginLeft": "-229.5px",
-                            #"marginRight": "-450px", 
                             "marginTop": "-106px",
                         }
                     ),
@@ -1434,8 +1316,8 @@ def create_tracking_tab(track_data):
 
         dbc.Modal([
             dbc.ModalHeader(
-                dbc.ModalTitle("Note")),
-                dbc.ModalBody("Annotation will go here...", 
+                dbc.ModalTitle(translation['note'])),
+                dbc.ModalBody(" ", 
                               id='modal-notes')
                               ], 
                               id="modal-annotation", 
@@ -1456,7 +1338,7 @@ def create_tracking_tab(track_data):
         "backgroundColor": "#f0f0f0",  # Ensure all background underneath the top bar is #f0f0f0
     })
 
-def create_about(app):
+def create_about(app, translation):
     return html.Div([
         html.Div(
             [
@@ -1471,8 +1353,7 @@ def create_about(app):
                            'marginLeft':'-100px'}),
                 html.Br(),
                 html.Br(),
-                html.P(
-                    "PsySys aims to convey the concepts of the network approach to psychopathology directly to users. Thereby, it provides users with a framework to better understand their mental health. Starting as a Research Master Thesis, the PsySys Project is currently being funded by the University of Amsterdam through an Impact Grant.",
+                html.P(translation['psysys_mission'],
                     style={"maxWidth": "900px", 
                            "color": "white", 
                            "margin": "0 auto", 
@@ -1514,12 +1395,12 @@ def create_about(app):
                                    'color': 'black', 
                                    "fontFamily": "Arial Black"}),
                         html.P(
-                            "Freelance Researcher", 
+                            translation['freelance'],
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey'}),
                         html.P(
-                            "Developer & Project Lead", 
+                            translation['role_01'], 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey'}),
@@ -1552,7 +1433,7 @@ def create_about(app):
                                    'color': 'grey',
                                    'marginLeft': '25px'}),
                         html.P(
-                            "Supervisor", 
+                            translation['role_02'], 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey',
@@ -1584,7 +1465,7 @@ def create_about(app):
                                    'color': 'grey',
                                    'marginLeft': '60px'}),
                         html.P(
-                            "Scientific Advisor", 
+                            translation['role_03'], 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey', 
@@ -1616,7 +1497,7 @@ def create_about(app):
                                    'color': 'grey',
                                    'marginLeft': '70px'}),
                         html.P(
-                            "Clinical Advisor", 
+                            translation['role_04'], 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey',
@@ -1642,13 +1523,13 @@ def create_about(app):
                                    "fontFamily": "Arial Black",
                                    'marginLeft': '60px'}),
                         html.P(
-                            "Yale", 
+                            "Yale University", 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey', 
                                    'marginLeft': '60px'}),
                         html.P(
-                            "Scientific Advisor", 
+                            translation['role_03'], 
                             style={'marginTop': '-15px', 
                                    'fontStyle': 'italic', 
                                    'color': 'grey', 

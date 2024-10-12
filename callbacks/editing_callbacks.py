@@ -3,6 +3,7 @@ import dash, json, base64
 from app import app
 from datetime import datetime
 from dash import dcc, Input, Output, State, ALL, MATCH, callback_context
+from constants import translations
 from functions.map_build import (add_edge, delete_edge)
 from functions.map_style import (node_sizing, calculate_degree_centrality, color_scheme)
 from functions.data_format import (format_export_data, send_to_github)
@@ -90,20 +91,6 @@ def open_node_edit_modal(tapNodeData, switch, severity_scores, annotations, edit
             return True, node_name, severity_score, annotation
         return False, None, None, ''
 
-# def open_node_edit_modal(tapNodeData, switch, severity_scores, annotations, editing_mode):
-#     if editing_mode == 'mode-1':
-#         if 0 not in switch and tapNodeData:
-#             node_id = tapNodeData['id']
-#             node_name = tapNodeData.get('label', node_id)
-#             severity_score = severity_scores.get(node_name, 0)  # Default to 0 if not found
-#             annotation = annotations.get(node_id, '')  # Default to empty string if not found
-
-#             return True, node_name, severity_score, annotation
-#         # If conditions are not met, return valid "empty" values
-#         return False, '', None, ''  # Return empty string and 0 instead of None
-#     # Default fallback in case `editing_mode` is not 'mode-1'
-#     return False, '', None, ''
-
 # Callback: Reset tabnodedata on mode switch
 def reset_tap_data(switch):
     return {}, {}
@@ -116,7 +103,87 @@ def update_annotations(note_input, tapNodeData, annotations):
     return annotations
 
 # Callback: Save node edits (name & severity) in graph and edit_map_data
-def save_node_changes(n_clicks, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData, color_scheme):
+# def save_node_changes(n_clicks, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData, color_scheme):
+#     if n_clicks and tapNodeData:
+#         old_node_id = tapNodeData['id']
+
+#         # Update node name in elements
+#         for element in elements:
+#             if element.get('data', {}).get('id') == old_node_id:
+#                 element['data']['label'] = new_name
+
+#         # Update severity score
+#         severity_scores[old_node_id] = new_severity
+#         severity_scores[new_name] = new_severity
+
+#         # Update edit_map_data with the changed elements
+#         edit_map_data['elements'] = elements
+
+#         # Find the node in the stylesheet and update its color
+#         node_selector = f'node[id="{old_node_id}"]'
+#         node_style_updated = False
+
+#         # if color_scheme == "Custom" and custom_color:
+#         #     # Correct the yellow color assignment
+#         #     if custom_color == 'yellow':
+#         #         custom_color = '#E3C210'  # Correct hex code for yellow
+
+#         #     # Search for existing styles for the node
+#         #     for style in edit_map_data['stylesheet']:
+#         #         if style['selector'] == node_selector:
+#         #             style['style']['background-color'] = custom_color
+#         #             node_style_updated = True
+#         #             print(custom_color)
+#         #             break
+
+#         #     # If no existing style was found, add a new one
+#         #     #if not node_style_updated:
+#         #         edit_map_data['stylesheet'].append({
+#         #             'selector': node_selector,
+#         #             'style': {'background-color': custom_color}
+#         #         })
+
+#         return elements, severity_scores, edit_map_data, edit_map_data['stylesheet']
+
+#     return dash.no_update
+
+
+# def save_node_changes_01(n_clicks, selected_color_scheme, selected_scheme, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData, color_scheme):
+#     if n_clicks and tapNodeData:
+#         old_node_id = tapNodeData['id']
+
+#         # Update node name in elements
+#         for element in elements:
+#             if element.get('data', {}).get('id') == old_node_id:
+#                 element['data']['label'] = new_name
+
+#         # Update severity score
+#         severity_scores[old_node_id] = new_severity
+#         severity_scores[new_name] = new_severity
+
+#         # Update edit_map_data with the changed elements
+#         edit_map_data['elements'] = elements
+
+#     if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+#         stylesheet = edit_map_data['stylesheet']
+
+#         return elements, severity_scores, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
+        
+#     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+
+#         # Update elements with the new stylesheet
+#         if 'stylesheet' in edit_map_data:
+#             stylesheet = edit_map_data['stylesheet']
+#         else:
+#             stylesheet = [] 
+#         return elements, severity_scores, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
+    
+#     else:
+#         return dash.no_update
+
+def save_node_changes_and_apply_schemes(n_clicks, selected_color_scheme, selected_scheme, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData):
     if n_clicks and tapNodeData:
         old_node_id = tapNodeData['id']
 
@@ -132,42 +199,32 @@ def save_node_changes(n_clicks, new_name, new_severity, elements, severity_score
         # Update edit_map_data with the changed elements
         edit_map_data['elements'] = elements
 
-        # Find the node in the stylesheet and update its color
-        node_selector = f'node[id="{old_node_id}"]'
-        node_style_updated = False
+    # Check and apply color scheme
+    if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
 
-        # if color_scheme == "Custom" and custom_color:
-        #     # Correct the yellow color assignment
-        #     if custom_color == 'yellow':
-        #         custom_color = '#E3C210'  # Correct hex code for yellow
+    # Check and apply node sizing scheme
+    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
 
-        #     # Search for existing styles for the node
-        #     for style in edit_map_data['stylesheet']:
-        #         if style['selector'] == node_selector:
-        #             style['style']['background-color'] = custom_color
-        #             node_style_updated = True
-        #             print(custom_color)
-        #             break
+    # Ensure stylesheet is updated based on the above changes
+    stylesheet = edit_map_data.get('stylesheet', [])
 
-        #     # If no existing style was found, add a new one
-        #     #if not node_style_updated:
-        #         edit_map_data['stylesheet'].append({
-        #             'selector': node_selector,
-        #             'style': {'background-color': custom_color}
-        #         })
+    # Return updated values
+    return elements, severity_scores, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
 
-        return elements, severity_scores, edit_map_data, edit_map_data['stylesheet']
-
-    return dash.no_update
-
+    
 # Callback: Open edge edit modal
-def open_edge_edit_modal(tapEdgeData, switch, edge_data):
+def open_edge_edit_modal(tapEdgeData, switch, edge_data, language):
+
+    translation = translations.get(language, translations['en'])
+
     if edge_data is None:
         edge_data = {}
 
     if 0 not in switch and tapEdgeData:
         edge_id = tapEdgeData['id']
-        explanation = f"The factor {tapEdgeData['source']} causes the factor {tapEdgeData['target']}"
+        explanation = translation['text_edge_01'] + " " + tapEdgeData['source'] + " " + translation['text_edge_02'] + " " + tapEdgeData['target']
         strength = edge_data.get(edge_id, {}).get('strength', 5)
         annotation = edge_data.get(edge_id, {}).get('annotation', '')
         return True, explanation, strength, annotation
@@ -243,7 +300,32 @@ def save_edge_changes_and_close_modal(save_clicks, tapEdgeData, strength, annota
     return edge_data, stylesheet, edit_map_data, dash.no_update
 
 # Callback: Edit map - add node
-def map_add_node(n_clicks, node_name, elements, edit_map_data, severity_scores, history):
+# def map_add_node(n_clicks, node_name, elements, edit_map_data, severity_scores, history):
+#     if n_clicks and node_name:
+#         if not any(node['data']['id'] == node_name for node in elements):
+
+#             # Save current state to history
+#             #history.append(edit_map_data)
+#             history.append({
+#             'elements': elements.copy(),
+#             'edit_map_data': edit_map_data.copy(),
+#             'severity_scores': severity_scores.copy()
+#             })
+
+#             new_node = {'data': {'id': node_name, 'label': node_name}}
+#             elements.append(new_node)
+#             severity_scores[node_name] = 5  # Add new node with default severity score
+
+#     node_names = [node['data']['id'] for node in elements if 'id' in node['data'] and len(node['data']['id']) < 30]
+#     edit_map_data['add-nodes'] = node_names
+#     edit_map_data['elements'] = elements
+
+#     cytoscape_elements = edit_map_data.get('elements', [])
+#     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
+    
+#     return elements, options_1, edit_map_data, severity_scores, history
+
+def map_add_node_01(n_clicks, node_name, elements, edit_map_data, severity_scores, history, selected_color_scheme, selected_scheme):
     if n_clicks and node_name:
         if not any(node['data']['id'] == node_name for node in elements):
 
@@ -266,10 +348,47 @@ def map_add_node(n_clicks, node_name, elements, edit_map_data, severity_scores, 
     cytoscape_elements = edit_map_data.get('elements', [])
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
     
-    return elements, options_1, edit_map_data, severity_scores, history
+    # Check and apply color scheme
+    if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+
+    # Check and apply node sizing scheme
+    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+
+    # Ensure stylesheet is updated based on the above changes
+    stylesheet = edit_map_data.get('stylesheet', [])
+
+    return elements, options_1, edit_map_data, severity_scores, history, stylesheet
 
 # Callback: Remove existing node from graph
-def delete_node(n_clicks, node_id, elements, edit_map_data, severity_scores, history):
+# def delete_node(n_clicks, node_id, elements, edit_map_data, severity_scores, history):
+#     if n_clicks and node_id:
+
+#         history.append({
+#             'elements': elements.copy(),
+#             'edit_map_data': edit_map_data.copy(),
+#             'severity_scores': severity_scores.copy()
+#         })
+
+#         # Delete node from elements
+#         elements = [element for element in elements if element['data'].get('id') != node_id]
+#         # Delete any existing edges from elements which contain this node
+#         elements = [element for element in elements if not (('source' in element['data'] and element['data']['source'] == node_id) or ('target' in element['data'] and element['data']['target'] == node_id))]
+
+#         if node_id in severity_scores:
+#             del severity_scores[node_id]  # Remove node from severity scores
+
+#     node_names = [node['data']['id'] for node in elements if 'id' in node['data'] and len(node['data']['id']) < 30]
+#     edit_map_data['add-nodes'] = node_names
+#     edit_map_data['elements'] = elements
+
+#     cytoscape_elements = edit_map_data.get('elements', [])
+#     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
+
+#     return elements, options_1, edit_map_data, severity_scores, history
+
+def delete_node_01(n_clicks, node_id, elements, edit_map_data, severity_scores, history, selected_color_scheme, selected_scheme):
     if n_clicks and node_id:
 
         history.append({
@@ -293,7 +412,18 @@ def delete_node(n_clicks, node_id, elements, edit_map_data, severity_scores, his
     cytoscape_elements = edit_map_data.get('elements', [])
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
 
-    return elements, options_1, edit_map_data, severity_scores, history
+        # Check and apply color scheme
+    if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+
+    # Check and apply node sizing scheme
+    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+
+    # Ensure stylesheet is updated based on the above changes
+    stylesheet = edit_map_data.get('stylesheet', [])
+
+    return elements, options_1, edit_map_data, severity_scores, history, stylesheet
 
 # Callback: Limit dropdown for edit-edge to 2
 def limit_dropdown_edit_edge(edit_edge):
@@ -302,7 +432,69 @@ def limit_dropdown_edit_edge(edit_edge):
     return edit_edge
 
 # Callback: Add additional edge to graph
-def add_edge_output(n_clicks, new_edge, elements, edit_map_data, severity_scores, history, edge_data):
+# def add_edge_output(n_clicks, new_edge, elements, edit_map_data, severity_scores, history, edge_data):
+#     if n_clicks and new_edge and len(new_edge) == 2:
+#         # Save current state to history
+#         history.append({
+#             'elements': elements.copy(),
+#             'edit_map_data': edit_map_data.copy(),
+#             'severity_scores': severity_scores.copy(),
+#             'edge_data': edge_data.copy()  # Ensure to also copy edge_data to history
+#         })
+
+#         source, target = new_edge
+
+#         # Initialize edge_data if it is None
+#         if edge_data is None:
+#             edge_data = {}
+
+#         # Create a unique edge ID and add the new edge
+#         edge_id = f"edge_{source}_{target}"  # Ensure a unique edge ID
+#         if edge_id not in edge_data:
+#             # Initialize new edge data with default values
+#             edge_data[edge_id] = {
+#                 'strength': 3,  # Default strength
+#                 'annotation': '',  # Default annotation
+#                 'type': 'default'  # Default type
+#             }
+
+#         # Assuming edit_map_data['edges'] is a list of edge dictionaries
+#         existing_edges = set(f"{e['data']['source']}->{e['data']['target']}" for e in elements if 'source' in e.get('data', {}))
+
+#         # Add the new edge to elements for visualization with a unique ID
+#         elements.append({
+#             'data': {
+#                 'id': edge_id,
+#                 'source': source,
+#                 'target': target
+#             }
+#         })
+#         existing_edges.add(f"{source}->{target}")
+
+#         # Update edit_map_data with the new edges
+#         edit_map_data['edges'] = [{'data': {'id': f"edge_{src}_{tgt}_{i}", 'source': src, 'target': tgt}}
+#                                   for i, (src, tgt) in enumerate((edge.split('->') for edge in existing_edges))]
+#         edit_map_data['elements'] = elements
+
+#         # Explicitly update the stylesheet to ensure it includes the new edge
+#         new_stylesheet = edit_map_data.get('stylesheet', [])
+#         tapped_edge_style = {
+#             'selector': f'edge[id="{edge_id}"]',
+#             'style': {
+#                 'opacity': 0.6,  # Default opacity
+#                 'line-color': '#999999',  # Default color
+#                 'target-arrow-color': '#999999',
+#                 'source-arrow-color': '#999999'
+#             }
+#         }
+#         new_stylesheet.append(tapped_edge_style)
+#         edit_map_data['stylesheet'] = new_stylesheet
+
+#         return elements, edit_map_data, history, edge_data
+
+#     return elements, edit_map_data, history, edge_data
+
+def add_edge_output_01(n_clicks, new_edge, elements, edit_map_data, severity_scores, history, edge_data, selected_color_scheme, selected_scheme):
     if n_clicks and new_edge and len(new_edge) == 2:
         # Save current state to history
         history.append({
@@ -360,33 +552,53 @@ def add_edge_output(n_clicks, new_edge, elements, edit_map_data, severity_scores
         new_stylesheet.append(tapped_edge_style)
         edit_map_data['stylesheet'] = new_stylesheet
 
-        return elements, edit_map_data, history, edge_data
+        # Check and apply color scheme
+        if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+            edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
 
-    return elements, edit_map_data, history, edge_data
+        # Check and apply node sizing scheme
+        if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+            edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
 
+        # Ensure stylesheet is updated based on the above changes
+        stylesheet = edit_map_data.get('stylesheet', [])
+
+
+        return elements, edit_map_data, history, edge_data, stylesheet
+
+    return elements, edit_map_data, history, edge_data, edit_map_data['stylesheet']
 
 # Callback: Delete existing edge from graph
-# def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history):
+# def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history, edge_data):
 #     if n_clicks and edge and len(edge) == 2:
-
+#         # Save current state to history
 #         history.append({
 #             'elements': elements.copy(),
 #             'edit_map_data': edit_map_data.copy(),
-#             'severity_scores': severity_scores.copy()
+#             'severity_scores': severity_scores.copy(),
+#             'edge_data': edge_data.copy()  # Save edge_data in history for undo functionality
 #         })
 
 #         source, target = edge
 
-#         existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
+#         # Identify the edge ID (assuming the format used earlier in add_edge_output)
+#         edge_id = f"edge_{source}_{target}"
 
+#         # Remove the edge from elements and existing edges set
+#         existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
 #         delete_edge(source, target, elements, existing_edges)
 
+#         # Remove the edge from edge_data
+#         if edge_id in edge_data:
+#             del edge_data[edge_id]
+
+#         # Update edit_map_data
 #         edit_map_data['edges'] = list(existing_edges)
 #         edit_map_data['elements'] = elements
 
-#     return elements, edit_map_data, history
+#     return elements, edit_map_data, history, edge_data
 
-def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores, history, edge_data):
+def delete_edge_output_01(n_clicks, edge, elements, edit_map_data, severity_scores, history, edge_data, selected_color_scheme, selected_scheme):
     if n_clicks and edge and len(edge) == 2:
         # Save current state to history
         history.append({
@@ -413,32 +625,44 @@ def delete_edge_output(n_clicks, edge, elements, edit_map_data, severity_scores,
         edit_map_data['edges'] = list(existing_edges)
         edit_map_data['elements'] = elements
 
-    return elements, edit_map_data, history, edge_data
+        # Check and apply color scheme
+        if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+            edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+
+        # Check and apply node sizing scheme
+        if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+            edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+
+        # Ensure stylesheet is updated based on the above changes
+        stylesheet = edit_map_data.get('stylesheet', [])
+
+    return elements, edit_map_data, history, edge_data, edit_map_data['stylesheet']
 
 # Callback: Listens to color scheme user input 
-def set_color_scheme(selected_scheme, stylesheet, edit_map_data, severity_scores):
-    # Update the color scheme based on the selected option
-    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = color_scheme(selected_scheme, edit_map_data, severity_scores)
+# def set_color_scheme(selected_scheme, stylesheet, edit_map_data, severity_scores,):
+#     # Update the color scheme based on the selected option
+#     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = color_scheme(selected_scheme, edit_map_data, severity_scores)
 
-    # Update elements with the new stylesheet
-    stylesheet = edit_map_data['stylesheet']
+#     # Update elements with the new stylesheet
+#     stylesheet = edit_map_data['stylesheet']
 
-    return stylesheet, edit_map_data, selected_scheme
+#     return stylesheet, edit_map_data, selected_scheme
 
 # Callback: Listens to node sizing user input 
-def set_node_sizes(selected_scheme, stylesheet, edit_map_data, severity_scores):
-    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+# def set_node_sizes(selected_scheme, n_clicks, stylesheet, edit_map_data, severity_scores):
+#     print("Current Severity Scores:", severity_scores)
+#     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
 
-        # Update elements with the new stylesheet
-        if 'stylesheet' in edit_map_data:
-            stylesheet = edit_map_data['stylesheet']
-        else:
-            stylesheet = [] 
-        return stylesheet, edit_map_data, selected_scheme
-    else:
-        return dash.no_update
+#         # Update elements with the new stylesheet
+#         if 'stylesheet' in edit_map_data:
+#             stylesheet = edit_map_data['stylesheet']
+#         else:
+#             stylesheet = [] 
+#         return stylesheet, edit_map_data, selected_scheme
+#     else:
+#         return dash.no_update
 
 # Callback: Dynamically generate Likert scales
 def update_likert_scales(selected_factors, severity_scores):
@@ -723,30 +947,14 @@ def register_editing_callbacks(app):
     )(update_annotations)
 
     app.callback(
-        [Output('my-mental-health-map', 'elements', allow_duplicate=True),
-        Output('severity-scores', 'data', allow_duplicate=True),
-        Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)],
-        [Input('modal-save-btn', 'n_clicks')],
-        [State('modal-node-name', 'value'),
-        State('modal-severity-score', 'value'),
-        State('my-mental-health-map', 'elements'),
-        State('severity-scores', 'data'),
-        State('edit-map-data', 'data'),
-        State('my-mental-health-map', 'tapNodeData'),
-        #State('custom-node-color', 'value'),
-        State('color-scheme', 'value')],
-        prevent_initial_call=True
-    )(save_node_changes)
-
-    app.callback(
         [Output('edge-edit-modal', 'is_open'),
         Output('edge-explanation', 'children'),
         Output('edge-strength', 'value'),
         Output('edge-annotation', 'value')],
         [Input('my-mental-health-map', 'tapEdgeData'),
         Input('inspect-switch', 'value')],
-        State('edge-data', 'data')
+        [State('edge-data', 'data'),
+         State('language-dropdown', 'value')]
     )(open_edge_edit_modal)
 
     app.callback(
@@ -775,92 +983,201 @@ def register_editing_callbacks(app):
         prevent_initial_call=True
     )(save_edge_changes_and_close_modal)
 
+    # app.callback(
+    #     [Output('my-mental-health-map', 'elements'),
+    #     Output('edit-edge', 'options'),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('severity-scores', 'data', allow_duplicate=True),
+    #     Output('history-store', 'data')], 
+    #     [Input('btn-plus-node', 'n_clicks')],
+    #     [State('edit-node', 'value'),
+    #     State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data'),
+    #     State('history-store', 'data')],  
+    #     prevent_initial_call=True
+    # )(map_add_node)
+
     app.callback(
         [Output('my-mental-health-map', 'elements'),
         Output('edit-edge', 'options'),
         Output('edit-map-data', 'data', allow_duplicate=True),
         Output('severity-scores', 'data', allow_duplicate=True),
-        Output('history-store', 'data')], 
+        Output('history-store', 'data'),
+        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)], 
         [Input('btn-plus-node', 'n_clicks')],
         [State('edit-node', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
-        State('history-store', 'data')],  
+        State('history-store', 'data'),
+        State('color_scheme', 'data'),
+        State('sizing_scheme', 'data')],  
         prevent_initial_call=True
-    )(map_add_node)
+    )(map_add_node_01)
+
+    # app.callback(
+    #     [Output('my-mental-health-map', 'elements', allow_duplicate=True),
+    #     Output('edit-edge', 'options', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('severity-scores', 'data', allow_duplicate=True),
+    #     Output('history-store', 'data', allow_duplicate=True)],  
+    #     [Input('btn-minus-node', 'n_clicks')],
+    #     [State('edit-node', 'value'),
+    #     State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data'),
+    #     State('history-store', 'data')],  
+    #     prevent_initial_call=True
+    # )(delete_node)
 
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-edge', 'options', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
         Output('severity-scores', 'data', allow_duplicate=True),
-        Output('history-store', 'data', allow_duplicate=True)],  
+        Output('history-store', 'data', allow_duplicate=True),
+        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)],  
         [Input('btn-minus-node', 'n_clicks')],
         [State('edit-node', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
-        State('history-store', 'data')],  
+        State('history-store', 'data'),
+        State('color_scheme', 'data'),
+        State('sizing_scheme', 'data')],  
         prevent_initial_call=True
-    )(delete_node)
+    )(delete_node_01)
 
     app.callback(
         Output('edit-edge', 'value'),
         Input('edit-edge', 'value')
     )(limit_dropdown_edit_edge)
 
+    # app.callback(
+    #     [Output('my-mental-health-map', 'elements', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('history-store', 'data', allow_duplicate=True),
+    #     Output('edge-data', 'data', allow_duplicate=True)],
+    #     [Input('btn-plus-edge', 'n_clicks')],
+    #     [State('edit-edge', 'value'),
+    #     State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data'),
+    #     State('history-store', 'data'),
+    #     State('edge-data', 'data')],
+    #     prevent_initial_call=True
+    # )(add_edge_output)
+
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
         Output('history-store', 'data', allow_duplicate=True),
-        Output('edge-data', 'data', allow_duplicate=True)],
+        Output('edge-data', 'data', allow_duplicate=True),
+        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)],
         [Input('btn-plus-edge', 'n_clicks')],
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
         State('history-store', 'data'),
-        State('edge-data', 'data')],
+        State('edge-data', 'data'),
+        State('color_scheme', 'data'),
+        State('sizing_scheme', 'data')],
         prevent_initial_call=True
-    )(add_edge_output)
+    )(add_edge_output_01)
+
+    # app.callback(
+    #     [Output('my-mental-health-map', 'elements', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('history-store', 'data', allow_duplicate=True),
+    #     Output('edge-data', 'data', allow_duplicate=True)],
+    #     [Input('btn-minus-edge', 'n_clicks')],
+    #     [State('edit-edge', 'value'),
+    #     State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data'),
+    #     State('history-store', 'data'),
+    #     State('edge-data', 'data')],
+    #     prevent_initial_call=True
+    # )(delete_edge_output)
 
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
         Output('history-store', 'data', allow_duplicate=True),
         Output('edge-data', 'data', allow_duplicate=True)],
+        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
         [Input('btn-minus-edge', 'n_clicks')],
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
         State('severity-scores', 'data'),
         State('history-store', 'data'),
-        State('edge-data', 'data')],
+        State('edge-data', 'data'),
+        State('color_scheme', 'data'),
+        State('sizing_scheme', 'data')],
         prevent_initial_call=True
-    )(delete_edge_output)
+    )(delete_edge_output_01)
+
+    # app.callback(
+    #     [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('color_scheme', 'data')],
+    #     [Input('color-scheme', 'value')],
+    #     [State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data')],
+    #     prevent_initial_call=True
+    # )(set_color_scheme)
+
+    # app.callback(
+    #     [Output('my-mental-health-map', 'elements', allow_duplicate=True),
+    #     Output('severity-scores', 'data', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)],
+    #     [Input('modal-save-btn', 'n_clicks')],
+    #     [State('modal-node-name', 'value'),
+    #     State('modal-severity-score', 'value'),
+    #     State('my-mental-health-map', 'elements'),
+    #     State('severity-scores', 'data'),
+    #     State('edit-map-data', 'data'),
+    #     State('my-mental-health-map', 'tapNodeData'),
+    #     #State('custom-node-color', 'value'),
+    #     State('color-scheme', 'value')],
+    #     prevent_initial_call=True
+    # )(save_node_changes)
 
     app.callback(
-        [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
+        [Output('my-mental-health-map', 'elements', allow_duplicate=True),
+        Output('severity-scores', 'data', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
+        Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
+        Output('sizing_scheme', 'data'),
         Output('color_scheme', 'data')],
-        [Input('color-scheme', 'value')],
-        [State('my-mental-health-map', 'elements'),
+        [Input('modal-save-btn', 'n_clicks'),
+         Input('color-scheme', 'value'),
+         Input('sizing-scheme', 'value')],
+        [State('modal-node-name', 'value'),
+        State('modal-severity-score', 'value'),
+        State('my-mental-health-map', 'elements'),
+        State('severity-scores', 'data'),
         State('edit-map-data', 'data'),
-        State('severity-scores', 'data')],
+        State('my-mental-health-map', 'tapNodeData')],
         prevent_initial_call=True
-    )(set_color_scheme)
-
-    app.callback(
-        [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
-        Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('sizing_scheme', 'data')],
-        [Input('sizing-scheme', 'value')],
-        [State('my-mental-health-map', 'elements'),
-        State('edit-map-data', 'data'),
-        State('severity-scores', 'data')],
-        prevent_initial_call=True
-    )(set_node_sizes)
+    )(save_node_changes_and_apply_schemes)
+    
+    # app.callback(
+    #     [Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
+    #     Output('edit-map-data', 'data', allow_duplicate=True),
+    #     Output('sizing_scheme', 'data')],
+    #     [Input('sizing-scheme', 'value'),
+    #      Input('modal-save-btn', 'n_clicks')],
+    #     [State('my-mental-health-map', 'elements'),
+    #     State('edit-map-data', 'data'),
+    #     State('severity-scores', 'data')],
+    #     prevent_initial_call=True
+    # )(set_node_sizes)
 
     app.callback(
         Output('likert-scales-container', 'children'),
