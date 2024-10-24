@@ -1,15 +1,143 @@
-import dash, json
+import dash, json, time
 
 from app import app
 from dash import html, Input, Output, State, ALL, MATCH
+from dash.exceptions import PreventUpdate
 from constants import factors, stylesheet, hidden_style, visible_style, translations
 from functions.page_content import (generate_step_content, create_mental_health_map_tab, create_tracking_tab, 
                                     create_about)
 from functions.map_build import (map_add_factors, map_add_chains, map_add_cycles)
 from functions.map_style import (graph_color)
 
-# from functions import (map_add_factors, graph_color, map_add_chains, map_add_cycles, generate_step_content,
-#                        create_mental_health_map_tab, create_tracking_tab, create_about)
+# def update_factors_based_on_language(selected_language, session_data, edit_map_data):
+#     # Get the appropriate factors based on selected language
+#     translation = translations.get(selected_language, translations['en'])
+    
+#     # Update the dropdown options for session-data and edit-map-data
+#     session_data['dropdowns']['initial-selection']['options'] = [{'label': factor, 'value': factor} for factor in translation['factors']]
+#     edit_map_data['dropdowns']['initial-selection']['options'] = [{'label': factor, 'value': factor} for factor in translation['factors']]
+    
+#     return session_data, edit_map_data
+
+# def update_factors_based_on_language(selected_language, session_data, edit_map_data):
+#     # Get the translation dictionary based on the selected language
+#     translation = translations.get(selected_language, translations['en'])
+
+#     # Define a translation map between English and German factors
+#     factor_translation_map = {
+#         "Loss of interest": "Interessenverlust",
+#         "Sadness": "Traurigkeit",
+#         "Loss of motivation": "Motivationsverlust",
+#         "Stress": "Stress",
+#         "Worry": "Sorgen",
+#         "Overthinking": "Überdenken",
+#         "Sleep problems": "Schlafstörungen",
+#         "Tiredness": "Müdigkeit",
+#         "Physical pain": "Körperliche Beschwerden",
+#         "Changes in appetite": "Veränderter Appetit",
+#         "Self-blame": "Selbstvorwürfe",
+#         "Concentration problems": "Konzentrationsprobleme",
+#         "Procrastination": "Prokrastination",
+#         "Guilt": "Schuldgefühle",
+#         "Shame": "Schamgefühle",
+#         "Hopelessness": "Hoffnungslosigkeit",
+#         "Interpersonal problems": "Beziehungsprobleme",
+#         "Social isolation": "Soziale Isolation",
+#         "Irritability": "Reizbarkeit",
+#         "Anxiety": "Ängstlichkeit",
+#         "Reduced activity": "Verminderte Aktivität",
+#         "Self-neglect": "Selbstvernachlässigung",
+#         "Suicidal thoughts": "Suizidgedanken",
+#         "Fear of the future": "Zukunftsangst",
+#         "Substance abuse": "Substanzmissbrauch"
+#     }
+    
+#     # Reverse map for translating back (from German to English)
+#     reverse_translation_map = {v: k for k, v in factor_translation_map.items()}
+
+#     # Step 1: Handle selected factors translation
+#     # Retrieve current selected factors
+#     selected_factors = session_data['dropdowns']['initial-selection'].get('value', [])
+    
+#     # Translate the selected factors depending on the current language
+#     if selected_language == 'en':
+#         translated_selected_factors = [reverse_translation_map.get(factor, factor) for factor in selected_factors]
+#     else:
+#         translated_selected_factors = [factor_translation_map.get(factor, factor) for factor in selected_factors]
+    
+#     # Step 2: Update the dropdown options and selected values in both session_data and edit_map_data
+#     # Update the dropdown options to reflect the factors in the target language
+#     options = [{'label': factor, 'value': factor} for factor in translation['factors']]
+
+#     # Update session_data dropdowns
+#     session_data['dropdowns']['initial-selection']['options'] = options
+#     session_data['dropdowns']['initial-selection']['value'] = translated_selected_factors
+
+#     # Update edit_map_data dropdowns similarly
+#     edit_map_data['dropdowns']['initial-selection']['options'] = options
+#     edit_map_data['dropdowns']['initial-selection']['value'] = translated_selected_factors
+
+#     return session_data, edit_map_data
+
+def update_factors_based_on_language(selected_language, session_data, edit_map_data):
+    # Initialize dropdowns if they don't exist in session_data or edit_map_data
+    session_data['dropdowns'] = session_data.get('dropdowns', {'initial-selection': {'options': [], 'value': []}})
+    edit_map_data['dropdowns'] = edit_map_data.get('dropdowns', {'initial-selection': {'options': [], 'value': []}})
+    
+    # Get the translation dictionary based on the selected language
+    translation = translations.get(selected_language, translations['en'])
+
+    # Define the translation map between English and German factors
+    factor_translation_map = {
+        "Loss of interest": "Interessenverlust",
+        "Sadness": "Traurigkeit",
+        "Loss of motivation": "Motivationsverlust",
+        "Stress": "Stress",
+        "Worry": "Sorgen",
+        "Overthinking": "Überdenken",
+        "Sleep problems": "Schlafstörungen",
+        "Tiredness": "Müdigkeit",
+        "Physical pain": "Körperliche Beschwerden",
+        "Changes in appetite": "Veränderter Appetit",
+        "Self-blame": "Selbstvorwürfe",
+        "Concentration problems": "Konzentrationsprobleme",
+        "Procrastination": "Prokrastination",
+        "Guilt": "Schuldgefühle",
+        "Shame": "Schamgefühle",
+        "Hopelessness": "Hoffnungslosigkeit",
+        "Interpersonal problems": "Beziehungsprobleme",
+        "Social isolation": "Soziale Isolation",
+        "Irritability": "Reizbarkeit",
+        "Anxiety": "Ängstlichkeit",
+        "Reduced activity": "Verminderte Aktivität",
+        "Self-neglect": "Selbstvernachlässigung",
+        "Suicidal thoughts": "Suizidgedanken",
+        "Fear of the future": "Zukunftsangst",
+        "Substance abuse": "Substanzmissbrauch"
+    }
+    
+    reverse_translation_map = {v: k for k, v in factor_translation_map.items()}
+
+    # Retrieve current selected factors, defaulting to an empty list if None
+    selected_factors = session_data['dropdowns']['initial-selection'].get('value', [])
+
+    # Translate the selected factors
+    if selected_language == 'en':
+        translated_selected_factors = [reverse_translation_map.get(factor, factor) for factor in selected_factors]
+    else:
+        translated_selected_factors = [factor_translation_map.get(factor, factor) for factor in selected_factors]
+
+    # Update the dropdown options and selected values
+    options = [{'label': factor, 'value': factor} for factor in translation['factors']]
+
+    # Update session_data and edit_map_data dropdowns
+    session_data['dropdowns']['initial-selection']['options'] = options
+    session_data['dropdowns']['initial-selection']['value'] = translated_selected_factors
+
+    edit_map_data['dropdowns']['initial-selection']['options'] = options
+    edit_map_data['dropdowns']['initial-selection']['value'] = translated_selected_factors
+
+    return session_data, edit_map_data
 
 # Display the page & next/back button based on current step 
 def update_page_and_buttons(pathname, edit_map_data, current_step_data, language, session_data, color, sizing, 
@@ -21,6 +149,7 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
     content = None
     back_button_style = hidden_style
     next_button_style = visible_style
+    redirect_button_style = hidden_style
     next_button_text = html.I(className="fas fa-solid fa-angle-right")
 
     translation = translations.get(language, translations['en'])
@@ -39,7 +168,9 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
         elif step == 5:
             content = generate_step_content(step, session_data, translation)
             back_button_style = visible_style           
-            next_button_text = html.I(className="fas fa-solid fa-forward")      
+            #next_button_text = html.I(className="fas fa-solid fa-forward")  
+            next_button_text = html.I(className="fas fa-solid fa-trash", style={'color': '#E57373'}) 
+            redirect_button_style = visible_style    
 
     elif pathname == "/my-mental-health-map":
         content = create_mental_health_map_tab(edit_map_data, color, sizing, custom_color_data, translation)
@@ -59,7 +190,7 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
     elif content is None:
         content = html.Div("Page not found")
 
-    return content, back_button_style, next_button_style, next_button_text
+    return content, back_button_style, next_button_style, next_button_text, redirect_button_style
 
 # Update current step based on next/back button clicks
 def update_step(back_clicks, next_clicks, current_step_data):
@@ -86,13 +217,49 @@ def update_hidden_div(values):
     return json.dumps(values)
 
 # Update session-data (dropdowns) based on hidden Div
-def update_session_data(n_clicks, json_values, session_data, current_step_data, severity_scores):
+# def update_session_data(n_clicks, json_values, session_data, current_step_data, severity_scores):
 
+#     step = current_step_data.get('step')
+#     values = json.loads(json_values) if json_values else []
+#     session_data['severity'] = severity_scores
+
+
+#     if len(values) == 1:
+#         if step == 1:
+#             session_data = map_add_factors(session_data, values[0], severity_scores)
+
+#     if n_clicks: 
+#         if len(values) == 1:
+#             if step == 4:
+#                 session_data['dropdowns']['target']['value'] = values[0]
+#                 graph_color(session_data, severity_scores)
+
+#         elif len(values) == 2:
+#             if step == 2: 
+#                 session_data = map_add_chains(session_data, values[0], values[1])
+#             elif step == 3: 
+#                 session_data = map_add_cycles(session_data, values[0], values[1])
+
+#     return session_data
+
+def update_session_data(n_clicks, json_values, session_data, current_step_data, severity_scores):
     step = current_step_data.get('step')
     values = json.loads(json_values) if json_values else []
-    session_data['severity'] = severity_scores
 
+    # Ensure 'dropdowns' and other keys exist in session_data
+    session_data.setdefault('dropdowns', {
+        'initial-selection': {'options': [], 'value': None},
+        'chain1': {'options': [], 'value': None},
+        'chain2': {'options': [], 'value': None},
+        'cycle1': {'options': [], 'value': None},
+        'cycle2': {'options': [], 'value': None},
+        'target': {'options': [], 'value': None},
+    })
 
+    # Store severity scores
+    session_data['severity'] = severity_scores or {}
+
+    # Rest of your logic
     if len(values) == 1:
         if step == 1:
             session_data = map_add_factors(session_data, values[0], severity_scores)
@@ -111,6 +278,7 @@ def update_session_data(n_clicks, json_values, session_data, current_step_data, 
 
     return session_data
 
+
 # Update session data based on initial factor selection
 def dropdown_step5_init(value, session_data):
     if session_data['add-node'] == []:
@@ -123,7 +291,7 @@ def reset(current_step_data):
         data = {
             'dropdowns': {
                 'initial-selection': {'options': [{'label': factor, 'value': factor} for factor in factors], 
-                                      'value': None},
+                                      'value': []},
                 'chain1': {'options': [], 'value': None},
                 'chain2': {'options': [], 'value': None},
                 'cycle1': {'options': [], 'value': None},
@@ -141,14 +309,127 @@ def reset(current_step_data):
     else:
         return (dash.no_update, dash.no_update)
 
+# Re-direct user to edit tab & populate edit-map-data with psysys map when user clicks on redirect button end of PsySys
+def redirect_edit(n_clicks):
+    if n_clicks:
+        return "/my-mental-health-map"
+
+# Extract likert scale severity 
+def extract_severity_scores(severity_values, current_severity_scores, slider_ids, session_data):
+    factor_selection = session_data['dropdowns']['initial-selection']['value']
+    
+    if factor_selection is None:
+        return dash.no_update
+    
+    if current_severity_scores is None:
+        current_severity_scores = {}
+
+    # Ensure severity_values and slider_ids are not None
+    if severity_values is None or slider_ids is None:
+        return current_severity_scores
+
+    # Remove any factors from current_severity_scores that are not in the Likert scales
+    current_severity_scores = {factor: score for factor, score in current_severity_scores.items() if factor in factor_selection}
+
+    # Extract factor names and update their values in the severity scores
+    for value, slider_id in zip(severity_values, slider_ids):
+        factor = slider_id['factor']  # Extract the factor name from the slider id
+        current_severity_scores[factor] = value
+
+    print(current_severity_scores)
+
+    return current_severity_scores
+
+# Show suicide hotline message if user selects suicidal thoughts 
+def show_suicide_prevention_message(selected_factors):
+    if 'Suicidal thoughts' in selected_factors or 'Suizidgedanken' in selected_factors:
+        return {"color": "#516395", "visibility": "visible"}  # Show the message
+    return {"color": "#516395", "visibility": "hidden"}  # Keep the space but hide the text
+
+# def update_tab_content(n_clicks):
+#     # Debounce logic: add a small delay
+#     time.sleep(0.3)  # adjust the debounce delay
+#     return f"Tab content for click {n_clicks}"
+
+# def update_content(n_clicks, n_clicks_edit, n_clicks_compare, n_clicks_about):
+#     # Simulate content loading
+#     if n_clicks or n_clicks_edit or n_clicks_compare or n_clicks_about:
+#         time.sleep(1)  # Simulating a delay
+#     return ""
+
+# def update_content(n_clicks_psy, n_clicks_edit, n_clicks_compare, n_clicks_about, loading_state):
+
+#     # Prevent content update if loading is still in progress
+#     if loading_state:
+#         raise PreventUpdate
+
+#     # Triggered context for knowing which link was clicked
+#     ctx = dash.callback_context
+#     if not ctx.triggered:
+#         return "", False
+
+#     # Set loading state to True at the beginning
+#     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+#     # Simulate content loading delay based on the clicked link
+#     if triggered_id == 'Psychoeducation':
+#         time.sleep(2)  # Simulate delay
+#         content = ""
+#     elif triggered_id == 'EditMyMap':
+#         time.sleep(2)
+#         content = ""
+#     elif triggered_id == 'CompareMyMap':
+#         time.sleep(2)
+#         content = ""
+#     elif triggered_id == 'AboutUs':
+#         time.sleep(2)
+#         content = ""
+#     else:
+#         return "", False
+
+#     # Set loading state to False after content has loaded
+#     return content, False
+
+# Callback to disable the nav links during loading
+# def disable_nav_links(loading_state):
+#     if loading_state:
+#         return {"pointer-events": "none", "opacity": "0.5"}  # Disable nav links
+#     else:
+#         return {"pointer-events": "auto", "opacity": "1"}  # Enable nav links
+
+def turn_loading_true(pathname):
+    return True 
+
+def simulate_page_load(pathname):
+    # Simulate that the page is loading for 3 seconds, you can change this logic
+    import time
+    time.sleep(3)  # Simulating delay in content load
+    content = ""
+    return False, content  # Return False when done loading
+
+# Callback to disable/enable the navlinks based on the loading-state
+def toggle_nav_links(loading):
+    # If loading is True, disable all navlinks, else enable them
+    return [loading, loading, loading, loading]
+
 # Register the callbacks
 def register_layout_callbacks(app):
+
+    app.callback(
+        [Output('session-data', 'data', allow_duplicate=True),
+        Output('edit-map-data', 'data', allow_duplicate=True)],
+        [Input('language-dropdown', 'value')],
+        [State('session-data', 'data'),
+        State('edit-map-data', 'data')],
+        prevent_initial_call=True
+    )(update_factors_based_on_language)
 
     app.callback(
         [Output('page-content', 'children'),
         Output('back-button', 'style'),
         Output('next-button', 'style', allow_duplicate=True),
-        Output('next-button', 'children')],
+        Output('next-button', 'children'),
+        Output('go-to-edit', 'style')],
         [Input('url', 'pathname'),
         Input('edit-map-data', 'data'),  
         Input('current-step', 'data'),
@@ -197,3 +478,72 @@ def register_layout_callbacks(app):
         Input('current-step', 'data'),
         prevent_initial_call=True
     )(reset)
+
+    app.callback(
+         Output('severity-scores', 'data'),  # Update the stored severity scores
+        [Input({'type': 'likert-scale', 'factor': ALL}, 'value')],
+         #Input({'type': 'dynamic-dropdown', 'step': 1}, 'value')],  # Listen to all Likert scale values
+        [State('severity-scores', 'data'),  # Current severity scores
+        State({'type': 'likert-scale', 'factor': ALL}, 'id'), 
+        State('session-data', 'data')]  # Get the IDs (factors) of all scales
+    )(extract_severity_scores)
+
+    app.callback(
+        Output('suicide-prevention-hotline', 'style'),
+        [Input({'type': 'dynamic-dropdown', 'step': 1}, 'value')]
+    )(show_suicide_prevention_message)
+
+    app.callback(
+        Output('url', 'pathname'),
+        Input('go-to-edit', 'n_clicks')
+    )(redirect_edit)
+
+    # app.callback(
+    #     Output('content', 'children'),
+    #     [Input('nav-link', 'n_clicks')],
+    #     prevent_initial_call=True
+    # )(update_tab_content)
+
+    # app.callback(
+    #     Output('tab-content', 'children'),
+    #     [Input('Psychoeducation', 'n_clicks'),
+    #      Input('Edit My Map', 'n_clicks'),
+    #      Input('Compare My Map', 'n_clicks'),
+    #      Input('About Us', 'n_clicks')]  # Use the actual id of the NavLink
+    # )(update_content)
+
+    # app.callback(
+    #     [Output('tab-content', 'children'),
+    #     Output('loading-state', 'data')],
+    #     [Input('Psychoeducation', 'n_clicks'),
+    #     Input('Edit My Map', 'n_clicks'),
+    #     Input('Compare My Map', 'n_clicks'),
+    #     Input('About Us', 'n_clicks')],
+    #     [State('loading-state', 'data')]
+    # )(update_content)
+
+    # app.callback(
+    #     Output('nav-links', 'style'),
+    #     Input('loading-state', 'data')
+    # )(disable_nav_links)
+
+    app.callback(
+        Output("loading-state", "data"),
+        [Input("url", "pathname")]
+    )(turn_loading_true)
+
+    app.callback(
+        [Output("loading-state", "data", allow_duplicate=True),
+         Output('tab-content', 'children')],
+        [Input("url", "pathname")],
+        prevent_initial_call=True
+    )(simulate_page_load)
+
+    app.callback(
+        [Output("Psychoeducation", "disabled"),
+        Output("Edit My Map", "disabled"),
+        Output("Compare My Map", "disabled"),
+        Output("About Us", "disabled")],
+        [Input("loading-state", "data")]
+    )(toggle_nav_links)
+

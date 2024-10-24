@@ -4,7 +4,7 @@ import numpy as np
 import plotly as plt
 
 # Function: Create current centrality bar plot
-def current_centrality_plot(track_data, comparison_data, selected_map, marks):
+def current_centrality_plot(track_data, comparison_data, selected_map, marks, translation):
     # Extract elements of currently visible map by checking timeline slider & fetching from comparison_data
     if comparison_data is not None:
         label = marks.get(str(selected_map))  # Fetch label based on the slider's value
@@ -26,20 +26,15 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                 in_degrees = [degrees[node]['in'] for node in node_ids]
                 out_degrees = [degrees[node]['out'] for node in node_ids]
 
-                # Create bar plot
-                # fig = go.Figure(data=[
-                #     go.Bar(name='In-Coming', x=node_ids, y=in_degrees, marker_color='lightblue'),
-                #     go.Bar(name='Out-Going', x=node_ids, y=out_degrees, marker_color='orange')
-                # ])
                 fig = go.Figure(data=[
                 go.Bar(
-                    name='In-Coming', 
+                    name=translation['plot_01_in'], 
                     x=node_ids, 
                     y=in_degrees, 
                     marker_color='rgba(156, 211, 225, 0.5)'  # Color with low opacity
                 ),
                 go.Bar(
-                    name='Out-Going', 
+                    name=translation['plot_01_out'], 
                     x=node_ids, 
                     y=out_degrees, 
                     marker_color='#9CD3E1'  # Solid color
@@ -51,7 +46,7 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                     barmode='group',
                     margin={'l': 20, 'r': 20, 't': 100, 'b': 5},
                     title={
-                        'text': 'Factor Influence',
+                        'text': translation['plot_01_title'],
                         'y': 0.92,  # Adjust the vertical position of the title
                         'x': 0.5,
                         'xanchor': 'center',
@@ -60,7 +55,7 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                     xaxis=dict(
                         tickangle=-45  # Rotate tick labels for better fit
                     ),
-                    yaxis_title='Connections',
+                    yaxis_title=translation['plot_01_y'],
                     template='plotly_white',
                     yaxis=dict(
                     tickmode='linear',
@@ -73,7 +68,14 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks):
                 yanchor='bottom',  # Anchor to the bottom of the legend box
                 y=1,  # Position it slightly above the plot
                 xanchor='center',  # Center the legend horizontally
-                x=0.5  # Set it in the middle of the plot
+                x=0.5,  # Set it in the middle of the plot
+                ),
+                modebar_remove=['zoom', 'pan', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'],
+                modebar_add=['toImage'],  # 'toImage' adds the "save as PNG" button
+                modebar=dict(
+                    orientation='v',  # Vertical orientation for the modebar
+                    bgcolor='rgba(0,0,0,0)',  # Transparent background
+                    activecolor='#516395'  # Active button color
                 )
                 )
 
@@ -90,16 +92,36 @@ def calculate_degree_ratios(elements):
     degree_ratios = {node: degrees[node]['out'] / degrees[node]['in'] if degrees[node]['in'] != 0 else degrees[node]['out'] for node in degrees}
     return degree_ratios
 
+# def prepare_graph_data(comparison_data):
+#     x = []
+#     y = []
+#     for network, data in comparison_data.items():
+#         #ratios = calculate_degree_ratios(data['elements'])
+#         # x.append(network)
+#         #y.append(ratios)
+#         severity = data.get('severity', {})
+
+#         x.append(network)
+#         y.append(severity)
+
+#     return x, y
+
 def prepare_graph_data(comparison_data):
     x = []
     y = []
-    for network, data in comparison_data.items():
-        #ratios = calculate_degree_ratios(data['elements'])
-        # x.append(network)
-        #y.append(ratios)
-        severity = data.get('severity', {})
 
+    for network, data in comparison_data.items():
+        severity = data.get('severity', {})
+        elements = data.get('elements', [])
+
+        # Extract valid factor names from the elements
+        valid_factors = set([element['data']['label'] for element in elements if 'data' in element and 'label' in element['data']])
+
+        # Filter the severity data to only include factors that are still in the elements
+        filtered_severity = {factor: score for factor, score in severity.items() if factor in valid_factors}
+
+        # Append the filtered severity data and the network name to x and y
         x.append(network)
-        y.append(severity)
+        y.append(filtered_severity)
 
     return x, y

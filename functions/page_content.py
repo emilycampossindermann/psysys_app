@@ -1,4 +1,3 @@
-import dash, requests, json, base64
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 from dash import dcc, html
@@ -65,7 +64,8 @@ def generate_step_content(step, session_data, translation):
                     html.Br(),
                     html.Div(
                         html.H2(translation['welcome_01'],
-                                style={"fontFamily": "Gill Sans", 
+                                style={#"fontFamily": "Gill Sans", 
+                                    "fontFamily": "Arial Black",
                                     "fontWeight": "normal", 
                                     "color": "white",
                                     "marginTop": "-10px"}),
@@ -75,8 +75,9 @@ def generate_step_content(step, session_data, translation):
                                "maxWidth": "500px"}
                     ),
                     html.Div(
-                        html.H3(translation['welcome_02'],
-                                style={"fontFamily": "Gill Sans", 
+                        html.H5(translation['welcome_02'],
+                                style={#"fontFamily": "Gill Sans",
+                                    "fontFamily": "Arial Black", 
                                     "fontWeight": "normal", 
                                     "color": "white"}),
                         style={"display": "flex", 
@@ -233,6 +234,26 @@ def generate_step_content(step, session_data, translation):
                     html.Br(), 
                     html.Br(),
                ]),
+
+               html.Div(
+                    id='suicide-prevention-hotline', 
+                    children=[
+                        html.P(translation['suicide-prevention'], 
+                                style={"color": "#516395",
+                                       #"display": "block",
+                                       "width": "50%",
+                                       'marginLeft': '490px'
+                                       }),
+                    ],
+                    style={'marginLeft': '490px', 
+                           'marginTop': '0px',
+                           'color': 'red', 
+                           'width': '47%', 
+                           'position': 'relative',
+                           'zIndex': '100',
+                           'visibility': 'hidden'}
+                ),
+
                html.Div([
                     create_dropdown(id=id, 
                                     options=options, 
@@ -244,11 +265,13 @@ def generate_step_content(step, session_data, translation):
                         style={'overflowY': 'auto', 
                                'maxHeight': '290px', 
                                 "marginLeft": "-210px", 
-                                "zIndex": "500"})
+                                "zIndex": "500"}),
                 ], style={"width": "46.5%",
                           "marginLeft": "20px", 
-                          "marginTop":"-375px",
-                          "flex": "1"})
+                          "marginTop":"-465px",
+                          "flex": "1",
+                          "position": "fixed"}),
+
             ]),
         ], style={
             "position": "fixed",
@@ -270,7 +293,6 @@ def generate_step_content(step, session_data, translation):
                      'step': 2}
         id_chain2 = {'type': 'dynamic-dropdown', 
                      'step': 3}
-        text = 'Select two factors'
         return html.Div([
             html.Div(
                 [
@@ -536,18 +558,20 @@ def generate_step_content(step, session_data, translation):
                     html.Br(), html.Br(),
                     html.Div(
                         html.H2(translation['finish_01'],
-                                style={"fontFamily": "Gill Sans", 
+                                style={#"fontFamily": "Gill Sans", 
+                                    "fontFamily": "Arial Black",
                                     "fontWeight": "normal", 
                                     "color": "white",
                                     "marginTop": "-10px"}),
                                     style={"display": "flex", 
                                            "justifyContent": "flex-start", 
                                            "width": "100%",
-                                           "maxWidth": "500px"}
+                                           "maxWidth": "600px"}
                     ),
                     html.Div(
-                        html.H3(translation['finish_02'],
-                                style={"fontFamily": "Gill Sans", 
+                        html.H5(translation['finish_02'],
+                                style={#"fontFamily": "Gill Sans",
+                                    "fontFamily": "Arial Black", 
                                     "fontWeight": "normal", 
                                     "color": "white"}),
                                     style={"display": "flex", 
@@ -657,19 +681,41 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 
                   'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
     # options = [{'label': factor, 'value': factor} for factor in factors]
-    color_schemes = [{'label': color, 'value': color} for color in node_color]
-    sizing_schemes = [{'label': size, 'value': size} for size in node_size]
+    color_schemes = [{'label': color, 'value': color} for color in translation['schemes']]
+    sizing_schemes = [{'label': size, 'value': size} for size in translation['schemes']]
     return html.Div(id='edit-wrapper', 
                     className='no-blur', 
                     children=[
                         html.Div(
                                     [
-                                        html.Br(), 
-                                        html.Br(),
-                                        html.Div(style={"height": "17px"}),
-                                        html.Br(), 
-                                        html.Br(), 
-                                        html.Br(), 
+                                        # html.Br(), 
+                                        # html.Br(),
+                                        #html.Div(style={"height": "17px"}),
+                                        html.Br(), html.Br(),
+                                        html.Div(
+                                            html.H2(translation['edit-map-title_01'],
+                                                    style={#"fontFamily": "Gill Sans", 
+                                                        "fontFamily": "Arial Black",
+                                                        "fontWeight": "normal", 
+                                                        "color": "white",
+                                                        "marginTop": "-10px"}),
+                                                        style={"display": "flex", 
+                                                            "justifyContent": "flex-start", 
+                                                            "width": "100%",
+                                                            "maxWidth": "700px"}
+                                        ),
+                                        html.Div(
+                                            html.H5(translation['edit-map-title_02'],
+                                                    style={#"fontFamily": "Gill Sans",
+                                                        "fontFamily": "Arial Black", 
+                                                        "fontWeight": "normal", 
+                                                        "color": "white"}),
+                                                        style={"display": "flex", 
+                                                            "justifyContent": "flex-start", 
+                                                            "width": "100%",
+                                                            "maxWidth": "500px"}
+                                        ),
+                                        html.Div(style={"height": "21px"}),
                                         html.Br(), 
                                         html.Br(),
                                     ],
@@ -878,6 +924,14 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                     id='back-btn', 
                                                                     color="light", 
                                                                     style={'marginRight': '0px'}),
+                                                            
+                                                            dbc.Tooltip(
+                                                                translation['hover-back-edit'],
+                                                                target='back-btn',  # Matches the button id
+                                                                placement="top",
+                                                                autohide=True, 
+                                                                delay={"show": 500, "hide": 100}
+                                                            ),
                                                         ], 
                                                         style={'display': 'flex', 
                                                                   'alignItems': 'center', 
@@ -941,6 +995,15 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     style={'border': 'none',
                                                            'color': '#8793c9',
                                                            'backgroundColor': 'lightgray'}),
+
+                                            dbc.Tooltip(
+                                                translation['hover-load-psysys'],
+                                                target='load-map-btn',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 500, "hide": 100}
+                                            ),
+                                            
                                             # Style the dcc.Upload component to look like a button
                                             dcc.Upload(
                                                 id='upload-data',
@@ -957,6 +1020,15 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     'display': 'inline-block',
                                                 },
                                             ),
+
+                                            dbc.Tooltip(
+                                                translation['hover-upload-map'],
+                                                target='upload-map-btn',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 500, "hide": 100}
+                                            ),
+
                                             dbc.Button([
                                                 html.I(
                                                     className="fas fa-solid fa-download"), " ",".json"], 
@@ -965,6 +1037,15 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                            'color': '#8793c9',
                                                            'backgroundColor': 'lightgray', 
                                                            'marginLeft':'8px'}), 
+
+                                            dbc.Tooltip(
+                                                translation['hover-download-map'],
+                                                target='download-file-btn',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 500, "hide": 100}
+                                            ),
+
                                             dbc.Button([
                                                 html.I(
                                                     className="fas fa-solid fa-download"), " ",".jpg"], 
@@ -974,6 +1055,14 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                            'backgroundColor': 'lightgray', 
                                                            'marginLeft':'8px', 
                                                            'marginRight':'8px'}),
+                                            dbc.Tooltip(
+                                                translation['hover-save-image'],
+                                                target='download-image-btn',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 500, "hide": 100}
+                                            ),
+
                                             dbc.Button([
                                                 html.I(
                                                     className="fas fa-solid fa-hand-holding-medical")], 
@@ -983,7 +1072,14 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                   'display': 'flex', 
                                                   'flexWrap': 'wrap', 
                                                   'gap': '10px'}), 
-                                        
+                                        dbc.Tooltip(
+                                                translation['hover-donate'],
+                                                target='donate-btn',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 500, "hide": 100}
+                                            ),
+
                                     ], style={'flex': '1'}),
 
                                     # Modal for node name & severity edit
@@ -1113,14 +1209,41 @@ def create_tracking_tab(track_data, translation):
     return html.Div(id='tracking-wrapper', className='no-blur', children=[
         html.Div(
             [
-                html.Br(), 
-                html.Br(),
-                html.Div(style={"height": "17px"}),
-                html.Br(), 
-                html.Br(), 
-                html.Br(), 
-                html.Br(), 
-                html.Br(),
+                # html.Br(), 
+                # html.Br(),
+                # html.Div(style={"height": "17px"}),
+                # html.Br(), 
+                # html.Br(), 
+                # html.Br(), 
+                # html.Br(), 
+                # html.Br(),
+                html.Br(), html.Br(),
+                html.Div(
+                    html.H2(translation['compare-map-title_01'],
+                            style={#"fontFamily": "Gill Sans", 
+                                "fontFamily": "Arial Black",
+                                "fontWeight": "normal",
+                                "color": "white",
+                                "marginTop": "-10px"}),
+                                style={"display": "flex", 
+                                       "justifyContent": "flex-start", 
+                                       "width": "100%",
+                                       "maxWidth": "700px"}
+                                       ),
+                    html.Div(
+                        html.H5(translation['compare-map-title_02'],
+                                style={#"fontFamily": "Gill Sans",
+                                     "fontFamily": "Arial Black", 
+                                     "fontWeight": "normal",
+                                     "color": "white"}),
+                                     style={"display": "flex", 
+                                            "justifyContent": "flex-start",
+                                            "width": "100%",
+                                            "maxWidth": "500px"}
+                                        ),
+                    html.Div(style={"height": "21px"}),
+                    html.Br(), 
+                    html.Br(),
             ],
             style={
                 "background-image": "linear-gradient(to right, #8793c9, #516395)",
@@ -1145,13 +1268,13 @@ def create_tracking_tab(track_data, translation):
                             [
                                 dbc.NavItem(
                                     dbc.NavLink(
-                                        "Plot 1", 
+                                        translation['plot_01'], 
                                         id="plot-current", 
                                         href="#", 
                                         active='exact')),
                                 dbc.NavItem(
                                     dbc.NavLink(
-                                        "Plot 2", 
+                                        translation['plot_02'], 
                                         id="plot-overall", 
                                         href="#", 
                                         active='exact')),
@@ -1164,8 +1287,8 @@ def create_tracking_tab(track_data, translation):
                     ]),
                     color="light", 
                     className="mb-2", 
-                    style={'width':'30.2%', 
-                           'marginLeft':'125px', 
+                    style={'width':'40%', 
+                           'marginLeft':'100px', 
                            'marginTop':'-105px', 
                            'zIndex':'2000', 
                            'borderRadius': '15px'}
@@ -1280,6 +1403,15 @@ def create_tracking_tab(track_data, translation):
                               switch=True, 
                               style={'display': 'inline-block', 
                                      'marginLeft':'-320px'}),
+
+                dbc.Tooltip(
+                    translation['hover-uniform'],  # Tooltip text
+                    target="uniform-switch",  # ID of the element to show the tooltip for
+                    placement="top",
+                    autohide=True, 
+                    delay={"show": 500, "hide": 100}
+                ),
+
                 dcc.Upload(id='upload-graph-tracking', 
                            children = dbc.Button([
                                html.I(
@@ -1290,7 +1422,18 @@ def create_tracking_tab(track_data, translation):
                                           'backgroundColor': 'lightgray', 
                                           'padding': '7px'}),
                    style={'display': 'inline-block', 
-                          'marginLeft':'190px'}),
+                          'marginLeft':'190px'},
+                          
+                          ),
+
+                    dbc.Tooltip(
+                        translation['hover-upload-tracking'],  # Tooltip text
+                        target="upload-map-btn",  # ID of the element to show the tooltip for
+                        placement="top",
+                        autohide=True, 
+                        delay={"show": 500, "hide": 100}
+                    ),
+
                 dbc.Button([
                     html.I(
                         className="fas fa-solid fa-trash")], 
@@ -1301,6 +1444,15 @@ def create_tracking_tab(track_data, translation):
                                'color': '#8793c9',
                                'backgroundColor': 'lightgray', 
                                'padding': '7px'}),
+
+                    dbc.Tooltip(
+                        translation['hover-delete-tracking'],  # Tooltip text
+                        target="delete-tracking-map",  # ID of the element to show the tooltip for
+                        placement="top",
+                        autohide=True, 
+                        delay={"show": 500, "hide": 100}  # Set delay for show and hide (milliseconds) # Adjust placement as needed (top, bottom, left, right)
+                    ),
+
                    ], style={'display': 'flex', 
                              'alignItems': 'center',
                              'marginLeft': '112px', 
@@ -1345,7 +1497,7 @@ def create_about(app, translation):
                 html.Br(),
                 html.Br(),
                 html.Br(),
-                html.H2(
+                html.H1(
                     "Share Knowledge. Empower People.", 
                     style={"fontFamily": "Arial Black", 
                            "fontWeight": "bold",

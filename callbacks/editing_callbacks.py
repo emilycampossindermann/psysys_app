@@ -1,4 +1,5 @@
 import dash, json, base64
+import copy
 
 from app import app
 from datetime import datetime
@@ -8,22 +9,44 @@ from functions.map_build import (add_edge, delete_edge)
 from functions.map_style import (node_sizing, calculate_degree_centrality, color_scheme)
 from functions.data_format import (format_export_data, send_to_github)
 from functions.page_content import (create_likert_scale)
-
-# from functions import (calculate_degree_centrality, format_export_data, add_edge, delete_edge, color_scheme,
-#                        node_sizing, create_likert_scale, send_to_github)
+from datetime import datetime
 
 # Callback: Set edit-graph to session-data if "Load from session" is pressed
-def load_session_graph(n_clicks, session_data):
+# def load_session_graph(n_clicks, session_data):
+#     if n_clicks:
+#         return session_data
+#     # Return no update if the button wasn't clicked
+#     return dash.no_update      
+def redirect_edit(n_clicks, session_data, severity_scores):
     if n_clicks:
-        return session_data
+        severity_scores_edit = severity_scores.copy()
+        # Ensure you're working with a copy of the session data, not the original data
+        session_data_copy = {
+            'elements': session_data['elements'].copy(), 
+            'stylesheet': session_data['stylesheet'].copy(),
+            'severity': session_data.get('severity', {}).copy()  # Clone severity to prevent direct modification
+        }
+        return session_data_copy, severity_scores_edit
     # Return no update if the button wasn't clicked
-    return dash.no_update      
+    return dash.no_update
+
+def load_session_graph(n_clicks, session_data, severity_scores):
+    if n_clicks:
+        severity_scores_edit = severity_scores.copy()
+        # Ensure you're working with a copy of the session data, not the original data
+        session_data_copy = {
+            'elements': session_data['elements'].copy(), 
+            'stylesheet': session_data['stylesheet'].copy(),
+            'severity': session_data.get('severity', {}).copy()  # Clone severity to prevent direct modification
+        }
+        return session_data_copy, severity_scores_edit
+    # Return no update if the button wasn't clicked
+    return dash.no_update
 
 # Callback: Generate download file  
 def generate_download(n_clicks, data, severity_scores, annotations, edge_data, current_style):
     if n_clicks:
         elements = data['elements']
-        #current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         current_date = datetime.now().strftime("%y/%m/%d-%H:%M")
         # Calculate & include: degree centralities
         degrees = {element['data']['id']: {'out': 0, 'in': 0} for element in elements 
@@ -51,7 +74,7 @@ def generate_download(n_clicks, data, severity_scores, annotations, edge_data, c
         exported_data = {
             'elements': data['elements'],
             'stylesheet': current_style,
-            'edges': data['edges'],
+            'edges': data.get('edges'),
             'severity-scores': severity_scores,
             'edge-data': edge_data,
             'out-degrees': out_degrees,
@@ -74,7 +97,6 @@ def upload_graph(contents, filename):
     if contents:
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
-        # Assuming the file is JSON, adjust the decoding as necessary
         data = json.loads(decoded.decode('utf-8'))
         return data
     return dash.no_update
@@ -183,7 +205,44 @@ def update_annotations(note_input, tapNodeData, annotations):
 #     else:
 #         return dash.no_update
 
+# def save_node_changes_and_apply_schemes(n_clicks, selected_color_scheme, selected_scheme, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData):
+#     if n_clicks and tapNodeData:
+#         old_node_id = tapNodeData['id']
+
+#         # Update node name in elements
+#         for element in elements:
+#             if element.get('data', {}).get('id') == old_node_id:
+#                 element['data']['label'] = new_name
+
+#         # Update severity score
+#         severity_scores[old_node_id] = new_severity
+#         severity_scores[new_name] = new_severity
+
+#         # Update edit_map_data with the changed elements
+#         edit_map_data['elements'] = elements
+
+#     # Check and apply color scheme
+#     if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = color_scheme(selected_color_scheme, 
+#                                      edit_map_data, 
+#                                      severity_scores)
+
+#     # Check and apply node sizing scheme
+#     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
+#         edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+#                                     graph_data=edit_map_data, 
+#                                     severity_scores=severity_scores)
+
+#     # Ensure stylesheet is updated based on the above changes
+#     stylesheet = edit_map_data.get('stylesheet', [])
+
+#     # Return updated values
+#     return elements, severity_scores, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
+
 def save_node_changes_and_apply_schemes(n_clicks, selected_color_scheme, selected_scheme, new_name, new_severity, elements, severity_scores, edit_map_data, tapNodeData):
+    # Initialize severity_scores_copy with a deep copy of severity_scores
+    severity_scores_copy = copy.deepcopy(severity_scores)
+
     if n_clicks and tapNodeData:
         old_node_id = tapNodeData['id']
 
@@ -192,28 +251,38 @@ def save_node_changes_and_apply_schemes(n_clicks, selected_color_scheme, selecte
             if element.get('data', {}).get('id') == old_node_id:
                 element['data']['label'] = new_name
 
-        # Update severity score
-        severity_scores[old_node_id] = new_severity
-        severity_scores[new_name] = new_severity
+        # Update severity score in the copied version
+        severity_scores_copy[old_node_id] = new_severity
+        severity_scores_copy[new_name] = new_severity
 
         # Update edit_map_data with the changed elements
         edit_map_data['elements'] = elements
 
     # Check and apply color scheme
-    if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+    if selected_color_scheme is None: 
+        edit_map_data = color_scheme('Uniform', edit_map_data, severity_scores)
+
+    if selected_color_scheme is not None and edit_map_data is not None and severity_scores_copy is not None:
+        edit_map_data = color_scheme(selected_color_scheme, 
+                                     edit_map_data, 
+                                     severity_scores_copy)
 
     # Check and apply node sizing scheme
-    if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+    if selected_scheme is None: 
+        edit_map_data = node_sizing('Severity', edit_map_data, severity_scores)
+
+    if selected_scheme is not None and edit_map_data is not None and severity_scores_copy is not None:
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+                                    graph_data=edit_map_data, 
+                                    severity_scores=severity_scores_copy)
 
     # Ensure stylesheet is updated based on the above changes
     stylesheet = edit_map_data.get('stylesheet', [])
 
-    # Return updated values
-    return elements, severity_scores, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
+    # Return the deep-copied severity scores to prevent accidental modification of the original scores
+    return elements, severity_scores_copy, edit_map_data, stylesheet, selected_scheme, selected_color_scheme
 
-    
+
 # Callback: Open edge edit modal
 def open_edge_edit_modal(tapEdgeData, switch, edge_data, language):
 
@@ -349,12 +418,22 @@ def map_add_node_01(n_clicks, node_name, elements, edit_map_data, severity_score
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
     
     # Check and apply color scheme
+    if selected_color_scheme is None: 
+        edit_map_data = color_scheme('Uniform', edit_map_data, severity_scores)
+    
     if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+        edit_map_data = color_scheme(selected_color_scheme, 
+                                     edit_map_data, 
+                                     severity_scores)
 
     # Check and apply node sizing scheme
+    if selected_scheme is None: 
+        edit_map_data = node_sizing('Severity', edit_map_data, severity_scores)
+
     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+                                    graph_data=edit_map_data, 
+                                    severity_scores=severity_scores)
 
     # Ensure stylesheet is updated based on the above changes
     stylesheet = edit_map_data.get('stylesheet', [])
@@ -412,13 +491,23 @@ def delete_node_01(n_clicks, node_id, elements, edit_map_data, severity_scores, 
     cytoscape_elements = edit_map_data.get('elements', [])
     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
 
-        # Check and apply color scheme
+    # Check and apply color scheme
+    if selected_color_scheme is None: 
+        edit_map_data = color_scheme('Uniform', edit_map_data, severity_scores)
+    
     if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+        edit_map_data = color_scheme(selected_color_scheme, 
+                                     edit_map_data, 
+                                     severity_scores)
 
     # Check and apply node sizing scheme
+    if selected_scheme is None: 
+        edit_map_data = node_sizing('Severity', edit_map_data, severity_scores)
+
     if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-        edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+        edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+                                    graph_data=edit_map_data, 
+                                    severity_scores=severity_scores)
 
     # Ensure stylesheet is updated based on the above changes
     stylesheet = edit_map_data.get('stylesheet', [])
@@ -553,12 +642,22 @@ def add_edge_output_01(n_clicks, new_edge, elements, edit_map_data, severity_sco
         edit_map_data['stylesheet'] = new_stylesheet
 
         # Check and apply color scheme
+        if selected_color_scheme is None: 
+            edit_map_data = color_scheme('Uniform', edit_map_data, severity_scores)
+
         if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
-            edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
+            edit_map_data = color_scheme(selected_color_scheme, 
+                                         edit_map_data, 
+                                         severity_scores)
 
         # Check and apply node sizing scheme
+        if selected_scheme is None: 
+            edit_map_data = node_sizing('Severity', edit_map_data, severity_scores)
+
         if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-            edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+            edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+                                        graph_data=edit_map_data, 
+                                        severity_scores=severity_scores)
 
         # Ensure stylesheet is updated based on the above changes
         stylesheet = edit_map_data.get('stylesheet', [])
@@ -614,7 +713,8 @@ def delete_edge_output_01(n_clicks, edge, elements, edit_map_data, severity_scor
         edge_id = f"edge_{source}_{target}"
 
         # Remove the edge from elements and existing edges set
-        existing_edges = set([(e['data']['source'], e['data']['target']) for e in elements if 'source' in e.get('data', {})])
+        existing_edges = set([(e['data']['source'], e['data']['target']) 
+                              for e in elements if 'source' in e.get('data', {})])
         delete_edge(source, target, elements, existing_edges)
 
         # Remove the edge from edge_data
@@ -626,12 +726,20 @@ def delete_edge_output_01(n_clicks, edge, elements, edit_map_data, severity_scor
         edit_map_data['elements'] = elements
 
         # Check and apply color scheme
+        if selected_color_scheme is None: 
+            edit_map_data = color_scheme('Uniform', edit_map_data, severity_scores)
+
         if selected_color_scheme is not None and edit_map_data is not None and severity_scores is not None:
             edit_map_data = color_scheme(selected_color_scheme, edit_map_data, severity_scores)
 
         # Check and apply node sizing scheme
+        if selected_scheme is None: 
+            edit_map_data = node_sizing('Severity', edit_map_data, severity_scores)
+
         if selected_scheme is not None and edit_map_data is not None and severity_scores is not None:
-            edit_map_data = node_sizing(chosen_scheme=selected_scheme, graph_data=edit_map_data, severity_scores=severity_scores)
+            edit_map_data = node_sizing(chosen_scheme=selected_scheme, 
+                                        graph_data=edit_map_data, 
+                                        severity_scores=severity_scores)
 
         # Ensure stylesheet is updated based on the above changes
         stylesheet = edit_map_data.get('stylesheet', [])
@@ -666,6 +774,9 @@ def delete_edge_output_01(n_clicks, edge, elements, edit_map_data, severity_scor
 
 # Callback: Dynamically generate Likert scales
 def update_likert_scales(selected_factors, severity_scores):
+    # print("Selected factors:", selected_factors)
+    # print("Severity scores:", severity_scores)
+
     if severity_scores is None:
         severity_scores = {}
 
@@ -674,8 +785,9 @@ def update_likert_scales(selected_factors, severity_scores):
 
     return [create_likert_scale(factor, severity_scores.get(factor, 0)) for factor in selected_factors]
 
+
 # Callback: Update severity scores
-def update_severity_scores(severity_values, session_data, existing_severity_scores):
+def update_severity_scores(severity_values, session_data, existing_severity_scores, edit_map_data):
     # Check if severity_values, session_data or existing_severity_scores is None
     if severity_values is None or session_data is None or existing_severity_scores is None:
         return dash.no_update
@@ -685,7 +797,14 @@ def update_severity_scores(severity_values, session_data, existing_severity_scor
         existing_severity_scores = {}
 
     # Get the current list of factors
-    current_factors = session_data['dropdowns']['initial-selection']['value']
+    # current_factors = session_data['dropdowns']['initial-selection']['value']
+    # print(current_factors)
+        
+    current_factors = [
+        element['data']['label'] 
+        for element in edit_map_data['elements'] 
+        if 'source' not in element['data'] and 'target' not in element['data']  # This means it's a node, not an edge
+    ]
 
     # Ensure current_factors is not None
     if current_factors is None:
@@ -754,7 +873,8 @@ def update_stylesheet_01(tapNodeData, switch, edit_map_data, editing_mode):
         new_stylesheet.extend([
             {'selector': f'node[id = "{clicked_node_id}"]', 'style': {'opacity': '1'}},
             {'selector': ','.join([f'node[id = "{n_id}"]' for n_id in target_node_ids]), 'style': {'opacity': '1'}},
-            {'selector': ','.join([f'edge[source = "{clicked_node_id}"][target = "{e["data"]["target"]}"]' for e in outgoing_edges]), 'style': {'opacity': '1'}}
+            {'selector': ','.join([f'edge[source = "{clicked_node_id}"][target = "{e["data"]["target"]}"]' 
+                                   for e in outgoing_edges]), 'style': {'opacity': '1'}}
         ])
 
         return new_stylesheet
@@ -774,20 +894,23 @@ def toggle_modal_color(n_clicks, is_open):
     return is_open
 
 # Callback: Populate color info modal
-def update_modal_content_color(selected_scheme):
+def update_modal_content_color(selected_scheme, language):
+
+    translation = translations.get(language, translations['en'])
+
     if selected_scheme == 'Uniform':
-        return 'All the factors in your map have the same color.'
+        return translation['modal_color_uniform']
     if selected_scheme == 'Severity':
-        return 'The factors in your map are colored based on their relative severity. The darkest factor has the highest indicated severity and the lightest factor has lowest indicated severity.'
+        return translation['modal_color_severity']
     elif selected_scheme == 'Severity (abs)':
-        return 'The factors in your map are colored based on their absolute severity. The darkest factor has the highest possible severity score (10) and the lightest factor has the lowest possible severity score (0).'
+        return translation['modal_color_severity_abs']
     elif selected_scheme == 'Out-degree':
-        return 'The factors in your map are colored based on their out-degree, which refers to the number of out-going connections. The darkest factor has the most out-going connections and the lightest factor has the least out-going connections. Factors with a lot of out-going connections can be seen as main causes in your map.'
+        return translation['modal_color_out']
     elif selected_scheme == 'In-degree':
-        return 'The factors in your map are colored based on their in-degree, which refers to the number of incoming connections. The darkest factor has the most incoming connections and the lightest factor has the least incoming connections. Factors with a lot of incoming connections can be seen as main effects in your map.'
+        return translation['modal_color_in']
     elif selected_scheme == 'Out-/In-degree ratio':
-        return 'The factors in your map are colored based on their out-/in-degree ratio, which is calculated by dividing the number of out-going by the number of incoming connections. The darkest factor has many out-going and few incoming connections (active), and the lightest factor has few out-going and many incoming connections (passive).'
-    return 'As a default the factors in your map are uniformly colored.'
+        return translation['modal_color_out-in']
+    return translation['modal_color_default']
 
 # Callback: Open sizing info modal 
 def toggle_modal_sizing(n_clicks, is_open):
@@ -796,20 +919,23 @@ def toggle_modal_sizing(n_clicks, is_open):
     return is_open
 
 # Callback: Populate sizing info modal 
-def update_modal_content_sizing(selected_scheme):
+def update_modal_content_sizing(selected_scheme, language):
+
+    translation = translations.get(language, translations['en'])
+
     if selected_scheme == 'Uniform':
-        return 'All factors in your map have the same size.'
+        return translation['modal_size_uniform']
     if selected_scheme == 'Severity':
-        return 'The size of the factors in your map corresponds to their relative severity. The largest factor has the highest indicated severity and the smallest factor has lowest indicated severity.'
+        return translation['modal_size_severity']
     elif selected_scheme == 'Severity (abs)':
-        return 'The size of the factors in your map corresponds to their absolute severity. The largest factor has the highest possible severity score (10) and the smallest factor has the lowest possible severity score (0).'
+        return translation['modal_size_severity_abs']
     elif selected_scheme == 'Out-degree':
-        return 'The size of the factors in your map corresponds to their out-degree, which refers to the number of out-going connections. The largest factor has the most out-going connections and the smallest factor has the least out-going connections. Factors with a lot of out-going connections can be seen as main causes in your map.'
+        return translation['modal_size_out']
     elif selected_scheme == 'In-degree':
-        return 'The size of the factors in your map corresponds to their in-degree, which refers to the number of incoming connections. The largest factor has the most incoming connections and the smallest factor has the least incoming connections. Factors with a lot of incoming connections can be seen as main effects in your map.'
+        return translation['modal_size_in']
     elif selected_scheme == 'Out-/In-degree ratio':
-        return 'The size of the factors in your map corresponds to their out-/in-degree ratio, which is calculated by dividing the number of out-going by the number of incoming connections. The largest factor has many out-going and few incoming connections (active), and the smallest factor has few out-going and many incoming connections (passive).'
-    return 'As a default the size of the factors in your map corresponds to their relative severity. The largest factor has the highest indicated severity and the smallest factor has lowest indicated severity.'
+        return translation['modal_size_out-in']
+    return translation['modal_size_default']
 
 # Callback: Download network as image
 def get_image(n_clicks):
@@ -842,13 +968,13 @@ def donation_modal(n_clicks, is_open):
     return is_open
 
 # Callback: Donation button functionality
-def donate_button_clicked(n_clicks, data, current_style, severity_scores, edge_data, annotations):
+def donate_button_clicked(n_clicks, data, current_style, severity_scores, edge_data, annotations, is_open):
     if n_clicks:
         graph_data = format_export_data(data, current_style, severity_scores, edge_data, annotations)
         send_to_github(graph_data)
-        return 'Thank you for your donation! Data sent to GitHub.'
+        return 'Thank you for your donation! Data sent to GitHub.', False
 
-    return 'Donate to send data to GitHub'
+    return 'Donate to send data to GitHub', is_open
 
 # Callback: Blur background when information modal is open 
 def toggle_blur(donation_modal, color_modal, sizing_modal, inspect_modal, factor_edit, edge_edit):
@@ -896,16 +1022,28 @@ def save_edge_type(n_clicks, edge_data, selected_type, edge_data_store):
 def register_editing_callbacks(app):
 
     app.callback(
-        Output('edit-map-data', 'data'),
-        Input('load-map-btn', 'n_clicks'),
-        State('session-data', 'data')
+        [Output('edit-map-data', 'data'),
+         Output('severity-scores-edit', 'data', allow_duplicate=True)],
+        [Input('go-to-edit', 'n_clicks')],
+        [State('session-data', 'data'),
+         State('severity-scores', 'data')],
+         prevent_initial_call=True
+    )(load_session_graph)
+
+    app.callback(
+        [Output('edit-map-data', 'data', allow_duplicate=True),
+         Output('severity-scores-edit', 'data', allow_duplicate=True)],
+        [Input('load-map-btn', 'n_clicks')],
+        [State('session-data', 'data'),
+         State('severity-scores', 'data')],
+         prevent_initial_call=True
     )(load_session_graph)
 
     app.callback(
         Output('download-link', 'data'),
         Input('download-file-btn', 'n_clicks'),
         [State('edit-map-data', 'data'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('annotation-data', 'data'),
         State('edge-data', 'data'),
         State('my-mental-health-map', 'stylesheet')],
@@ -926,7 +1064,7 @@ def register_editing_callbacks(app):
         Output('note-input', 'value')],
         [Input('my-mental-health-map', 'tapNodeData'),
         Input('inspect-switch', 'value'),
-        Input('severity-scores', 'data'),
+        Input('severity-scores-edit', 'data'), ##
         State('annotation-data', 'data'),
         State('editing-mode', 'data')],  
         prevent_initial_call=True
@@ -1002,14 +1140,14 @@ def register_editing_callbacks(app):
         [Output('my-mental-health-map', 'elements'),
         Output('edit-edge', 'options'),
         Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('severity-scores', 'data', allow_duplicate=True),
+        Output('severity-scores-edit', 'data', allow_duplicate=True), ##
         Output('history-store', 'data'),
         Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)], 
         [Input('btn-plus-node', 'n_clicks')],
         [State('edit-node', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('history-store', 'data'),
         State('color_scheme', 'data'),
         State('sizing_scheme', 'data')],  
@@ -1035,14 +1173,14 @@ def register_editing_callbacks(app):
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-edge', 'options', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('severity-scores', 'data', allow_duplicate=True),
+        Output('severity-scores-edit', 'data', allow_duplicate=True), ##
         Output('history-store', 'data', allow_duplicate=True),
         Output('my-mental-health-map', 'stylesheet', allow_duplicate=True)],  
         [Input('btn-minus-node', 'n_clicks')],
         [State('edit-node', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('history-store', 'data'),
         State('color_scheme', 'data'),
         State('sizing_scheme', 'data')],  
@@ -1079,7 +1217,7 @@ def register_editing_callbacks(app):
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('history-store', 'data'),
         State('edge-data', 'data'),
         State('color_scheme', 'data'),
@@ -1112,7 +1250,7 @@ def register_editing_callbacks(app):
         [State('edit-edge', 'value'),
         State('my-mental-health-map', 'elements'),
         State('edit-map-data', 'data'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('history-store', 'data'),
         State('edge-data', 'data'),
         State('color_scheme', 'data'),
@@ -1150,7 +1288,7 @@ def register_editing_callbacks(app):
 
     app.callback(
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
-        Output('severity-scores', 'data', allow_duplicate=True),
+        Output('severity-scores-edit', 'data', allow_duplicate=True), ##
         Output('edit-map-data', 'data', allow_duplicate=True),
         Output('my-mental-health-map', 'stylesheet', allow_duplicate=True),
         Output('sizing_scheme', 'data'),
@@ -1161,7 +1299,7 @@ def register_editing_callbacks(app):
         [State('modal-node-name', 'value'),
         State('modal-severity-score', 'value'),
         State('my-mental-health-map', 'elements'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('edit-map-data', 'data'),
         State('my-mental-health-map', 'tapNodeData')],
         prevent_initial_call=True
@@ -1182,16 +1320,17 @@ def register_editing_callbacks(app):
     app.callback(
         Output('likert-scales-container', 'children'),
         [Input({'type': 'dynamic-dropdown', 'step': 1}, 'value'),
-        Input('severity-scores', 'data')]
+        Input('severity-scores', 'data')] ##
     )(update_likert_scales)
 
     app.callback(
-        Output('severity-scores', 'data'),
+        Output('severity-scores-edit', 'data'), ##
         [Input({'type': 'likert-scale', 'factor': ALL}, 'value')],
-        [State('session-data', 'data'),
-        State('severity-scores', 'data')]
+        [State('session-data', 'data'), 
+        State('severity-scores-edit', 'data'), ##
+        State('edit-map-data', 'data')] 
     )(update_severity_scores)
-
+    
     app.callback(
         Output('custom-color', 'data'),
         Input('custom-node-color', 'value'),
@@ -1228,7 +1367,8 @@ def register_editing_callbacks(app):
 
     app.callback(
         Output('modal-color-scheme-body', 'children'),
-        [Input('color-scheme', 'value')]
+        [Input('color-scheme', 'value')],
+        State('language-dropdown', 'value')
     )(update_modal_content_color)
 
     app.callback(
@@ -1239,7 +1379,8 @@ def register_editing_callbacks(app):
 
     app.callback(
         Output('modal-sizing-scheme-body', 'children'),
-        [Input('sizing-scheme', 'value')]
+        [Input('sizing-scheme', 'value')],
+        State('language-dropdown', 'value')
     )(update_modal_content_sizing)
 
     app.callback(
@@ -1254,13 +1395,16 @@ def register_editing_callbacks(app):
     )(donation_modal)
 
     app.callback(
-        Output('dummy-output', 'children'),
+        [Output('dummy-output', 'children'),
+         Output("donation-modal", "is_open", allow_duplicate=True)],
         Input('donation-agree', 'n_clicks'),
         [State('edit-map-data', 'data'),
         State('my-mental-health-map', 'stylesheet'),
-        State('severity-scores', 'data'),
+        State('severity-scores-edit', 'data'), ##
         State('edge-data', 'data'),
-        State('annotation-data', 'data')]
+        State('annotation-data', 'data'),
+        State("donation-modal", "is_open")],
+        prevent_initial_call = True
     )(donate_button_clicked)
 
     app.callback(
@@ -1277,7 +1421,7 @@ def register_editing_callbacks(app):
         [Output('my-mental-health-map', 'elements', allow_duplicate=True),
         Output('edit-edge', 'options', allow_duplicate=True),
         Output('edit-map-data', 'data', allow_duplicate=True),
-        Output('severity-scores', 'data', allow_duplicate=True),
+        Output('severity-scores-edit', 'data', allow_duplicate=True), ##
         Output('history-store', 'data', allow_duplicate=True)],
         [Input('back-btn', 'n_clicks')],
         [State('history-store', 'data')],
