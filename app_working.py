@@ -312,6 +312,7 @@ app.layout = dbc.Container([
     html.Div(id='dummy-output', style={'display': 'none'})
 ], fluid=True)
 
+server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8069)
