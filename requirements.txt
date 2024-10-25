@@ -1,0 +1,14 @@
+dash
+dash_cytoscape
+dash_bootstrap_components
+networkx
+plotly
+numpy
+matplotlib
+json
+base64
+requests
+datetime
+copy
+time
+gunicorn
