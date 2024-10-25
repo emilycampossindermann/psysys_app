@@ -78,7 +78,7 @@ translations = {
                                              style={"color": "blue", 
                                                     "textDecoration": "underline"}),
                                     ". Remember, you're not alone."]), 
-        'video_link_intro': "https://www.youtube.com/embed/iAD3SAvDc2s?si=s3OfeTq00FNRGdEx&rel=0&modestbranding=1",
+        'video_link_intro': "https://www.youtube.com/embed/-xp54xI-1PE?si=30BUKSN2ZEP6Q9_s&rel=0&modestbranding=1",
         'title_block_01': 'Everybody struggles from time to time',
         'description_block_01': 'Learn about the variability & identify your personal factors',
         'title_block_02': 'Seeing the connections',
