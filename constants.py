@@ -1,11 +1,11 @@
 from dash import html
 
 # Initialize factor list
-factors = ["Loss of interest", "Sadness", "Loss of motivation", "Stress", "Worry", "Overthinking",
-           "Sleep problems", "Tiredness", "Physical pain", "Changes in appetite", "Self-blame",
-           "Concentration problems", "Procrastination", "Guilt", "Shame", "Hopelessness", "Interpersonal problems",
-           "Social isolation", "Irritability", "Anxiety", "Reduced activity", "Self-neglect", "Suicidal thoughts", 
-           "Fear of the future", "Substance abuse"]
+factors = ["Anxiety", "Changes in appetite", "Concentration problems", "Fear of the future", "Guilt", 
+           "Hopelessness", "Interpersonal problems", "Irritability", "Loss of interest", "Loss of motivation", 
+           "Overthinking", "Physical pain", "Procrastination", "Reduced activity", "Sadness", "Self-blame", 
+           "Self-neglect", "Shame", "Sleep problems", "Social isolation", "Stress", "Substance abuse", 
+           "Suicidal thoughts", "Tiredness", "Worry"]
 
 # Initialize node color schemes
 node_color = ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"]
@@ -61,11 +61,16 @@ factor_translation_map = {
 # Dictionary
 translations = {
     'en': {
-        'factors': ["Loss of interest", "Sadness", "Loss of motivation", "Stress", "Worry", "Overthinking", 
-                    "Sleep problems", "Tiredness","Physical pain", "Changes in appetite", "Self-blame", 
-                    "Concentration problems", "Procrastination", "Guilt", "Shame", "Hopelessness", "Interpersonal problems",
-                    "Social isolation", "Irritability", "Anxiety", "Reduced activity", "Self-neglect", "Suicidal thoughts", 
-                    "Fear of the future", "Substance abuse"],
+        # 'factors': ["Loss of interest", "Sadness", "Loss of motivation", "Stress", "Worry", "Overthinking", 
+        #             "Sleep problems", "Tiredness","Physical pain", "Changes in appetite", "Self-blame", 
+        #             "Concentration problems", "Procrastination", "Guilt", "Shame", "Hopelessness", "Interpersonal problems",
+        #             "Social isolation", "Irritability", "Anxiety", "Reduced activity", "Self-neglect", "Suicidal thoughts", 
+        #             "Fear of the future", "Substance abuse"],
+        'factors': ["Anxiety", "Changes in appetite", "Concentration problems", "Fear of the future", "Guilt", 
+                    "Hopelessness", "Interpersonal problems", "Irritability", "Loss of interest", "Loss of motivation", 
+                    "Overthinking", "Physical pain", "Procrastination", "Reduced activity", "Sadness", "Self-blame", 
+                    "Self-neglect", "Shame", "Sleep problems", "Social isolation", "Stress", "Substance abuse", 
+                    "Suicidal thoughts", "Tiredness", "Worry"],
         'welcome_01': 'Welcome to PsySys',
         'welcome_02': 'Dive into your mental health!',
         'suicide-prevention': html.P(["If you're experiencing ",
@@ -219,12 +224,18 @@ translations = {
         'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)"
     },
     'de': {
-        'factors': ["Interessenverlust", "Traurigkeit", "Motivationsverlust", "Stress", "Sorgen", "Überdenken", 
-                    "Schlafstörungen", "Müdigkeit", "Schmerzen", "Veränderter Appetit", "Selbstvorwürfe", 
-                    "Konzentrationsprobleme", "Verlangsamtes Denken", "Gedächtnisprobleme", "Prokrastination", 
-                    "Schuldgefühle", "Schamgefühle", "Hoffnungslosigkeit", "Beziehungsprobleme", "Soziale Isolation", 
-                    "Reizbarkeit", "Ängstlichkeit", "Verminderte Aktivität", "Selbstvernachlässigung", "Suizidgedanken", 
-                    "Zukunftsangst", "Substanzmissbrauch"],
+        # 'factors': ["Interessenverlust", "Traurigkeit", "Motivationsverlust", "Stress", "Sorgen", "Überdenken", 
+        #             "Schlafstörungen", "Müdigkeit", "Schmerzen", "Veränderter Appetit", "Selbstvorwürfe", 
+        #             "Konzentrationsprobleme", "Verlangsamtes Denken", "Gedächtnisprobleme", "Prokrastination", 
+        #             "Schuldgefühle", "Schamgefühle", "Hoffnungslosigkeit", "Beziehungsprobleme", "Soziale Isolation", 
+        #             "Reizbarkeit", "Ängstlichkeit", "Verminderte Aktivität", "Selbstvernachlässigung", "Suizidgedanken", 
+        #             "Zukunftsangst", "Substanzmissbrauch"],
+        'factors': ["Ängstlichkeit", "Beziehungsprobleme", "Gedächtnisprobleme", "Hoffnungslosigkeit", "Interessenverlust", 
+                    "Konzentrationsprobleme", "Motivationsverlust", "Müdigkeit", "Prokrastination", "Reizbarkeit", 
+                    "Schamgefühle", "Schlafstörungen", "Schmerzen", "Schuldgefühle", "Selbstvernachlässigung", 
+                    "Selbstvorwürfe", "Soziale Isolation", "Sorgen", "Stress", "Substanzmissbrauch", 
+                    "Suizidgedanken", "Traurigkeit", "Überdenken", "Veränderter Appetit", "Verlangsamtes Denken", 
+                    "Verminderte Aktivität", "Zukunftsangst"],
         'welcome_01': "Wilkommen bei PsySys",
         'welcome_02': "Erkunde Deine mentale Gesundheit!",
         'suicide-prevention': html.P(["Wenn Du ", 
