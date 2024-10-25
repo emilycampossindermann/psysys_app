@@ -13,3 +13,5 @@ app = dash.Dash(
 )
 
 app.title = "PsySys"
+
+server = app.server
