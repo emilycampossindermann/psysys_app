@@ -12,6 +12,6 @@ app = dash.Dash(
     suppress_callback_exceptions=True
 )
 
-app.title = "PsySys"
-
 server = app.server
+
+app.title = "PsySys"
