@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import numpy as np
 import plotly as plt
 
-# Function: Create current centrality bar plot
+# Create current centrality bar plot
 def current_centrality_plot(track_data, comparison_data, selected_map, marks, translation):
     # Extract elements of currently visible map by checking timeline slider & fetching from comparison_data
     if comparison_data is not None:
@@ -84,7 +84,7 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks, tr
 
     return None
 
-# Function: Create overall centrality line plot
+# Create overall centrality line plot
 def calculate_degree_ratios(elements):
     degrees = {element['data']['id']: {'out': 0, 'in': 0} for element in elements 
                if 'source' not in element['data'] and 'target' not in element['data']}
@@ -92,20 +92,7 @@ def calculate_degree_ratios(elements):
     degree_ratios = {node: degrees[node]['out'] / degrees[node]['in'] if degrees[node]['in'] != 0 else degrees[node]['out'] for node in degrees}
     return degree_ratios
 
-# def prepare_graph_data(comparison_data):
-#     x = []
-#     y = []
-#     for network, data in comparison_data.items():
-#         #ratios = calculate_degree_ratios(data['elements'])
-#         # x.append(network)
-#         #y.append(ratios)
-#         severity = data.get('severity', {})
-
-#         x.append(network)
-#         y.append(severity)
-
-#     return x, y
-
+# Prepare data for severity overall plot
 def prepare_graph_data(comparison_data):
     x = []
     y = []

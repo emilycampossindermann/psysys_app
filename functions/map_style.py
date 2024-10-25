@@ -1,18 +1,18 @@
-# Function: Normalize        
+# Normalize        
 def normalize(value, max_degree, min_degree):
     value = float(value)
     if max_degree - min_degree == 0:
         return 0.5  
     return (value - min_degree) / (max_degree - min_degree)
 
-# Function: Color gradient
+# Color gradient
 def get_color(value):
     b = 255
     r = int(173 * (1 - value))
     g = int(216 * (1 - value))
     return r, g, b
 
-# Function: Calculate degree centrality
+# Calculate degree centrality
 def calculate_degree_centrality(elements, degrees):
     for element in elements:
         if 'source' in element['data']:
@@ -23,7 +23,7 @@ def calculate_degree_centrality(elements, degrees):
             degrees[target]['in'] = degrees[target].get('in', 0) + 1
     return elements, degrees
 
-# Function: Apply uniform color
+# Apply uniform color
 def apply_uniform_color_styles(stylesheet):
     # Define the uniform color style for nodes
     uniform_color_style = {
@@ -39,36 +39,7 @@ def apply_uniform_color_styles(stylesheet):
     stylesheet.append(uniform_color_style)
     return stylesheet
 
-# Function: Apply severity color
-# def apply_severity_color_styles(type, stylesheet, severity_scores, default_style):
-#     # Check if severity_scores is not empty and valid
-#     if severity_scores and all(isinstance(score, (int, float)) for score in severity_scores.values()):
-#         if type == "Severity":
-#             max_severity = max(severity_scores.values())
-#             min_severity = min(severity_scores.values())
-#         elif type == "Severity (abs)":
-#             max_severity = 10
-#             min_severity = 1
-
-#         # Normalize and apply color based on severity
-#         for node_id, severity in severity_scores.items():
-#             normalized_severity = (severity - min_severity) / (max_severity - min_severity)
-#             r, g, b = get_color(normalized_severity)  # Assuming get_color is defined as before
-
-#             severity_style = {
-#                 'selector': f'node[id="{node_id}"]',
-#                 'style': {
-#                     'background-color': f'rgb({r},{g},{b})'
-#                 }
-#             }
-#             # Append the style for this node
-#             stylesheet.append(severity_style)
-
-#     elif severity_scores == {}:
-#         stylesheet = default_style
-
-#     return stylesheet
-
+# Apply severity color
 def apply_severity_color_styles(type, stylesheet, severity_scores, default_style):
     # Check if severity_scores is not empty and valid
     if severity_scores and all(isinstance(score, (int, float)) for score in severity_scores.values()):
@@ -113,7 +84,7 @@ def apply_severity_color_styles(type, stylesheet, severity_scores, default_style
 
     return stylesheet
 
-# Function: Apply degree centrality color
+# Apply degree centrality color
 def apply_centrality_color_styles(type, stylesheet, elements):
     degrees = {element['data']['id']: {'out': 0, 'in': 0} for element in elements 
                if 'id' in element['data']}
@@ -159,7 +130,7 @@ def apply_centrality_color_styles(type, stylesheet, elements):
 
     return stylesheet
 
-# Function: Set color scheme
+# Set color scheme
 def color_scheme(chosen_scheme, graph_data, severity_scores):
     elements = graph_data['elements']
     stylesheet = graph_data['stylesheet']
@@ -175,7 +146,7 @@ def color_scheme(chosen_scheme, graph_data, severity_scores):
     
     return graph_data
 
-# Function: Include edge properties 
+# Include edge properties 
 def update_stylesheet(graph_data, edge_id, edge_type, strength):
     stylesheet = graph_data.get('stylesheet', [])
 
@@ -209,7 +180,7 @@ def update_stylesheet(graph_data, edge_id, edge_type, strength):
 
     return graph_data
 
-# Function: Normalize size
+# Normalize size
 def normalize_size(value, max_value, min_value, min_size, max_size):
     if max_value == min_value:
         # If max and min values are equal, return the average size to avoid division by zero
@@ -219,7 +190,7 @@ def normalize_size(value, max_value, min_value, min_size, max_size):
     normalized = (value - min_value) / (max_value - min_value)
     return normalized * (max_size - min_size) + min_size
 
-# Function: Apply uniform node sizing 
+# Apply uniform node sizing 
 def apply_uniform_size_styles(stylesheet):
     # Define the uniform size style
     uniform_size_style = {
@@ -232,7 +203,7 @@ def apply_uniform_size_styles(stylesheet):
 
     return stylesheet
 
-# Function: Apply severity node sizing
+# Apply severity node sizing
 def apply_severity_size_styles(type, stylesheet, severity_scores, default_style):
     # Check if severity_scores is not empty and valid
     max_size = 50
@@ -265,7 +236,7 @@ def apply_severity_size_styles(type, stylesheet, severity_scores, default_style)
 
     return stylesheet
 
-# Function: Apply degree centraliy node sizing
+# Apply degree centraliy node sizing
 def apply_centrality_size_styles(type, stylesheet, elements):
     max_size = 50
     min_size = 10
@@ -309,7 +280,7 @@ def apply_centrality_size_styles(type, stylesheet, elements):
 
     return stylesheet
 
-# Function: Set node sizing scheme 
+# Set node sizing scheme 
 def node_sizing(chosen_scheme, graph_data, severity_scores):
     print(severity_scores)
     elements = graph_data['elements']
@@ -326,7 +297,7 @@ def node_sizing(chosen_scheme, graph_data, severity_scores):
     
     return graph_data
 
-# Function: Color most influential fator in graph 
+# Color most influential fator in graph 
 def color_target(graph_data):
     influential_factor = graph_data['dropdowns']['target']['value']
     stylesheet = graph_data['stylesheet']
@@ -338,7 +309,7 @@ def color_target(graph_data):
     graph_data['stylesheet'] = stylesheet
     return graph_data
 
-# Function: Reset target color
+# Reset target color
 def reset_target(graph_data):
     stylesheet = graph_data['stylesheet']
     new_stylesheet = [style for style in stylesheet 
@@ -346,7 +317,7 @@ def reset_target(graph_data):
     graph_data['stylesheet'] = new_stylesheet
     return graph_data
 
-# Function: Color graph (out-degree centrality, target node)
+# Color graph (out-degree centrality, target node)
 def graph_color(session_data, severity_scores):
 
     session_data = reset_target(session_data)
@@ -356,7 +327,7 @@ def graph_color(session_data, severity_scores):
 
     return session_data
 
-# Function: Updates edge styles based on strength
+# Updates edge styles based on strength
 def update_edge_opacity(edge_id, strength, stylesheet):
     opacity = strength / 5  # Adjust opacity based on strength
     tapped_edge_style = {
@@ -386,8 +357,3 @@ def apply_uniform_style(elements, severity_scores, uniform_color, stylesheet):
             stylesheet.append(uniform_style)
 
     return stylesheet
-
-# Function: Find feedback loops 
-
-# Function: Find most central factor in the map 
-

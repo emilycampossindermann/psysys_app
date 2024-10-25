@@ -28,6 +28,36 @@ stylesheet = [{'selector': 'node',
 hidden_style = {'display': 'none'}
 visible_style = {'display': 'block', "color": "#8793c9"}
 
+# Factor translation map 
+# Define the translation map between English and German factors
+factor_translation_map = {
+    "Loss of interest": "Interessenverlust",
+    "Sadness": "Traurigkeit",
+    "Loss of motivation": "Motivationsverlust",
+    "Stress": "Stress",
+    "Worry": "Sorgen",
+    "Overthinking": "Überdenken",
+    "Sleep problems": "Schlafstörungen",
+    "Tiredness": "Müdigkeit",
+    "Physical pain": "Körperliche Beschwerden",
+    "Changes in appetite": "Veränderter Appetit",
+    "Self-blame": "Selbstvorwürfe",
+    "Concentration problems": "Konzentrationsprobleme",
+    "Procrastination": "Prokrastination",
+    "Guilt": "Schuldgefühle",
+    "Shame": "Schamgefühle",
+    "Hopelessness": "Hoffnungslosigkeit",
+    "Interpersonal problems": "Beziehungsprobleme",
+    "Social isolation": "Soziale Isolation",
+    "Irritability": "Reizbarkeit",
+    "Anxiety": "Ängstlichkeit",
+    "Reduced activity": "Verminderte Aktivität",
+    "Self-neglect": "Selbstvernachlässigung",
+    "Suicidal thoughts": "Suizidgedanken",
+    "Fear of the future": "Zukunftsangst",
+    "Substance abuse": "Substanzmissbrauch"
+}
+
 # Dictionary
 translations = {
     'en': {
@@ -48,7 +78,7 @@ translations = {
                                              style={"color": "blue", 
                                                     "textDecoration": "underline"}),
                                     ". Remember, you're not alone."]), 
-        'video_link_intro': "https://www.youtube.com/embed/d8ZZyuESXcU?si=CYvKNlf17wnzt4iGrel=0&modestbranding=1",
+        'video_link_intro': "https://www.youtube.com/embed/iAD3SAvDc2s?si=s3OfeTq00FNRGdEx&rel=0&modestbranding=1",
         'title_block_01': 'Everybody struggles from time to time',
         'description_block_01': 'Learn about the variability & identify your personal factors',
         'title_block_02': 'Seeing the connections',
@@ -58,17 +88,17 @@ translations = {
         'description_block_03': 'Understand why you might drift into a downward spiral',
         'title_block_04': 'Breaking out of the cycle',
         'description_block_04': 'Detect promising areas for positive change',
-        'video_link_block_01': 'https://www.youtube.com/embed/ttLzT4U2F2I?si=xv1ETjdc1uGROZTo',
+        'video_link_block_01': "https://www.youtube.com/embed/mb91ZnrT9Bg?si=PJa94P0IMJJw4iNV&rel=0&modestbranding=1",
         'placeholder_dd_01': "Select your personal factors",
-        'video_link_block_02': 'https://www.youtube.com/embed/stqJRtjIPrI?si=1MI5daW_ldY3aQz3',
+        'video_link_block_02': "https://www.youtube.com/embed/e-ppym1WsNA?si=Pck80FZK1WDIzDS4&rel=0&modestbranding=1",
         'placeholder_dd_02': "Select your factors that are causally connected",
         'example_block_02': ('Example: If you feel that normally worrying causes you to become less concentrated, ' 
                              'select these factors in this order.'),
-        'video_link_block_03': 'https://www.youtube.com/embed/EdwiSp3BdKk?si=TcqeWxAlGl-_NUfx',
+        'video_link_block_03': "https://www.youtube.com/embed/53t5ScSfpH0?si=Gof066JxVvdHV9eu&rel=0&modestbranding=1",
         'placeholder_dd_03': "Select your factors that reinforce each other",
         'example_block_03': ('Example: If you feel that that ruminating causes you to worry, '
                              'which only worsens the rumination, select these factors.'),
-        'video_link_block_04': 'https://www.youtube.com/embed/hwisVnJ0y88?si=OpCWAMaDwTThocO6',
+        'video_link_block_04': "https://www.youtube.com/embed/Hbhe6kliuSI?si=Bb2P-q7bz8EcOwvd&rel=0&modestbranding=1",
         'placeholder_dd_04': "Select the factor you think is the most influential",
         'finish_01': "You've completed PsySys.",
         'finish_02': 'Explore your Mental-Health-Map!',
@@ -185,7 +215,8 @@ translations = {
         'hover-uniform': "same color, severity determines factor size",
         'hover-upload-tracking': "Upload saved map to compare (.json file)",
         'hover-delete-tracking': "Delete current map (you can't delete PsySys map)",
-        'schemes': ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"]
+        'schemes': ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"],
+        'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)"
     },
     'de': {
         'factors': ["Interessenverlust", "Traurigkeit", "Motivationsverlust", "Stress", "Sorgen", "Überdenken", 
@@ -204,7 +235,7 @@ translations = {
                                       html.A("diesen Link", href="https://findahelpline.com", target="_blank", 
                                              style={"color": "blue", "textDecoration": "underline"}),
                                              " besuchst. Denke daran, Du bist nicht allein."]),
-        'video_link_intro': "https://www.youtube.com/embed/iAD3SAvDc2s?si=ZE9nz2ghhzqtwuTZ",
+        'video_link_intro': "https://www.youtube.com/embed/iAD3SAvDc2s?si=ZE9nz2ghhzqtwuTZ&rel=0&modestbranding=1",
         'title_block_01': "Jedem geht's mal schlecht",
         'description_block_01': "Erkenne Deine persönlichen Faktoren.",
         'title_block_02': "Die Zusammenhänge erkennen",
@@ -213,17 +244,17 @@ translations = {
         'description_block_03': "Verstehe, wie man in Abwärtsspiralen stecken bleibt.",
         'title_block_04': "Aus dem Kreislauf ausbrechen",
         'description_block_04': "Finde Ansätze für positive Veränderungen.",
-        'video_link_block_01': "https://www.youtube.com/embed/VbtrHB-R8aQ?si=SLZj1ykaXey-shvZ",
+        'video_link_block_01': "https://www.youtube.com/embed/VbtrHB-R8aQ?si=SLZj1ykaXey-shvZ&rel=0&modestbranding=1",
         'placeholder_dd_01': "Wähle Deine persönlichen Faktoren aus",
-        'video_link_block_02': "https://www.youtube.com/embed/p3iVzuhIhrk?si=0YsKJkr-HgVDVJkN",
+        'video_link_block_02': "https://www.youtube.com/embed/p3iVzuhIhrk?si=0YsKJkr-HgVDVJkN&rel=0&modestbranding=1",
         'placeholder_dd_02': "Wähle die Faktoren, die miteinander zusammenhängen",
         'example_block_02': ("Beispiel: Wenn Du merkst, dass Sorgen dich unkonzentriert machen, "
                              "wähle diese Faktoren in dieser Reihenfolge aus."),
-        'video_link_block_03': "https://www.youtube.com/embed/98JNUCJrbbA?si=Eci1YF2-pd4iZDZx",
+        'video_link_block_03': "https://www.youtube.com/embed/98JNUCJrbbA?si=Eci1YF2-pd4iZDZx&rel=0&modestbranding=1",
         'placeholder_dd_03': "Wähle die Faktoren, die sich gegenseitig verstärken",
         'example_block_03': ("Beispiel: Wenn Du merkst, dass Grübeln Sorgen auslöst und das Grübeln "
                              "dadurch nur noch schlimmer wird, wähle diese Faktoren aus."),
-        'video_link_block_04': "https://www.youtube.com/embed/gUMGu49w7o0?si=sUabGZ5BheGLgA_F",
+        'video_link_block_04': "https://www.youtube.com/embed/gUMGu49w7o0?si=sUabGZ5BheGLgA_F&rel=0&modestbranding=1",
         'placeholder_dd_04': "Wähle den Faktor mit dem größten Einfluss.",
         'finish_01': "Du hast PsySys abgeschlossen.",
         'finish_02': "Erkunde Deine Mental-Health-Map!",
@@ -345,6 +376,7 @@ translations = {
         'hover-uniform': "gleiche Farbe, Schweregrad bestimmt Faktorgröße",
         'hover-upload-tracking': "Gespeicherte Map zum Vergleich hochladen (.json Datei)",
         'hover-delete-tracking': "Map löschen (Du kannst die PsySys Map nicht löschen)",
-        'schemes': ["Einheitlich", "Schweregrad", "Schweregrad (abs)", "Out-degree", "In-degree", "Out-/In-degree Verhältnis"]
+        'schemes': ["Einheitlich", "Schweregrad", "Schweregrad (abs)", "Out-degree", "In-degree", "Out-/In-degree Verhältnis"],
+        'birdt': "Mit beratender Unterstützung von Mark Willems (Gründer & CEO Birdt Health)"
     }
 }

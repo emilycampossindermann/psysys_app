@@ -2,51 +2,7 @@ import json, base64, requests, datetime
 from functions.map_style import calculate_degree_centrality
 from datetime import datetime
 
-# def format_export_data(data, current_style, severity_scores, edge_data, annotations):
-#     elements = data.get('elements', [])
-    
-#     # Calculate & include: degree centralities
-#     degrees = {element['data']['id']: {'out': 0, 'in': 0} for element in elements if 'id' in element['data']}
-    
-#     # Calculate in-degree and out-degree
-#     elements, degrees = calculate_degree_centrality(elements, degrees)
-
-#     # Compute centrality based on the selected type
-#     out_degrees = {}
-#     in_degrees = {}
-#     out_in_ratio = {}
-#     for id, degree_counts in degrees.items():
-#         out_degrees[id] = degree_counts['out']
-#         in_degrees[id] = degree_counts['in']
-
-#         if degree_counts['in'] != 0:
-#             out_in_ratio[id] = degree_counts['out'] / degree_counts['in']
-#         else:
-#             out_in_ratio[id] = 0 
-
-#     current_date = datetime.now().strftime("%y/%m/%d-%H:%M")
-
-#     # Check if the 'edges' key exists in the data
-#     edges = data.get('edges', [])
-
-#     # Format data to be exported 
-#     # Filter out: elements, stylesheet, edges
-#     # Include: annotations, severity scores, edge_data, degree centralities
-#     exported_data = {
-#         'elements': data.get('elements', []),
-#         'stylesheet': current_style,
-#         'edges': edges,  # Safely access 'edges'
-#         'severity-scores': severity_scores,
-#         'edge-data': edge_data,
-#         'out-degrees': out_degrees,
-#         'in-degrees': in_degrees,
-#         'out-in-ratio': out_in_ratio,
-#         'annotations': annotations,
-#         'date': current_date,
-#         'severity': severity_scores
-#     }
-#     return exported_data
-
+# Format graph data to export
 def format_export_data(data, current_style, severity_scores, edge_data, annotations):
     elements = data.get('elements', [])
 
@@ -91,7 +47,7 @@ def format_export_data(data, current_style, severity_scores, edge_data, annotati
 
     return exported_data
 
-# Function: Send file to github
+# Send graph file to github
 def send_to_github(data):
     # Replace with your own GitHub repository details
     repo_owner = 'emilycampossindermann'

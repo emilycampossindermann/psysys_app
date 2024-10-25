@@ -1,4 +1,4 @@
-# Function: Initiate graph with elements
+# Initiate graph with elements
 def map_add_factors(session_data, value, severity_score):
     if value is None:
         value = []
@@ -38,7 +38,7 @@ def map_add_factors(session_data, value, severity_score):
 
     return session_data
 
-# Function: Add an edge 
+# Add an edge 
 def add_edge(source, target, elements, existing_edges):
         edge_key = f"{source}->{target}"
         if edge_key not in existing_edges:
@@ -48,7 +48,7 @@ def add_edge(source, target, elements, existing_edges):
         else:
             return elements, existing_edges
         
-# Function: Delete an edge
+# Delete an edge
 def delete_edge(source, target, elements, existing_edges):
     # Remove the edge from elements
     elements[:] = [element for element in elements if not ('source' in element.get('data', {}) and element['data']['source'] == source and 'target' in element.get('data', {}) and element['data']['target'] == target)]
@@ -56,11 +56,11 @@ def delete_edge(source, target, elements, existing_edges):
     # Remove the edge from existing_edges if it's stored as a tuple (source, target)
     existing_edges.discard((source, target))
 
-# Function: Check if a factor exists in elements
+# Check if a factor exists in elements
 def factor_exists(factor, elements):
     return any(element.get('data', {}).get('id') == factor for element in elements)
 
-# Function: Remove chain edges    
+# Remove chain edges    
 def remove_chain_edges(chain, elements, existing_edges, cycles):
     cycle_edges = set()
     for cycle in cycles:
@@ -74,13 +74,13 @@ def remove_chain_edges(chain, elements, existing_edges, cycles):
             elements[:] = [e for e in elements if not ('source' in e.get('data', {}) and e['data']['source'] == edge[0] and 'target' in e.get('data', {}) and e['data']['target'] == edge[1])]
             existing_edges[:] = [e for e in existing_edges if not ('source' in e.get('data', {}) and e['data']['source'] == edge[0] and e['data']['target'] == edge[1])]
 
-# Function: Add an edge to the elements
+# Add an edge to the elements
 def add_edge_new(source, target, elements):
     edge_data = {'data': {'source': source, 'target': target}}
     if not any(e.get('data') == edge_data['data'] for e in elements):
         elements.append(edge_data)
 
-# Function: Add chain elements
+# Add chain elements
 def map_add_chains(session_data, chain1, chain2):
     map_elements = session_data['elements']
     previous_chain1 = session_data['dropdowns']['chain1']['value'] or []
@@ -109,7 +109,7 @@ def map_add_chains(session_data, chain1, chain2):
 
     return session_data
 
-# Function: Remove cycle edges
+# Remove cycle edges
 def remove_cycle_edges(cycle, elements, existing_edges, chains):
     # Gather all edges from chain1 and chain2
     chain_edges = set()
@@ -129,7 +129,7 @@ def remove_cycle_edges(cycle, elements, existing_edges, chains):
             elements[:] = [e for e in elements if not ('source' in e.get('data', {}) and e['data']['source'] == source and 'target' in e.get('data', {}) and e['data']['target'] == target)]
             existing_edges.discard(edge)
 
-# Function: Add cycles
+# Add cycles
 def map_add_cycles(session_data, cycle1, cycle2):
     map_elements = session_data['elements']
     existing_edges = set(session_data['edges'])

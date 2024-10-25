@@ -207,14 +207,27 @@ style.css
 .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.5); /* Same overlay for both modals */
 }
-/* Custom background color for the dropdown menu (already added) */
 
-/* Text color for the dropdown menu items (already added) */
-/* .custom-dropdown.Select-option {
-    color: white;  /* Adjust the text color of the dropdown options */
-/* } */ 
+/* Custom CSS for icon hover effects */
 
-/* Custom color for the currently selected value */
-/* .custom-dropdown.Select-value-label { */
-    /* color: #9AA6D6 !important;  Change this color to the lighter shade you want
-} */
+/* Add smooth transition to the icons */
+.nav-icon {
+    transition: transform 0.3s ease, color 0.3s ease; /* Add smooth transition for color and scale */
+}
+
+/* Only the icon changes color and scales up on hover */
+.nav-link:hover .nav-icon {
+    transform: scale(1.2);  /* Scale the icon to make it pop */
+}
+
+/* Optional: If you want to change the background or text of the NavLink itself (without affecting the icon) */
+.nav-link {
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: transparent;  /* Ensure background stays transparent */
+    color: inherit;  /* Ensure text color stays the same */
+}
+
+

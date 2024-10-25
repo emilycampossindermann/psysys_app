@@ -119,10 +119,11 @@ def generate_step_content(step, session_data, translation):
                                "marginLeft": "480px", 
                                "marginTop": "-70px", 
                                "borderRadius": "15px", 
-                               "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)"}
+                               "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                               "backgroundColor": "white" }
                     ),
                     html.Br(), html.Br(),
-                ]),
+                ]), 
                 html.Div([
                         html.Div(
                             style={"height": "6px"}),
@@ -1496,7 +1497,7 @@ def create_about(app, translation):
             [
                 html.Br(),
                 html.Br(),
-                html.Br(),
+                #html.Br(),
                 html.H1(
                     "Share Knowledge. Empower People.", 
                     style={"fontFamily": "Arial Black", 
@@ -1559,7 +1560,7 @@ def create_about(app, translation):
                     ],
                     style={'display': 'inline-block', 
                            'margin': '3px',
-                           'marginTop': '190px',
+                           'marginTop': '130px',
                            'marginLeft': '-150px'},
                 ),
                 html.Div(
@@ -1689,6 +1690,50 @@ def create_about(app, translation):
                     ],
                     style={'display': 'inline-block', 
                            'margin': '3px'},
+                ),
+
+                # Birdt Health section
+                html.Div(
+                    [
+                        html.Div(
+                            html.Img(
+                                src=app.get_asset_url('Amsterdamuniversitylogo.svg.png'), 
+                                style={'width': '50px', 
+                                       'height': '50px', 
+                                       'borderRadius': '50%', 
+                                       'marginRight': '15px'}),
+                            style={'flex': '0 0 auto'}
+                        ), 
+
+                        html.Div(
+                            html.Img(
+                                src=app.get_asset_url('birdt-health-logo.jpeg'), 
+                                style={'width': '50px', 
+                                       'height': '50px', 
+                                       'borderRadius': '50%', 
+                                       'marginRight': '15px'}),
+                            style={'flex': '0 0 auto'}
+                        ),
+                        html.Div(style={'height': '30px'}),
+                        html.Div(
+                            html.P(
+                                translation['birdt'], 
+                                style={'textAlign': 'left', 
+                                       'color': 'grey', 
+                                       'marginTop': '12px',
+                                       'maxWidth': '350px'}),
+                            style={'flex': '1'}
+                        )
+                    ],
+                    style={'display': 'flex', 
+                           'alignItems': 'center', 
+                           'marginTop': '20px',
+                           'marginLeft': '400px',
+                           'width': '35%',
+                           'padding': '10px',
+                           'borderTop': '1px solid lightgrey',
+                           'justifyContent': 'center',
+                           'textAlign': 'center'}
                 ),
             ],
             style={"backgroundColor": "#f0f0f0", 
