@@ -64,8 +64,8 @@ def generate_step_content(step, session_data, translation):
                     html.Br(),
                     html.Div(
                         html.H2(
-                            # translation['welcome_01'],
-                            translation.get('wecome_01', ''),
+                            translation['welcome_01'],
+                            #translation.get('wecome_01', ''),
                                 style={#"fontFamily": "Gill Sans", 
                                     "fontFamily": "Arial Black",
                                     "fontWeight": "normal", 
@@ -78,8 +78,8 @@ def generate_step_content(step, session_data, translation):
                     ),
                     html.Div(
                         html.H5(
-                            # translation['welcome_02'],
-                            translation.get('wecome_02', ''),
+                            translation['welcome_02'],
+                            #translation.get('wecome_02', ''),
                                 style={#"fontFamily": "Gill Sans",
                                     "fontFamily": "Arial Black", 
                                     "fontWeight": "normal", 
@@ -115,8 +115,8 @@ def generate_step_content(step, session_data, translation):
                 html.Div([
                     html.Iframe(
                         #src="https://www.youtube.com/embed/d8ZZyuESXcU?si=CYvKNlf17wnzt4iGrel=0&modestbranding=1",
-                        # src=translation['video_link_intro'],
-                        src = translation.get('video_link_intro', ''),
+                        src=translation['video_link_intro'],
+                        # src = translation.get('video_link_intro', ''),
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
