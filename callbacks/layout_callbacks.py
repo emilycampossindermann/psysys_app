@@ -226,14 +226,14 @@ def show_suicide_prevention_message(selected_factors):
     return {"color": "#516395", "visibility": "hidden"}  # Keep the space but hide the text
 
 # Set loading dcc.Store to true when user navigates to different tab
-def turn_loading_true(pathname):
-    return True 
+# def turn_loading_true(pathname):
+#     return True 
 
 # Simulate page load (3 sec) & show loading circle
-def simulate_page_load(pathname):
-    time.sleep(3)  # Simulating delay in content load
-    content = ""
-    return False, content
+# def simulate_page_load(pathname):
+#     time.sleep(3)  # Simulating delay in content load
+#     content = ""
+#     return False, content
 
 # Disable/enable the navlinks based on the loading-state
 # def toggle_nav_links(loading):
@@ -325,17 +325,17 @@ def register_layout_callbacks(app):
         Input('go-to-edit', 'n_clicks')
     )(redirect_edit)
 
-    app.callback(
-        Output("loading-state", "data"),
-        [Input("url", "pathname")]
-    )(turn_loading_true)
+    # app.callback(
+    #     Output("loading-state", "data"),
+    #     [Input("url", "pathname")]
+    # )(turn_loading_true)
 
-    app.callback(
-        [Output("loading-state", "data", allow_duplicate=True),
-         Output('tab-content', 'children')],
-        [Input("url", "pathname")],
-        prevent_initial_call=True
-    )(simulate_page_load)
+    # app.callback(
+    #     [Output("loading-state", "data", allow_duplicate=True),
+    #      Output('tab-content', 'children')],
+    #     [Input("url", "pathname")],
+    #     prevent_initial_call=True
+    # )(simulate_page_load)
 
     # app.callback(
     #     [Output("Psychoeducation", "disabled"),
