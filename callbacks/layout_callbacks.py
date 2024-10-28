@@ -112,7 +112,10 @@ def update_step(back_clicks, next_clicks, current_step_data):
 
 # Update session data based on user input
 def update_hidden_div(values):
-    return json.dumps(values)
+    try:
+        return json.dumps(values)
+    except TypeError:
+        return json.dumps(["Serialization error with values"])
 
 def update_session_data(n_clicks, json_values, session_data, current_step_data, severity_scores):
     step = current_step_data.get('step')
@@ -147,6 +150,12 @@ def update_session_data(n_clicks, json_values, session_data, current_step_data, 
                 session_data = map_add_chains(session_data, values[0], values[1])
             elif step == 3: 
                 session_data = map_add_cycles(session_data, values[0], values[1])
+
+    # Ensure session_data remains JSON-compatible
+    try:
+        json.dumps(session_data)
+    except TypeError:
+        session_data = {"error": "Session data serialization issue"}
 
     return session_data
 
@@ -227,9 +236,9 @@ def simulate_page_load(pathname):
     return False, content
 
 # Disable/enable the navlinks based on the loading-state
-def toggle_nav_links(loading):
-    # If loading is True, disable all navlinks, else enable them
-    return [loading, loading, loading, loading]
+# def toggle_nav_links(loading):
+#     # If loading is True, disable all navlinks, else enable them
+#     return [loading, loading, loading, loading]
 
 # Register the callbacks
 def register_layout_callbacks(app):
@@ -328,11 +337,11 @@ def register_layout_callbacks(app):
         prevent_initial_call=True
     )(simulate_page_load)
 
-    app.callback(
-        [Output("Psychoeducation", "disabled"),
-        Output("Edit My Map", "disabled"),
-        Output("Compare My Map", "disabled"),
-        Output("About Us", "disabled")],
-        [Input("loading-state", "data")]
-    )(toggle_nav_links)
+    # app.callback(
+    #     [Output("Psychoeducation", "disabled"),
+    #     Output("Edit My Map", "disabled"),
+    #     Output("Compare My Map", "disabled"),
+    #     Output("About Us", "disabled")],
+    #     [Input("loading-state", "data")]
+    # )(toggle_nav_links)
 

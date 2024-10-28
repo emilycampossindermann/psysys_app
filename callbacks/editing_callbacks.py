@@ -642,28 +642,76 @@ def update_modal_content_sizing(selected_scheme, language):
     return translation['modal_size_default']
 
 # Download network as image
-def get_image(n_clicks):
-    # File type to output of 'svg, 'png', 'jpg', or 'jpeg' (alias of 'jpg')
-    ftype = 'jpg'
+# def get_image(n_clicks):
+#     # File type to output of 'svg, 'png', 'jpg', or 'jpeg' (alias of 'jpg')
+#     ftype = 'jpg'
 
-    # 'store': Stores the image data in 'imageData' !only jpg/png are supported
-    # 'download'`: Downloads the image as a file with all data handling
-    # 'both'`: Stores image data and downloads image as file.
-    action = 'store'
+#     # 'store': Stores the image data in 'imageData' !only jpg/png are supported
+#     # 'download'`: Downloads the image as a file with all data handling
+#     # 'both'`: Stores image data and downloads image as file.
+#     action = 'store'
 
-    file_name = 'my_image'  # Default file name
+#     file_name = 'my_image'  # Default file name
 
+#     if n_clicks:
+#         action = 'download'
+#         #current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+#         current_date = datetime.now().strftime("%y/%m/%d-%H:%M")
+#         file_name = f"my_mental_health_map_snapshot_{current_date}.{ftype}"
+
+#     return {
+#         'type': ftype,
+#         'action': action,
+#         'filename': file_name  # Set the filename for download
+#     }
+
+# def get_image(n_clicks, image_data):
+#     if n_clicks:
+#         print(f"Button clicked: n_clicks={n_clicks}")
+#         print(image_data)
+#         if image_data:
+#             print("Image data received")
+#             print(image_data)  # Print the data to see the format
+            
+#             ftype = 'jpg'
+#             current_date = datetime.now().strftime("%y_%m_%d-%H%M")
+#             file_name = f"my_mental_health_map_snapshot_{current_date}.{ftype}"
+
+#             # If `image_data` includes a base64 prefix, split it
+#             base64_content = image_data.split(",")[1] if "," in image_data else image_data
+
+#             # Prepare download dictionary
+#             download_dict = {
+#                 "filename": file_name,
+#                 "content": base64_content,
+#                 "base64": True,
+#                 "type": ftype
+#             }
+#             print(download_dict)  # Debug print to check download dictionary format
+#             return download_dict
+
+#     return dash.no_update  # If not clicked or no data received
+
+def trigger_image_generation(n_clicks):
     if n_clicks:
-        action = 'download'
-        #current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        current_date = datetime.now().strftime("%y/%m/%d-%H:%M")
-        file_name = f"my_mental_health_map_snapshot_{current_date}.{ftype}"
+        return {'type': 'jpg', 'action': 'store'}
+    return dash.no_update
 
-    return {
-        'type': ftype,
-        'action': action,
-        'filename': file_name  # Set the filename for download
-    }
+def get_image(image_data, n_clicks):
+    if n_clicks and image_data:
+        ftype = 'jpg'
+        current_date = datetime.now().strftime("%y_%m_%d-%H%M")
+        file_name = f"my_mental_health_map_snapshot_{current_date}.{ftype}"
+        base64_content = image_data.split(",")[1] if "," in image_data else image_data
+        download_dict = {
+            "filename": file_name,
+            "content": base64_content,
+            "base64": True,
+            "type": ftype
+        }
+        print("Download dictionary prepared:", download_dict)
+        return download_dict
+    return dash.no_update
 
 # Donation 
 def donation_modal(n_clicks, is_open):
@@ -986,9 +1034,29 @@ def register_editing_callbacks(app):
         State('language-dropdown', 'value')
     )(update_modal_content_sizing)
 
+    # app.callback(
+    #     Output('my-mental-health-map', 'generateImage'),
+    #     Input('download-image-btn', 'n_clicks'),
+    # )(get_image)
+
+    # app.callback(
+    #     Output('download-link', 'data', allow_duplicate=True),  # Assuming an Output of dcc.Download component
+    #     Input('download-image-btn', 'n_clicks'),
+    #     State('my-mental-health-map', 'generateImage'),
+    #     prevent_initial_call=True
+    # )(get_image)
+
     app.callback(
         Output('my-mental-health-map', 'generateImage'),
         Input('download-image-btn', 'n_clicks'),
+        prevent_initial_call=True
+    )(trigger_image_generation)
+
+    app.callback(
+        Output('download-link', 'data', allow_duplicate=True),
+        Input('my-mental-health-map', 'imageData'),  # Directly observe imageData
+        State('download-image-btn', 'n_clicks'),
+        prevent_initial_call=True
     )(get_image)
 
     app.callback(

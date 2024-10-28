@@ -63,7 +63,9 @@ def generate_step_content(step, session_data, translation):
                     html.Br(), 
                     html.Br(),
                     html.Div(
-                        html.H2(translation['welcome_01'],
+                        html.H2(
+                            # translation['welcome_01'],
+                            translation.get('wecome_01', ''),
                                 style={#"fontFamily": "Gill Sans", 
                                     "fontFamily": "Arial Black",
                                     "fontWeight": "normal", 
@@ -75,7 +77,9 @@ def generate_step_content(step, session_data, translation):
                                "maxWidth": "500px"}
                     ),
                     html.Div(
-                        html.H5(translation['welcome_02'],
+                        html.H5(
+                            # translation['welcome_02'],
+                            translation.get('wecome_02', ''),
                                 style={#"fontFamily": "Gill Sans",
                                     "fontFamily": "Arial Black", 
                                     "fontWeight": "normal", 
@@ -111,7 +115,8 @@ def generate_step_content(step, session_data, translation):
                 html.Div([
                     html.Iframe(
                         #src="https://www.youtube.com/embed/d8ZZyuESXcU?si=CYvKNlf17wnzt4iGrel=0&modestbranding=1",
-                        src=translation['video_link_intro'],
+                        # src=translation['video_link_intro'],
+                        src = translation.get('video_link_intro', ''),
                         style={"width": "55.4%", 
                                "height": "60vh", 
                                "zIndex": "1000", 
@@ -176,8 +181,10 @@ def generate_step_content(step, session_data, translation):
     ], style=common_style)
     
     if step == 1:
-        options = session_data['dropdowns']['initial-selection']['options']
-        value = session_data['dropdowns']['initial-selection']['value']
+        # options = session_data['dropdowns']['initial-selection']['options']
+        options = session_data.get('dropdowns', {}).get('initial-selection', {}).get('options', [])
+        # value = session_data['dropdowns']['initial-selection']['value']
+        value = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
         id = {'type': 'dynamic-dropdown', 
               'step': 1}
         return html.Div([
@@ -286,10 +293,13 @@ def generate_step_content(step, session_data, translation):
         ])
 
     if step == 2:
-        selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        # selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
-        value_chain1 = session_data['dropdowns']['chain1']['value']
-        value_chain2 = session_data['dropdowns']['chain2']['value']
+        # value_chain1 = session_data['dropdowns']['chain1']['value']
+        value_chain1 = session_data.get('dropdowns', {}).get('chain1', {}).get('value', [])
+        # value_chain2 = session_data['dropdowns']['chain2']['value']
+        value_chain2 = session_data.get('dropdowns', {}).get('chain2', {}).get('value', [])
         id_chain1 = {'type': 'dynamic-dropdown', 
                      'step': 2}
         id_chain2 = {'type': 'dynamic-dropdown', 
@@ -379,10 +389,13 @@ def generate_step_content(step, session_data, translation):
         ])
     
     if step == 3:
-        selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        # selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
-        value_cycle1 = session_data['dropdowns']['cycle1']['value']
-        value_cycle2 = session_data['dropdowns']['cycle2']['value']
+        # value_cycle1 = session_data['dropdowns']['cycle1']['value']
+        value_cycle1 = session_data.get('dropdowns', {}).get('cycle1', {}).get('value', [])
+        # value_cycle2 = session_data['dropdowns']['cycle2']['value']
+        value_cycle2 = session_data.get('dropdowns', {}).get('cycle2', {}).get('value', [])
         id_cycle1 = {'type': 'dynamic-dropdown', 
                      'step': 4}
         id_cycle2 = {'type': 'dynamic-dropdown', 
@@ -471,9 +484,11 @@ def generate_step_content(step, session_data, translation):
         ])
     
     if step == 4:
-        selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        # selected_factors = session_data['dropdowns']['initial-selection']['value'] or []
+        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
-        value_target = session_data['dropdowns']['target']['value']
+        # value_target = session_data['dropdowns']['target']['value']
+        value_target = session_data.get('dropdowns', {}).get('target', {}).get('value', [])
         id = {'type': 'dynamic-dropdown', 
               'step': 6}
         return html.Div([
@@ -551,7 +566,8 @@ def generate_step_content(step, session_data, translation):
     
     if step == 5:
         elements = session_data.get('elements', [])
-        selected_factors = session_data['add-nodes'] or []
+        # selected_factors = session_data['add-nodes'] or []
+        selected_factors = session_data.get('add-nodes', [])
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
         return html.Div([
             html.Div(
@@ -604,7 +620,8 @@ def generate_step_content(step, session_data, translation):
                 html.Div([
                     cyto.Cytoscape(
                         id='graph-output',
-                        elements=session_data['elements'],
+                        #elements=session_data['elements'],
+                        elements = elements,
                         layout={'name': 'cose', 
                                 "padding": 10, 
                                 "nodeRepulsion": 3500,
@@ -620,7 +637,8 @@ def generate_step_content(step, session_data, translation):
                                 },
                         zoom=1,
                         pan={'x': 200, 'y': 200},
-                        stylesheet = session_data['stylesheet'],
+                        # stylesheet = session_data['stylesheet'],
+                        stylesheet = session_data.get('stylesheet', []),
                         style={ 'width': '55.4%',
                                'height': '60vh',
                                'borderRadius': '15px',  # Round the edges of the graph window
@@ -956,6 +974,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                         cyto.Cytoscape(
                                                 id='my-mental-health-map',
                                                 elements=edit_map_data['elements'],
+                                                # elements = edit_map_data.get('elements', []),
                                                 layout={'name': 'cose', 
                                                         "padding": 10, 
                                                         "nodeRepulsion": 3500,
@@ -983,7 +1002,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     "position": "fixed", 
                                                     "marginLeft": "480px",
                                                     "marginTop": "-441px",
-                                                }
+                                                },
+                                                generateImage={'type': 'jpg', 'action': 'store'},
                                             ), 
                                         
                                         html.Br(),
@@ -1350,7 +1370,8 @@ def create_tracking_tab(track_data, translation):
             html.Div([
                 cyto.Cytoscape(
                         id='track-graph',
-                        elements=track_data['elements'],
+                        # elements=track_data['elements'],
+                        elements = track_data.get('elements', []),
                         layout={'name': 'cose', 
                                 "padding": 10, 
                                 "nodeRepulsion": 3500,
