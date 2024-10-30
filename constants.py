@@ -94,7 +94,7 @@ translations = {
         'title_block_04': 'Breaking out of the cycle',
         'description_block_04': 'Detect promising areas for positive change',
         'video_link_block_01': "https://www.youtube.com/embed/mb91ZnrT9Bg?si=PJa94P0IMJJw4iNV&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Select your personal factors",
+        'placeholder_dd_01': "Select up to 15 personal factors",
         'video_link_block_02': "https://www.youtube.com/embed/e-ppym1WsNA?si=Pck80FZK1WDIzDS4&rel=0&modestbranding=1",
         'placeholder_dd_02': "Select your factors that are causally connected",
         'example_block_02': ('Example: If you feel that normally worrying causes you to become less concentrated, ' 
@@ -221,7 +221,10 @@ translations = {
         'hover-upload-tracking': "Upload saved map to compare (.json file)",
         'hover-delete-tracking': "Delete current map (you can't delete PsySys map)",
         'schemes': ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"],
-        'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)"
+        'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)",
+        'example_block_04': ("Example: If you feel like your Overthinking is the most central factor ", 
+                             "in your map, select it here. If you're unsure, you don't have to select one."),
+        'hover-plots': "Switch between plots"
     },
     'de': {
         # 'factors': ["Interessenverlust", "Traurigkeit", "Motivationsverlust", "Stress", "Sorgen", "Überdenken", 
@@ -256,7 +259,7 @@ translations = {
         'title_block_04': "Aus dem Kreislauf ausbrechen",
         'description_block_04': "Finde Ansätze für positive Veränderungen.",
         'video_link_block_01': "https://www.youtube.com/embed/VbtrHB-R8aQ?si=SLZj1ykaXey-shvZ&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Wähle Deine persönlichen Faktoren aus",
+        'placeholder_dd_01': "Wähle bis zu 15 Deiner persönlichen Faktoren aus",
         'video_link_block_02': "https://www.youtube.com/embed/p3iVzuhIhrk?si=0YsKJkr-HgVDVJkN&rel=0&modestbranding=1",
         'placeholder_dd_02': "Wähle die Faktoren, die miteinander zusammenhängen",
         'example_block_02': ("Beispiel: Wenn Du merkst, dass Sorgen dich unkonzentriert machen, "
@@ -388,6 +391,155 @@ translations = {
         'hover-upload-tracking': "Gespeicherte Map zum Vergleich hochladen (.json Datei)",
         'hover-delete-tracking': "Map löschen (Du kannst die PsySys Map nicht löschen)",
         'schemes': ["Einheitlich", "Schweregrad", "Schweregrad (abs)", "Out-degree", "In-degree", "Out-/In-degree Verhältnis"],
-        'birdt': "Mit beratender Unterstützung von Mark Willems (Gründer & CEO Birdt Health)"
+        'birdt': "Mit beratender Unterstützung von Mark Willems (Gründer & CEO Birdt Health)",
+        'example_block_04': ("Beispiel: Wenn Du das Gefühl hast, dass Deine Ängste der wichtigste Faktor ",
+                             "in Deiner Map ist, wähle dies aus. Wenn Du unsicher bist, musst Du keinen Faktor auswählen."),
+        'hover-plots': "Wechsle zwischen Plots"
     }
+}
+
+HEADER_STYLE = {
+    "background-image": "linear-gradient(to right, #8793c9, #516395)",
+    "padding": "75px",
+    "width": "100vw",
+    "position": "fixed",
+    "top": "0",
+    "left": "0",
+    "zIndex": "1000",
+    "display": "flex",
+    "flexDirection": "column",
+    "paddingLeft": "150px",
+}
+
+COMMON_STYLE = {
+    "backgroundColor": "#f0f0f0",
+    "width": "100vw",
+    "minHeight": "100vh",
+    "paddingTop": "250px",
+    "paddingLeft": "100px",
+    "margin": "0 auto",
+    'position': 'fixed'
+}
+
+# Flex container for text and video alignment
+CONTENT_CONTAINER_STYLE = {
+    "display": "flex",
+    "alignItems": "flex-start",
+    "width": "90vw",                  # Full width container for flexible layout
+    "justifyContent": "space-between",
+    "maxWidth": "1500px",
+    "margin": "0 auto",
+    #"gap": "30px",                    # Control space between text and video
+    "flexWrap": "wrap", 
+}
+
+# Direct container for the video, with flex alignment
+VIDEO_CONTAINER_STYLE = {
+    "display": "flex",
+    "alignItems": "center",
+    "width": "60.5%",                  # Matches specified video width
+    "maxWidth": "1000px",             # Prevents unexpected constraints
+    "marginTop": '-100px',
+    'zIndex': '1500',
+    'marginLeft': '-100px'
+}
+
+# Video style as specified
+VIDEO_STYLE = {
+    "width": "100%",                  # Full width within its container
+    "height": "53.8vh",
+    "borderRadius": "15px",
+    "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+    "backgroundColor": "white",
+    'marginLeft': '-20px'
+}
+
+PLOT_WINDOW_STYLE = {
+    'width': '40%', 
+    'height': "53.8vh",
+    'padding': '10px', 
+    'backgroundColor': 'white', 
+    'borderRadius': '15px', 
+    'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+# Adjusted text block style for alignment
+TEXT_BLOCK_STYLE = {
+    "width": "35%",                   # Adjusted for layout alongside video
+    "color": "grey",
+    "fontSize": "14px",
+    "padding": "10px",
+    'borderRadius': '15px', 
+}
+
+TEXT_STYLE = {
+    "fontFamily": "Arial Black",
+    "color": "grey",
+}
+
+EDITING_WINDOW_STYLE = {
+    'width': '40%',                   # Width for editing section
+    'height': "60vh",
+    'padding': '10px',
+    'backgroundColor': 'white',
+    'borderRadius': '15px',
+    'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
+    'zIndex': '2000'
+}
+
+ABOUT_SECTION_STYLE = {
+    "backgroundColor": "#f0f0f0",
+    "paddingTop": "90px",     # Offset for header height
+    "paddingBottom": "40px",
+    "display": "flex",
+    "flexWrap": "wrap",
+    "justifyContent": "center",
+    "gap": "0px",             # Responsive space between items
+    "textAlign": "center",
+    "width": "100%",
+    "maxWidth": "1200px",
+    "margin": "0 auto",
+}
+
+ABOUT_MEMBER_STYLE = {
+    "flex": "1 1 250px",          # Allows each member to take more space as screen width allows
+    "textAlign": "center",
+    "maxWidth": "210px",          # Allows each member to stretch horizontally without affecting the image size
+    "margin": "10px",             # Margin around each member card for spacing
+    "display": "flex",            # Flex to organize image and text
+    "flexDirection": "column",    # Stack image on top of text
+    "alignItems": "center",       # Center content within each member
+}
+
+# Style for the image to keep it at a fixed size
+IMAGE_STYLE = {
+    "width": "150px",             # Fixed width for image
+    "height": "150px",            # Fixed height for image
+    "borderRadius": "50%",        # Circular image
+    "marginBottom": "10px",       # Space between image and text
+}
+
+TEXT_CONTAINER_STYLE = {
+    "width": "100%",
+    "maxWidth": "250px",
+    "textAlign": "center",
+}
+
+TEXT_ELEMENT_STYLE = {
+    "marginTop": "1px",
+    "marginBottom": "1px",
+    "color": "grey",
+    "fontStyle": "italic"
+}
+
+ABOUT_PARTNER_STYLE = {
+    "display": "flex",
+    "alignItems": "center",
+    "gap": "15px",
+    "paddingTop": "10px",
+    "borderTop": "1px solid lightgrey",
+    "justifyContent": "center",
+    "margin": "50px auto 0",
+    "width": "60%",  # Adjust width for responsiveness
+    "maxWidth": "600px",
 }

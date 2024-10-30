@@ -225,6 +225,12 @@ def show_suicide_prevention_message(selected_factors):
         return {"color": "#516395", "visibility": "visible"}  # Show the message
     return {"color": "#516395", "visibility": "hidden"}  # Keep the space but hide the text
 
+# Limit dropdown for factor selection to 10
+def limit_factor_selection(selection):
+    if selection and len(selection) > 15:
+        return selection[:15]
+    return selection
+
 # Set loading dcc.Store to true when user navigates to different tab
 # def turn_loading_true(pathname):
 #     return True 
@@ -324,6 +330,11 @@ def register_layout_callbacks(app):
         Output('url', 'pathname'),
         Input('go-to-edit', 'n_clicks')
     )(redirect_edit)
+
+    app.callback(
+        Output({'type': 'dynamic-dropdown', 'step': 1}, 'value'),
+        Input({'type': 'dynamic-dropdown', 'step': 1}, 'value')
+    )(limit_factor_selection)
 
     # app.callback(
     #     Output("loading-state", "data"),

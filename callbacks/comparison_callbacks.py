@@ -14,6 +14,8 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
     filename = None
     if contents:
 
+        print("contents")
+
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
         data = json.loads(decoded.decode('utf-8'))  # Assuming JSON file, adjust as needed
@@ -32,9 +34,13 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
         filename = data['date']
         #match = re.search(r"(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})", filename)
         match = re.search(r"(\d{2}/\d{2}/\d{2}-\d{2}:\d{2})", filename)
+
+        print(match)
         
         if match:
             date_time = match.group(1)
+
+            print('existing-marks:', existing_marks)
             
             # Update marks if date/time not already in the timeline
             if date_time not in existing_marks.values():
@@ -149,6 +155,8 @@ def delete_current_map(n_clicks, existing_marks, current_max, current_value, gra
             # Set current_value to 1 if no marks are left
             current_value = 0 if not new_marks else current_value
 
+            print('new-marks:', new_marks)
+
             # Update the track_data timeline
             track_data['timeline-marks'] = new_marks
             track_data['timeline-max'] = current_max
@@ -164,23 +172,23 @@ def delete_current_map(n_clicks, existing_marks, current_max, current_value, gra
     return existing_marks, current_max, current_value, map_store, track_data
 
 # Store current mode (needed?)
-def set_editing_mode(clicks_mode1, clicks_mode2, clicks_mode3, clicks_mode4, edit_map_data, elements):
-    ctx = dash.callback_context
-    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+# def set_editing_mode(clicks_mode1, clicks_mode2, clicks_mode3, clicks_mode4, edit_map_data, elements):
+#     ctx = dash.callback_context
+#     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
     
-    if triggered_id == 'mode-1':
-        editing_mode_data = "mode-1"
-    elif triggered_id == 'mode-2':
-        editing_mode_data = "mode-2"
-    elif triggered_id == 'mode-3':
-        editing_mode_data = "mode-3"
-    elif triggered_id == 'mode-4':
-        editing_mode_data = "mode-4"
+#     if triggered_id == 'mode-1':
+#         editing_mode_data = "mode-1"
+#     elif triggered_id == 'mode-2':
+#         editing_mode_data = "mode-2"
+#     elif triggered_id == 'mode-3':
+#         editing_mode_data = "mode-3"
+#     elif triggered_id == 'mode-4':
+#         editing_mode_data = "mode-4"
     
-    else:
-        editing_mode_data = "unknown"
+#     else:
+#         editing_mode_data = "unknown"
 
-    return editing_mode_data
+#     return editing_mode_data
 
 # Plotting mode switch 
 def update_plotting_mode(current_clicks, overall_clicks, current_mode):
@@ -507,14 +515,14 @@ def register_comparison_callbacks(app):
         prevent_initial_call=True
     )(delete_current_map)
 
-    app.callback(
-        Output('editing-mode', 'data'),
-        #Output('edit-map-data', 'data', allow_duplicate=True)],
-        [Input('mode-1', 'n_clicks'), Input('mode-2', 'n_clicks'), Input('mode-3', 'n_clicks'), Input('mode-4', 'n_clicks')],
-        [State('edit-map-data', 'data'), 
-        State('my-mental-health-map', 'elements')],
-        prevent_initial_call=True
-    )(set_editing_mode)
+    # app.callback(
+    #     Output('editing-mode', 'data'),
+    #     #Output('edit-map-data', 'data', allow_duplicate=True)],
+    #     [Input('mode-1', 'n_clicks'), Input('mode-2', 'n_clicks'), Input('mode-3', 'n_clicks'), Input('mode-4', 'n_clicks')],
+    #     [State('edit-map-data', 'data'), 
+    #     State('my-mental-health-map', 'elements')],
+    #     prevent_initial_call=True
+    # )(set_editing_mode)
 
     app.callback(
         [Output('plot-mode', 'data'),

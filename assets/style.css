@@ -169,17 +169,17 @@ style.css
 }
 
 #likert-scales-container::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #cccccc; 
     border-radius: 10px;
 }
 
 #likert-scales-container::-webkit-scrollbar-thumb {
-    background: #f1f1f1; 
+    background: #b3c1e0; 
     border-radius: 10px;
 }
 
 #likert-scales-container::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #8793c9; 
 }
 
 /* assets/styles.css */
@@ -229,5 +229,4 @@ style.css
     background-color: transparent;  /* Ensure background stays transparent */
     color: inherit;  /* Ensure text color stays the same */
 }
-
 

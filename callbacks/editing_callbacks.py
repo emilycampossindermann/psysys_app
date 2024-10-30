@@ -98,16 +98,18 @@ def upload_graph(contents, filename):
     return dash.no_update
 
 # Open edit node modal upon clicking it
-def open_node_edit_modal(tapNodeData, switch, severity_scores, annotations, editing_mode):
-    if editing_mode == 'mode-1':
-        if 0 not in switch and tapNodeData:
-            node_id = tapNodeData['id']
-            node_name = tapNodeData.get('label', node_id)
-            severity_score = severity_scores.get(node_name, 0)
-            annotation = annotations.get(node_id, '') 
+def open_node_edit_modal(tapNodeData, switch, severity_scores, annotations):
+    #if editing_mode == 'mode-1':
+    if 0 not in switch and tapNodeData:
+        node_id = tapNodeData['id']
+        node_name = tapNodeData.get('label', node_id)
+        severity_score = severity_scores.get(node_name, 0)
+        annotation = annotations.get(node_id, '') 
 
-            return True, node_name, severity_score, annotation
-        return False, None, None, ''
+        return True, node_name, severity_score, annotation
+    
+    return False, '', 0, ''  # Closed modal with default values
+        # return False, None, None, ''
 
 # Reset tabnodedata on mode switch
 def reset_tap_data(switch):
@@ -545,12 +547,12 @@ def save_edge_type(n_clicks, edge_name, edge_type, edge_data):
     return edge_data
 
 # Inspect node (highlight direct effects) upon clicking
-def update_stylesheet_01(tapNodeData, switch, edit_map_data, editing_mode):
+def update_stylesheet_01(tapNodeData, switch, edit_map_data):
     default_stylesheet = edit_map_data['stylesheet']
     elements = edit_map_data['elements']
 
-    if editing_mode != 'mode-1':
-        return default_stylesheet
+    # if editing_mode != 'mode-1':
+    #     return default_stylesheet
     
     # Reset to default if in view mode
     if 0 not in switch:
@@ -815,9 +817,9 @@ def register_editing_callbacks(app):
         Output('note-input', 'value')],
         [Input('my-mental-health-map', 'tapNodeData'),
         Input('inspect-switch', 'value'),
-        Input('severity-scores-edit', 'data'), ##
+        Input('severity-scores-edit', 'data')], ##
         State('annotation-data', 'data'),
-        State('editing-mode', 'data')],  
+        #State('editing-mode', 'data')],  
         prevent_initial_call=True
     )(open_node_edit_modal)
 
@@ -1000,8 +1002,8 @@ def register_editing_callbacks(app):
         Output('my-mental-health-map', 'stylesheet'),
         [Input('my-mental-health-map', 'tapNodeData'),
         Input('inspect-switch', 'value')],
-        [State('edit-map-data', 'data'),
-        State('editing-mode', 'data')]
+        [State('edit-map-data', 'data')]
+        #State('editing-mode', 'data')]
     )(update_stylesheet_01)
 
     app.callback(
