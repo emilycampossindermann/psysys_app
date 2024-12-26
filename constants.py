@@ -17,7 +17,8 @@ node_size = ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree",
 stylesheet = [{'selector': 'node',
                'style': {'background-color': '#9CD3E1', 
                          'label': 'data(label)', 
-                         'font-family': 'Arial'}},
+                         'font-family': 'Outfit',
+                         'text-max-width': '5px'}},
               {'selector': 'edge',
                'style': {'curve-style': 'bezier', 
                          'target-arrow-shape': 'triangle', 
@@ -26,7 +27,14 @@ stylesheet = [{'selector': 'node',
 
 # Initialize styles (buttons)
 hidden_style = {'display': 'none'}
-visible_style = {'display': 'block', "color": "#8793c9"}
+visible_style = {'display': 'block', 
+                 "color": "white", 
+                 "border": "2px solid white", 
+                 "borderRadius":"50px", 
+                 "backgroundClip": "padding-box", 
+                 "background": "transparent",  
+                 'padding': '5px 13px',
+                 "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.1)"}
 
 # Factor translation map 
 # Define the translation map between English and German factors
@@ -71,13 +79,12 @@ translations = {
                     "Overthinking", "Physical pain", "Procrastination", "Reduced activity", "Sadness", "Self-blame", 
                     "Self-neglect", "Shame", "Sleep problems", "Social isolation", "Stress", "Substance abuse", 
                     "Suicidal thoughts", "Tiredness", "Worry"],
-        'welcome_01': 'Welcome to PsySys',
-        'welcome_02': 'Dive into your mental health!',
+        'welcome_01': 'welcome to psysys',
+        'welcome_02': 'dive into your mental health.',
         'suicide-prevention': html.P(["If you're experiencing ",
                                       html.Span("suicidal thoughts", style={"fontWeight": "bold"}),
-                                      ", support is available. Please reach out to ",
-                                      "someone you trust or contact a confidential suicide prevention hotline. ",
-                                      "You can find a hotline near you by visiting ",
+                                      ", support is available. ",
+                                      "Find a confidential suicide prevention hotline near you by visiting ",
                                       html.A("this link", href="https://findahelpline.com", 
                                              target="_blank", 
                                              style={"color": "blue", 
@@ -94,7 +101,7 @@ translations = {
         'title_block_04': 'Breaking out of the cycle',
         'description_block_04': 'Detect promising areas for positive change',
         'video_link_block_01': "https://www.youtube.com/embed/mb91ZnrT9Bg?si=PJa94P0IMJJw4iNV&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Select up to 15 personal factors",
+        'placeholder_dd_01': "Select between 5-8 personal factors",
         'video_link_block_02': "https://www.youtube.com/embed/e-ppym1WsNA?si=Pck80FZK1WDIzDS4&rel=0&modestbranding=1",
         'placeholder_dd_02': "Select your factors that are causally connected",
         'example_block_02': ('Example: If you feel that normally worrying causes you to become less concentrated, ' 
@@ -105,18 +112,19 @@ translations = {
                              'which only worsens the rumination, select these factors.'),
         'video_link_block_04': "https://www.youtube.com/embed/Hbhe6kliuSI?si=Bb2P-q7bz8EcOwvd&rel=0&modestbranding=1",
         'placeholder_dd_04': "Select the factor you think is the most influential",
-        'finish_01': "You've completed PsySys.",
-        'finish_02': 'Explore your Mental-Health-Map!',
-        'feedback_text': ("Congratulations! You've completed PsySys and built your personalised mental-health-map. "
-                          "You can now load your map into the Edit tab and further tweak it to create the best "
+        'finish_01': "you've completed psysys.",
+        'finish_02': 'explore your mental-health-map.',
+        'feedback_text': ("Congrats! You've built your personalised mental-health-map. "
+                          "You can zoom in and drag your factors to get a better look at it. You can also load your map "
+                          "into the Edit tab and further tweak it to create the best "
                           "representation of your mental health. Ask yourself:"),
         'feedback_question_01': "Are there personal factors or relations missing?",
         'feedback_question_02': "Are some of the relationships stronger than others?",
         'feedback_question_03': "Is my most influential factor really that central in my map?",
         'feedback_question_04': "Which could be promising treatment targets in my map?",
-        'edit-map-title_01': "Edit your map",
+        'edit-map-title_01': "Edit Your Mental-Health-Map",
         'edit-map-title_02': "Load, customize & save maps",
-        'compare-map-title_01': "Compare your map",
+        'compare-map-title_01': "Track Your Mental-Health-Map",
         'compare-map-title_02': "Upload maps & track changes",
         'placeholder_enter_factor': "Enter factor to add/delete",
         'placeholder_enter_connection': "Enter connection to add/delete",
@@ -222,9 +230,60 @@ translations = {
         'hover-delete-tracking': "Delete current map (you can't delete PsySys map)",
         'schemes': ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"],
         'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)",
-        'example_block_04': ("Example: If you feel like your Overthinking is the most central factor ", 
+        'example_block_04': ("e.g. If you feel like your Overthinking is the most influential factor ", 
                              "in your map, select it here. If you're unsure, you don't have to select one."),
-        'hover-plots': "Switch between plots"
+        'hover-plots': "Switch between plots",
+        "about-1-1":("The PsySys Project"),
+        "about-1-2":("Within the PsySys (Psychological Systems Education) project we aim to develop and evaluate a "
+                    "psychoeducational platform that leverages the network approach to psychopathology for therapeutic"
+                    " support. PsySys is designed is to educate users on their mental health and empower them to better "
+                    " understand and monitor their personal healing journey. "),
+        "about-2-1":("Our Mission"),
+        "about-2-2":("PsySys aims to enhance mental health care by providing and accessible, evidence-based tool "
+                    "that helps map and address the dynamic relationships between symptoms. Thereby PsySys encourages a "
+                    "deeper understanding of mental health and encourages more personalized approaches to care."),
+        "about-3-1":("Our Vision"),
+        "about-3-2":("We envision PsySys as a bridge between research and practice, offering clinicians and clients "
+                    "a new way to understand mental health challenges, and researchers a tool to explore them. "
+                    "By moving beyond traditional diagnostic frameworks, PsySys helps to promote an individualized and dynamic"
+                    " perspective onto mental health."),
+        "get-started": "Get Started",
+        "back-home": "Back to Home",
+        "welcome-landing": "Welcome to PsySys",
+        "sub-landing": "Leveraging the network approach to psychopathology to empower patients.",
+        "view-demo": "View Demo",
+        "learn-more": "Learn More",
+        "demo": "Discover insights, track your mental health, and gain actionable knowledge.",
+        "psychoeducation": "Psychoeducation",
+        "psychoeducation-sub": "Learn about your mental dynamics.",
+        "editor": "Map Editor",
+        "editor-sub": "Build your mental-health-map.",
+        "tracker": "Map Tracker",
+        "tracker-sub": "Monitor your mental-health-maps.",
+        "exercise-0": ("Watch the video. Then click on 'Start' to begin with the session which will guide you through the following blocks:"),
+        "exercise-1": ("Watch the video. Then select the factors you are currently dealing with from the list below "
+                       "and indicate their severity."),
+        "exercise-2": ("Watch the video. Then select two causal chains you recognize from yourself. Include as many "
+                       "factors as you like."),
+        "example-2-1": ("e.g. If you have trouble sleeping, which impairs your ability to concentrate, select "
+                        "'Sleep problems', 'Trouble concentrating'."),
+        "example-2-2": ("e.g. If your fear of the future increases your feelings of hopelesness, which in turn "
+                        "worsens your anxiety, select 'Fear of the future', 'Hopelesness', 'Anxiety'."),
+        "exercise-3": ("Watch the video. Then select two vicious cycles you recognize from yourself. Include as many "
+                       "factors as you like."),
+        "example-3-1": ("e.g. If you have trouble sleeping, which increases your anxiety, which worsens your sleep, "
+                        "select 'Sleep problems', 'Anxiety'."),
+        "example-3-2": ("e.g. If your social isolation leads to self-neglect which increases your shame and only worsens your "
+                        "isolation, select 'Social isolation', 'Self-neglect', 'Shame'."),
+        "exercise-4": ("Watch the video. Then select the factor you feel like is the most influential one in your mental-health-map."),
+        "psysys-steps": ["Intro", "Personal Factors", "Causal Chains", "Vicious Cycles", "Finding Targets", "Finish"],
+        "edit-text": ("Load your PsySys map or upload an existing map file to edit. Extend your map and explore different visualizations. Download your map as a file or image or donate it to our project."),
+        "uva-support": ("Granted the PsySys project an Impact Grant of €25.000  in April 2024."),
+        "dptv-support": ("Awarded the PsySys project with the master-research award 2024 endowed with €1000."),
+        "zu-support": ("Supported the improvement of the PsySys demo with usability feedback."),
+        "read-more": "Read more",
+        "back": "Back",
+        "coming-soon": "Coming soon"
     },
     'de': {
         # 'factors': ["Interessenverlust", "Traurigkeit", "Motivationsverlust", "Stress", "Sorgen", "Überdenken", 
@@ -259,7 +318,7 @@ translations = {
         'title_block_04': "Aus dem Kreislauf ausbrechen",
         'description_block_04': "Finde Ansätze für positive Veränderungen.",
         'video_link_block_01': "https://www.youtube.com/embed/VbtrHB-R8aQ?si=SLZj1ykaXey-shvZ&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Wähle bis zu 15 Deiner persönlichen Faktoren aus",
+        'placeholder_dd_01': "Wähle 5-10 Deiner persönlichen Faktoren aus",
         'video_link_block_02': "https://www.youtube.com/embed/p3iVzuhIhrk?si=0YsKJkr-HgVDVJkN&rel=0&modestbranding=1",
         'placeholder_dd_02': "Wähle die Faktoren, die miteinander zusammenhängen",
         'example_block_02': ("Beispiel: Wenn Du merkst, dass Sorgen dich unkonzentriert machen, "
@@ -270,18 +329,20 @@ translations = {
                              "dadurch nur noch schlimmer wird, wähle diese Faktoren aus."),
         'video_link_block_04': "https://www.youtube.com/embed/gUMGu49w7o0?si=sUabGZ5BheGLgA_F&rel=0&modestbranding=1",
         'placeholder_dd_04': "Wähle den Faktor mit dem größten Einfluss.",
-        'finish_01': "Du hast PsySys abgeschlossen.",
+        'finish_01': "Du bist mit psysys fertig.",
         'finish_02': "Erkunde Deine Mental-Health-Map!",
-        'feedback_text': ("Glückwunsch! Du hast PsySys abgeschlossen und Deine persönliche Mental-Health-Map "
-                          "erstellt. Du kannst diese in die „Bearbeiten“-Ansicht laden und weiter anpassen, "
-                          "um die beste Darstellung Deiner Psyche zu erstellen. Frag Dich selbst:"),
+        'feedback_text': ("Glückwunsch! Du hast Deine persönliche Mental-Health-Map "
+                          "erstellt. Du kannst in Deine Map rein zoomen und Deine Faktoren verschieben um eine"
+                          " bessere Übersicht zu bekommen. Du kannst deine Map auch in die „Bearbeiten“-Ansicht laden "
+                          " und weiter anpassen, "
+                          "um die beste Darstellung Deiner Psyche zu erstellen. Frag Dich:"),
         'feedback_question_01': "Fehlen einige Faktoren oder Verbindungen?",
         'feedback_question_02': "Sind manche Verbindungen stärker als andere?",
         'feedback_question_03': "Ist der wichtigste Faktor wirklich der zentralste?",
         'feedback_question_04': "Wo in meiner Map könnte ich intervenieren?",
-        'edit-map-title_01': "Bearbeite Deine Map",
+        'edit-map-title_01': "Bearbeite Deine Mental-Health-Map",
         'edit-map-title_02': "Uploade, individualisiere & speicher Maps",
-        'compare-map-title_01': "Vergleiche Deine Map",
+        'compare-map-title_01': "Tracke Deine Mental-Health-Map",
         'compare-map-title_02': "Uploade Maps & tracke Veränderungen",
         'placeholder_enter_factor': "Faktor zum hinzufügen/löschen",
         'placeholder_enter_connection': "Verbindung zum hinzufügen/löschen",
@@ -394,17 +455,19 @@ translations = {
         'birdt': "Mit beratender Unterstützung von Mark Willems (Gründer & CEO Birdt Health)",
         'example_block_04': ("Beispiel: Wenn Du das Gefühl hast, dass Deine Ängste der wichtigste Faktor ",
                              "in Deiner Map ist, wähle dies aus. Wenn Du unsicher bist, musst Du keinen Faktor auswählen."),
-        'hover-plots': "Wechsle zwischen Plots"
+        'hover-plots': "Wechsle zwischen Plots",
+        
     }
 }
 
 HEADER_STYLE = {
-    "background-image": "linear-gradient(to right, #8793c9, #516395)",
+    #"background-image": "linear-gradient(to right, #8793c9, #516395)",
     "padding": "75px",
     "width": "100vw",
     "position": "fixed",
     "top": "0",
-    "left": "0",
+    #"left": '0',
+    "left": "300px",
     "zIndex": "1000",
     "display": "flex",
     "flexDirection": "column",
@@ -412,46 +475,78 @@ HEADER_STYLE = {
 }
 
 COMMON_STYLE = {
-    "backgroundColor": "#f0f0f0",
-    "width": "100vw",
+    #"backgroundColor": "#f0f0f0",
+    'backgroundColor': 'white',
+    #"background": "linear-gradient(135deg, #ffffff, #ffffff, #CB6CE6, ##004AAD)",
+    #"background-size": "200% 200%",
+    #"width": "100vw",
+    "width": "100%",
     "minHeight": "100vh",
     "paddingTop": "250px",
     "paddingLeft": "100px",
-    "margin": "0 auto",
+    #"margin": "0 auto",
+    "marginLeft": "-12px",
     'position': 'fixed'
 }
 
 # Flex container for text and video alignment
+# CONTENT_CONTAINER_STYLE = {
+#     "display": "flex",
+#     "alignItems": "flex-start",
+#     "width": "80vw",                  # Full width container for flexible layout
+#     "justifyContent": "space-between",
+#     "maxWidth": "1500px",
+#     "margin": "0 auto",
+#     #"gap": "-100px",                    # Control space between text and video
+#     "flexWrap": "wrap", 
+#     'marginLeft': '150px'
+# }
+
 CONTENT_CONTAINER_STYLE = {
     "display": "flex",
-    "alignItems": "flex-start",
-    "width": "90vw",                  # Full width container for flexible layout
-    "justifyContent": "space-between",
-    "maxWidth": "1500px",
-    "margin": "0 auto",
-    #"gap": "30px",                    # Control space between text and video
-    "flexWrap": "wrap", 
+    "flexDirection": "row",  # Ensure video and text are side by side
+    "alignItems": "center",  # Align vertically
+    "justifyContent": "space-between",  # Distribute space evenly
+    "width": "100%",
+    #"padding": "-10px",  # Add padding to the container
+    "boxSizing": "border-box",  # Include padding in dimensions
+    "marginTop": "30px"
 }
 
 # Direct container for the video, with flex alignment
+# VIDEO_CONTAINER_STYLE = {
+#     "order": 2,
+#     "display": "flex",
+#     "alignItems": "center",
+#     #"width": "60.5%",                  # Matches specified video width
+#     "width": "50.5%",
+#     "maxWidth": "1000px",             # Prevents unexpected constraints
+#     "marginTop": '0px',
+#     'zIndex': '1500',
+#     # 'marginLeft': '-100px',
+#     'marginLeft': '30px'
+# }
+
 VIDEO_CONTAINER_STYLE = {
-    "display": "flex",
-    "alignItems": "center",
-    "width": "60.5%",                  # Matches specified video width
-    "maxWidth": "1000px",             # Prevents unexpected constraints
-    "marginTop": '-100px',
-    'zIndex': '1500',
-    'marginLeft': '-100px'
+    "order":2,
+    "width": "50%",  # Adjust to match your layout
+    "maxWidth": "600px",  # Ensure video doesn’t stretch too wide
+    "marginRight": "10px",  # Reduce space on the right
+    "marginLeft": "-500px",
+    "boxSizing": "border-box",  # Include padding in dimensions
+    "backgroundColor": "white",  # Optional styling
 }
 
 # Video style as specified
 VIDEO_STYLE = {
-    "width": "100%",                  # Full width within its container
-    "height": "53.8vh",
+    "maxWidth": "100%",                  # Full width within its container
+    "width": "770px", 
+    "height": "337.5px",
     "borderRadius": "15px",
     "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
     "backgroundColor": "white",
-    'marginLeft': '-20px'
+    'marginLeft': '-50px',
+    'marginTop': '-10px'
 }
 
 PLOT_WINDOW_STYLE = {
@@ -465,16 +560,33 @@ PLOT_WINDOW_STYLE = {
 
 # Adjusted text block style for alignment
 TEXT_BLOCK_STYLE = {
+    "order": 1,
     "width": "35%",                   # Adjusted for layout alongside video
     "color": "grey",
     "fontSize": "14px",
     "padding": "10px",
     'borderRadius': '15px', 
+    "marginLeft": "120px",
+    "marginTop": "5px"
 }
+# TEXT_BLOCK_STYLE = {
+#     "width": "45%",  # Adjust width as needed
+#     "marginLeft": "50px",  # Reduce space on the left
+#     "color": "grey",
+#     "fontSize": "14px",
+#     "padding": "10px",  # Optional padding inside the text block
+#     "backgroundColor": "white",  # Optional styling
+# }
+
 
 TEXT_STYLE = {
-    "fontFamily": "Arial Black",
-    "color": "grey",
+    # "fontFamily": "Arial Black",
+    "fontFamily": "Outfit",
+    "fontWeight": 300,
+    #"color": "grey",
+    "color": "black",
+    "fontSize": '17px',
+    "lineHeight": "1.6"
 }
 
 EDITING_WINDOW_STYLE = {
@@ -543,3 +655,7 @@ ABOUT_PARTNER_STYLE = {
     "width": "60%",  # Adjust width for responsiveness
     "maxWidth": "600px",
 }
+
+# Define the steps for the progress bar
+steps = [0,1,2,3,4,5]
+total_steps = len(steps)

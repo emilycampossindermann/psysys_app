@@ -18,8 +18,6 @@ from dash import dcc, html
 
 # app.title = "PsySys"
 
-server = app.server
-
 # Import callbacks 
 from callbacks.layout_callbacks import register_layout_callbacks
 from callbacks.editing_callbacks import register_editing_callbacks
@@ -53,12 +51,14 @@ button_group = html.Div(
     ],
    style={
         'position': 'fixed',
-        'bottom': '80px',
-        'right': '35px',
+        #'bottom': '70px',
+        "bottom": "40px",
+        'right': '100px',
         'display': 'flex',
         'flexDirection': 'row-reverse',  # Align buttons to the right
         'gap': '10px',                   # Adds space between the buttons
-        'zIndex': '5000'                 # Ensure it's above other content
+        'zIndex': '5000',                 # Ensure it's above other content
+        "borderRadius": "50px"
     }
 )
 
@@ -76,122 +76,75 @@ buttons_map = html.Div(
 )
 
 # Layout elements: Navigation sidebar
-nav_col = dbc.Col(
-    [
-        html.Br(),
-        html.Img(src="/assets/logo.png", 
-                 style={"marginLeft": "-3.5px", 
-                        "width": "100px", 
-                        "height": "auto", 
-                        "marginTop": "20px"}),
+nav_col = html.Div(
+    style={
+        "position": "fixed",
+        "top": "25px",
+        "left": "18%",
+        "width": "65%",
+        "background": "rgba(255, 255, 255, 0.85)",
+        "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        "borderRadius": "15px",
+        "backdropFilter": "blur(8px)",
+        "padding": "10px 10px",
+        "zIndex": 1000,
+        "display": "flex",
+        "alignItems": "center",
+    },
+    children=[
+        # Logo Section
+        html.A(
+            html.Img(
+                src="/assets/logo-clean.png",
+                className="glowing-button",
+                style={
+                    "height": "50px",
+                    "width": "50px",
+                    "borderRadius": "50%",
+                    "objectFit": "cover",
+                    "marginLeft": "10px",
+                    "marginRight": "200px",
+                },
+            ),
+            href="/",
+            style={"textDecoration": "none"},
+        ),
+        # Nav Links
         dbc.Nav(
             [
-                dbc.NavLink(html.I(className="fas fa-info-circle nav-icon"), 
-                            id = "Psychoeducation", 
-                            href="/", 
-                            active="exact", 
-                            style={"fontSize": "25px", 
-                                   "marginLeft": "17px", 
-                                   "marginTop": "150px", 
-                                   "color": "#8793c9"}),
-                dbc.NavLink(html.I(className="fas fa-edit nav-icon"),
-                            id = "Edit My Map", 
-                            href="/my-mental-health-map", 
-                            active="exact",
-                            style={"fontSize": "25px", 
-                                   "marginLeft": "17px",
-                                   "marginTop": "5px", 
-                                   "color": "#8793c9"}),
-                dbc.NavLink(html.I(className="fas fa-chart-bar nav-icon"), 
-                            id = "Compare My Map", 
-                            href="/track-my-mental-health-map", 
-                            active="exact",
-                            style={"fontSize": "25px", 
-                                   "marginLeft": "17px",
-                                   "marginTop": "5px", 
-                                   "color": "#8793c9"}),
-                dbc.NavLink(html.I(className="fas fa-users nav-icon"), 
-                            id = "About Us", 
-                            href="/about", 
-                            active="exact",
-                            style={"fontSize": "25px", 
-                                   "marginLeft": "17px", 
-                                   "color": "#8793c9"}),
+                dbc.NavItem(dbc.NavLink("About", href="/project-info", className="nav-link-custom")),
+                html.Div(
+                    className="dropdown-container",
+                    children=[
+                        dbc.NavLink(
+                            ["Demo", html.Span(" ▼", style={"fontSize": "12px"})],
+                            href="/psysys-demo",
+                            className="nav-link-custom dropdown-hover",
+                        ),
+                        html.Div(
+                            className="dropdown-content",
+                            children=[
+                                html.Div(
+                                    className="dropdown-item",
+                                    children=[
+                                        dbc.NavLink("Psychoeducation", href="/psychoeducation", className="dropdown-link"),
+                                        dbc.NavLink("Map Editor", href="/my-mental-health-map", className="dropdown-link"),
+                                        dbc.NavLink("Map Tracker", href="/track-my-mental-health-map", className="dropdown-link"),
+                                    ],
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+                dbc.NavItem(dbc.NavLink("Output", href="/output", className="nav-link-custom")),
+                dbc.NavItem(dbc.NavLink("Team", href="/about", className="nav-link-custom")),
             ],
-            vertical=True,
-            pills=True,
-            className="nav-primary",
-            id="nav-links"
+            className="justify-content-center",
         ),
-        html.Br(), html.Br(), 
-
-        dcc.Loading(
-            id="loading-1",
-            type="circle",
-            color='#8793c9',
-            children=html.Div(id="tab-content")
-        ),
-
-        dcc.Store(id="loading-state", data=False)  # False means not loading
     ],
-    md=1,
-    className="nav-yellow",  # Custom class for yellow background
-    style={"position": "fixed", 
-           "top": "0", 
-           "left": "0", 
-           "height": "100vh", 
-           "overflowY": "auto", 
-           "zIndex": "2000"}
 )
 
-# nav_col = dbc.Col(
-#     [
-#         html.Br(),
-#         html.Img(src="/assets/logo.png", 
-#                  style={"marginLeft": "-3.5px", 
-#                         "width": "100px", 
-#                         "height": "auto", 
-#                         "marginTop": "20px"}),
-#         dbc.Nav(
-#             [
-#                 dbc.NavLink(
-#                     [html.I(className="fas fa-info-circle nav-icon"), " "],
-#                     id="Psychoeducation",
-#                     href="/",
-#                     active="exact",
-#                     style={"fontSize": "25px", "marginLeft": "17px", "marginTop": "100px", "color": "#8793c9"}
-#                 ),
-#                 dbc.NavLink(
-#                     [html.I(className="fas fa-edit nav-icon"), " "],
-#                     id="go-to-edit",
-#                     href="/my-mental-health-map",
-#                     active="exact",
-#                     style={"fontSize": "25px", "marginLeft": "17px", "marginTop": "5px", "color": "#8793c9"}
-#                 ),
-#                 dbc.NavLink(
-#                     [html.I(className="fas fa-chart-bar nav-icon"), " "],
-#                     id="compare-map",
-#                     href="/track-my-mental-health-map",
-#                     active="exact",
-#                     style={"fontSize": "25px", "marginLeft": "17px", "marginTop": "5px", "color": "#8793c9"}
-#                 ),
-#                 dbc.NavLink(
-#                     [html.I(className="fas fa-users nav-icon"), " "],
-#                     id="about-us",
-#                     href="/about",
-#                     active="exact",
-#                     style={"fontSize": "25px", "marginLeft": "17px", "color": "#8793c9"}
-#                 ),
-#             ],
-#             vertical=True,
-#             pills=True,
-#             className="nav-primary"
-#         ),
-#     ],
-#     md=1,
-#     className="nav-yellow",
-#     style={"position": "fixed", "top": "0", "left": "0", "height": "100vh", "overflowY": "auto", "zIndex": "2000"}
-# )
+
 
 # Layout elements: Translation toggle
 translation_toggle = dbc.Col([
@@ -199,46 +152,26 @@ translation_toggle = dbc.Col([
         id='language-dropdown',
         className="custom-dropdown",
         options=[
-            {'label': 'English', 'value': 'en'},
-            {'label': 'Deutsch', 'value': 'de'}
+            {'label': 'en', 'value': 'en'},
+            {'label': 'de', 'value': 'de'}
         ],
         value='en',  # Default to English
         clearable=False,
         style={'float': 'right', 
-               'width': '100px', 
-               'color': '#8793c9'}
+               'width': '60px', 
+               'borderRadius': "50px"
+               #'color': '#8793c9'
+               }
     )], 
-    md=1, 
+    md=2, 
     style={'position': 'absolute', 
-           'top': '10px', 
+           'top': '15px', 
            'right': '50px',
            'textAlign': 'left', 
            'padding': '10px', 
-           'zIndex': '3000'})
-
-# Email toggle
-email_toggle = dbc.Col([
-    html.A(
-        html.I(className="fas fa-envelope", style={'fontSize': '30px', 'color': '#9AA6D6'}),
-        href="mailto:campos.sindermann@gmail.com?subject=Inquiry%20for%20PsySys%20App&",
-        id="email-button", 
-        style={
-            'position': 'absolute',
-            'top': '22px',
-            'right': '15px',
-            'textDecoration': 'none',
-            'zIndex': '5000'
-            }
-        ),
-
-    dbc.Tooltip(
-        "e-mail",  # Tooltip text
-        target="email-button",  # ID of the element to show the tooltip for
-        placement="top",
-        autohide=True, 
-        delay={"show": 500, "hide": 100}
-    )
-    ], md = 1)
+           'zIndex': '3000',
+           'width': '300px',
+           'borderRadius': "50px"})
 
 # Layout elements: Page content
 content_col = dbc.Col(
@@ -255,7 +188,8 @@ content_col = dbc.Col(
 stylesheet = [{'selector': 'node',
                'style': {'background-color': '#9CD3E1', 
                          'label': 'data(label)', 
-                         'font-family': 'Arial'}},
+                         'font-family': 'Outfit',
+                         'text-max-width': '5px'}},
               {'selector': 'edge',
                'style': {'curve-style': 'bezier', 
                          'target-arrow-shape': 'triangle', 
@@ -264,8 +198,10 @@ stylesheet = [{'selector': 'node',
 
 # Define app layout
 app.layout = dbc.Container([
-    dbc.Row([nav_col,translation_toggle, content_col, email_toggle]),
+    dbc.Row([nav_col,translation_toggle, content_col]),
+    dcc.Store(id='dropdown-store', storage_type='memory'),
     dcc.Store(id='history-store', data=[]),
+    dcc.Store(id="now-step", data=1, storage_type="session"),
     dcc.Store(id='current-step', data={'step': 0}, storage_type='session'),
     dcc.Store(id='color_scheme', data=None, storage_type='session'),
     dcc.Store(id='edge-type', data=None, storage_type='session'),

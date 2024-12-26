@@ -70,6 +70,11 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks, tr
                 xanchor='center',  # Center the legend horizontally
                 x=0.5,  # Set it in the middle of the plot
                 ),
+                font=dict(
+                    family="Outfit",  # Set font family
+                    size=14,          # Adjust font size
+                    color="#333333"    # Set font color
+                ),
                 modebar_remove=['zoom', 'pan', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'],
                 modebar_add=['toImage'],  # 'toImage' adds the "save as PNG" button
                 modebar=dict(

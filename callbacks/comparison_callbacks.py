@@ -171,25 +171,6 @@ def delete_current_map(n_clicks, existing_marks, current_max, current_value, gra
 
     return existing_marks, current_max, current_value, map_store, track_data
 
-# Store current mode (needed?)
-# def set_editing_mode(clicks_mode1, clicks_mode2, clicks_mode3, clicks_mode4, edit_map_data, elements):
-#     ctx = dash.callback_context
-#     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
-#     if triggered_id == 'mode-1':
-#         editing_mode_data = "mode-1"
-#     elif triggered_id == 'mode-2':
-#         editing_mode_data = "mode-2"
-#     elif triggered_id == 'mode-3':
-#         editing_mode_data = "mode-3"
-#     elif triggered_id == 'mode-4':
-#         editing_mode_data = "mode-4"
-    
-#     else:
-#         editing_mode_data = "unknown"
-
-#     return editing_mode_data
-
 # Plotting mode switch 
 def update_plotting_mode(current_clicks, overall_clicks, current_mode):
     ctx = dash.callback_context
@@ -217,6 +198,11 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks,
             return go.Figure()  # Return an empty figure if no data is available
         
         fig = current_centrality_plot(track_data, comparison_data, selected_map, marks, translation)
+
+        fig.update_layout(
+            paper_bgcolor="rgba(255, 255, 255, 0.0)",  # Semi-transparent white for entire graph
+            plot_bgcolor="rgba(255, 255, 255, 0.0)",   # Semi-transparent white for plot area
+        )
         
         if fig:
             return fig
@@ -259,6 +245,12 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks,
                 all_elements.update(network_dict.keys())
 
         fig = go.Figure()
+
+         # Set the background colors
+        fig.update_layout(
+            paper_bgcolor="rgba(255, 255, 255, 0.0)",  # Semi-transparent white for entire graph
+            plot_bgcolor="rgba(255, 255, 255, 0.0)",   # Semi-transparent white for plot area
+        )
 
         # Add a trace for each network element
         for element in all_elements:
@@ -320,6 +312,11 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks,
                 y=0.8,
                 xanchor='center',
                 x=0.5
+            ),
+            font=dict(
+                family="Outfit",  # Set font family
+                size=14,          # Adjust font size
+                color="#333333"    # Set font color
             ),
             modebar_remove=['zoom', 'pan', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'],
             modebar_add=['toImage'],  # 'toImage' adds the "save as PNG" button
