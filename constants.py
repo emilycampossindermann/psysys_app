@@ -456,7 +456,54 @@ translations = {
         'example_block_04': ("Beispiel: Wenn Du das Gefühl hast, dass Deine Ängste der wichtigste Faktor ",
                              "in Deiner Map ist, wähle dies aus. Wenn Du unsicher bist, musst Du keinen Faktor auswählen."),
         'hover-plots': "Wechsle zwischen Plots",
-        
+        "about-1-1":"Das PsySys Projekt",
+        "about-1-2":("Im Rahmen des Projekts PsySys (Psychological Systems Education) wollen wir eine Psychoedukationsplattform "
+                     "entwickeln, die den Netzwerkansatz der Psychopathologie in die psychotherapeutische Versorgung integriert. "
+                     "PsySys soll Nutzer:innen dabei unterstützen, ihre psychische Gesundheit besser zu verstehen und "
+                     "sie befähigen, ihren individuellen Heilungsprozess aktiv mitzugestalten und nachzuvollziehen."),
+        "about-2-1":"Unsere Mission",
+        "about-2-2":("PsySys hat das Ziel, die psychische Gesundheitsversorgung zu verbessern, indem es ein zugängliches, "
+        "evidenzbasiertes Werkzeug bereitstellt, das dabei hilft, die dynamischen Beziehungen zwischen Symptomen zu "
+        "erkennen und anzugehen. Dadurch fördert PsySys ein tieferes Verständnis von psychischer Gesundheit und "
+        "unterstützt individuellere Ansätze in der Versorgung."),
+        "about-3-1":"Unsere Vision",
+        "about-3-2":("PsySys versteht sich als Brücke zwischen Forschung und Praxis: Ein innovatives Werkzeug, "
+                     "das sowohl Kliniker:innen als auch Klient:innen eine neue Perspektive auf psychische "
+                     "Herausforderungen eröffnet und Forschenden eine Plattform zur weiteren Exploration bietet. "
+                     "Indem es traditionelle diagnostische Ansätze hinter sich lässt, fördert PsySys ein "
+                     "individuelles und dynamisches Verständnis von psychischer Gesundheit."),
+        "get-started": "Starte",
+        "back-home": "Zurück",
+        "welcome-landing": "Wilkommen zu PsySys",
+        "sub-landing": "Nutzung des Netzwerkansatzes, um Patient:innen zu stärken.",
+        "view-demo": "Siehe Demo",
+        "learn-more": "Mehr Info",
+        "demo": "Erhalte praktische Erkenntnisse über Deine psychische Gesundheit.",
+        "psychoeducation": "Psychoedukation",
+        "psychoeducation-sub": "Entdecke Deine mentalen Dynamiken.",
+        "editor": "Map Editor",
+        "editor-sub": "Erstelle Deine Mental-Health-Map.",
+        "tracker": "Map Tracker",
+        "tracker-sub": "Tracke Deine Mental-Health-Maps.",
+        "exercise-0": ("Schaue das Video an. Klicke auf 'Start', um die Sitzung zu beginnen, die Dich durch diese Blöcke führt:"),
+        "exercise-1": ("Schaue das Video. Wähle anschließend die Faktoren aus der Liste aus, die Dich betreffen, und gib deren Schwere an."),
+        "exercise-2": ("Schaue das Video. Wähle anschließend zwei kausale Ketten, die Du bei Dir erkennst. Füge so viele Faktoren hinzu, wie Du möchtest."),
+        "example-2-1": ("z.B. Wenn Du Schlafprobleme hast, die Deine Konzentration beeinträchtigen, wähle " 
+                        "'Schlafprobleme' und 'Konzentrationsstörungen' aus."),
+        "example-2-2": ("z.B. Wenn Deine Angst vor der Zukunft Dein Gefühl der Hoffnungslosigkeit verstärkt, was wiederum " 
+                        "Deine Angst verschlimmert, wähle 'Zukunftsangst', 'Hoffnungslosigkeit' und 'Angst' aus."),
+        "exercise-3": ("Schaue das Video. Wähle anschließend zwei Teufelskreise aus, die Du bei Dir selbst erkennst. Füge so viele Faktoren hinzu, wie Du möchtest."),
+        "example-3-1": ("z.B. Wenn Du Schlafprobleme hast, die Deine Angst verstärken und dadurch Deinen Schlaf weiter verschlechtern, wähle 'Schlafprobleme', 'Angst'."),
+        "example-3-2": ("z.B. Wenn Deine soziale Isolation zu Selbstvernachlässigung führt, was Dein Schamgefühl verstärkt und Deine Isolation weiter verschlimmert, wähle 'Soziale Isolation', 'Selbstvernachlässigung', 'Scham'."),
+        "exercise-4": ("Schaue das Video. Wähle anschließend den Faktor aus, der Deiner Meinung nach am stärksten in Deiner Mental-Health-Map wirkt."),
+        "psysys-steps": ["Intro", "Persönliche Faktoren", "Kausale Ketten", "Teufelskreise", "Ansatzpunkte", "Ende"],
+        "edit-text": ("Lade deine PsySys-Karte hoch, bearbeite und erweitere sie. Erkunde Visualisierungen, speichere sie als Datei oder Bild oder spende sie unserem Projekt."),
+        "uva-support": ("Zeichnete PsySys im April 2024 mit einem Impact Grant in Höhe von 25.000 € aus."),
+        "dptv-support": ("Zeichnete PsySys 2024 mit dem Master Forschungspreis in Höhe von 1.000 € aus."),
+        "zu-support": ("Unterstützte die Verbesserung der PsySys-Demo durch Benutzerfeedback."),
+        "read-more": "Mehr dazu",
+        "back": "Zurück",
+        "coming-soon": "Demnächst verfügbar"
     }
 }
 
