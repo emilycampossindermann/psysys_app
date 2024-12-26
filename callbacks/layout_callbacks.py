@@ -2,11 +2,10 @@ import dash, json, time
 
 from app import app
 from dash import html, Input, Output, State, ALL, MATCH
-from constants import factors, stylesheet, hidden_style, visible_style, translations, factor_translation_map, total_steps, steps
+from constants import factors, stylesheet, hidden_style, visible_style, translations, factor_translation_map
 from functions.map_build import (map_add_factors, map_add_chains, map_add_cycles)
 from functions.map_style import (graph_color)
-from functions.page_content import (generate_step_content, create_mental_health_map_tab, create_tracking_tab, create_about,
-                                    create_demo_page, create_landing_page, create_learn_more_page, create_output_page)
+from functions.page_content import (generate_step_content, create_mental_health_map_tab, create_tracking_tab, create_about)
 
 # Translate PsySys factors 
 def update_factors_based_on_language(selected_language, session_data, edit_map_data):
@@ -52,20 +51,16 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
     next_button_style = visible_style
     redirect_button_style = hidden_style
     next_button_text = html.I(className="fas fa-solid fa-angle-right")
-    class_name = ""
 
     translation = translations.get(language, translations['en'])
 
     # Update content and button states based on the pathname and step
-    if pathname == '/psychoeducation':
+    if pathname == '/':
         # Check the step and update accordingly
         if step == 0:
             content = generate_step_content(step, session_data, translation)   
-            class_name = "glowing-button"
-            next_button_text = html.Div("Start", style={"fontFamily": "Outfit", "fontWeight": 300})
         elif step == 1:
             content = generate_step_content(step, session_data, translation)
-            back_button_style = visible_style  
         elif 2 <= step <= 4:
             content = generate_step_content(step, session_data, translation)
             back_button_style = visible_style            
@@ -91,30 +86,10 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
         back_button_style = hidden_style
         next_button_style = hidden_style
 
-    elif pathname == "/psysys-demo":
-        content = create_demo_page()
-        back_button_style = hidden_style
-        next_button_style = hidden_style
-
-    elif pathname == "/project-info":
-        content = create_learn_more_page()
-        back_button_style = hidden_style
-        next_button_style = hidden_style
-
-    elif pathname == "/output":
-        content = create_output_page()
-        back_button_style = hidden_style
-        next_button_style = hidden_style
-
-    elif pathname == "/":
-        content = create_landing_page()
-        back_button_style = hidden_style
-        next_button_style = hidden_style
-
     elif content is None:
         content = html.Div("Page not found")
 
-    return content, back_button_style, next_button_style, next_button_text, redirect_button_style, class_name 
+    return content, back_button_style, next_button_style, next_button_text, redirect_button_style
 
 # Update current step based on next/back button clicks
 def update_step(back_clicks, next_clicks, current_step_data):
@@ -252,15 +227,24 @@ def show_suicide_prevention_message(selected_factors):
 
 # Limit dropdown for factor selection to 10
 def limit_factor_selection(selection):
-    if selection and len(selection) > 10:
-        return selection[:10]
+    if selection and len(selection) > 15:
+        return selection[:15]
     return selection
 
-# Callback for toggling the collapse
-def toggle_collapse(n_clicks, is_open):
-    if n_clicks:
-        return not is_open
-    return is_open
+# Set loading dcc.Store to true when user navigates to different tab
+# def turn_loading_true(pathname):
+#     return True 
+
+# Simulate page load (3 sec) & show loading circle
+# def simulate_page_load(pathname):
+#     time.sleep(3)  # Simulating delay in content load
+#     content = ""
+#     return False, content
+
+# Disable/enable the navlinks based on the loading-state
+# def toggle_nav_links(loading):
+#     # If loading is True, disable all navlinks, else enable them
+#     return [loading, loading, loading, loading]
 
 # Register the callbacks
 def register_layout_callbacks(app):
@@ -279,8 +263,7 @@ def register_layout_callbacks(app):
         Output('back-button', 'style'),
         Output('next-button', 'style', allow_duplicate=True),
         Output('next-button', 'children'),
-        Output('go-to-edit', 'style'),
-        Output('next-button', 'className'),],
+        Output('go-to-edit', 'style')],
         [Input('url', 'pathname'),
         Input('edit-map-data', 'data'),  
         Input('current-step', 'data'),
@@ -353,10 +336,23 @@ def register_layout_callbacks(app):
         Input({'type': 'dynamic-dropdown', 'step': 1}, 'value')
     )(limit_factor_selection)
 
-    app.callback(
-        Output("psysys-demo-collapse", "is_open"),
-        [Input("psysys-demo-link", "n_clicks")],
-        [dash.dependencies.State("psysys-demo-collapse", "is_open")],
-    )(toggle_collapse)
+    # app.callback(
+    #     Output("loading-state", "data"),
+    #     [Input("url", "pathname")]
+    # )(turn_loading_true)
 
+    # app.callback(
+    #     [Output("loading-state", "data", allow_duplicate=True),
+    #      Output('tab-content', 'children')],
+    #     [Input("url", "pathname")],
+    #     prevent_initial_call=True
+    # )(simulate_page_load)
+
+    # app.callback(
+    #     [Output("Psychoeducation", "disabled"),
+    #     Output("Edit My Map", "disabled"),
+    #     Output("Compare My Map", "disabled"),
+    #     Output("About Us", "disabled")],
+    #     [Input("loading-state", "data")]
+    # )(toggle_nav_links)
 

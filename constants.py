@@ -17,8 +17,7 @@ node_size = ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree",
 stylesheet = [{'selector': 'node',
                'style': {'background-color': '#9CD3E1', 
                          'label': 'data(label)', 
-                         'font-family': 'Outfit',
-                         'text-max-width': '5px'}},
+                         'font-family': 'Arial'}},
               {'selector': 'edge',
                'style': {'curve-style': 'bezier', 
                          'target-arrow-shape': 'triangle', 
@@ -72,8 +71,8 @@ translations = {
                     "Overthinking", "Physical pain", "Procrastination", "Reduced activity", "Sadness", "Self-blame", 
                     "Self-neglect", "Shame", "Sleep problems", "Social isolation", "Stress", "Substance abuse", 
                     "Suicidal thoughts", "Tiredness", "Worry"],
-        'welcome_01': 'welcome to psysys',
-        'welcome_02': 'dive into your mental health.',
+        'welcome_01': 'Welcome to PsySys',
+        'welcome_02': 'Dive into your mental health!',
         'suicide-prevention': html.P(["If you're experiencing ",
                                       html.Span("suicidal thoughts", style={"fontWeight": "bold"}),
                                       ", support is available. Please reach out to ",
@@ -95,7 +94,7 @@ translations = {
         'title_block_04': 'Breaking out of the cycle',
         'description_block_04': 'Detect promising areas for positive change',
         'video_link_block_01': "https://www.youtube.com/embed/mb91ZnrT9Bg?si=PJa94P0IMJJw4iNV&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Select between 5-10 personal factors",
+        'placeholder_dd_01': "Select up to 15 personal factors",
         'video_link_block_02': "https://www.youtube.com/embed/e-ppym1WsNA?si=Pck80FZK1WDIzDS4&rel=0&modestbranding=1",
         'placeholder_dd_02': "Select your factors that are causally connected",
         'example_block_02': ('Example: If you feel that normally worrying causes you to become less concentrated, ' 
@@ -106,11 +105,10 @@ translations = {
                              'which only worsens the rumination, select these factors.'),
         'video_link_block_04': "https://www.youtube.com/embed/Hbhe6kliuSI?si=Bb2P-q7bz8EcOwvd&rel=0&modestbranding=1",
         'placeholder_dd_04': "Select the factor you think is the most influential",
-        'finish_01': "you've completed psysys.",
-        'finish_02': 'explore your mental-health-map.',
-        'feedback_text': ("Congrats! You've built your personalised mental-health-map. "
-                          "You can zoom in and drag your factors to get a better look at it. You can also load your map "
-                          "into the Edit tab and further tweak it to create the best "
+        'finish_01': "You've completed PsySys.",
+        'finish_02': 'Explore your Mental-Health-Map!',
+        'feedback_text': ("Congratulations! You've completed PsySys and built your personalised mental-health-map. "
+                          "You can now load your map into the Edit tab and further tweak it to create the best "
                           "representation of your mental health. Ask yourself:"),
         'feedback_question_01': "Are there personal factors or relations missing?",
         'feedback_question_02': "Are some of the relationships stronger than others?",
@@ -224,7 +222,7 @@ translations = {
         'hover-delete-tracking': "Delete current map (you can't delete PsySys map)",
         'schemes': ["Uniform", "Severity", "Severity (abs)", "Out-degree", "In-degree", "Out-/In-degree ratio"],
         'birdt': "With advisory support from Mark Willems (Founder & CEO Birdt Health)",
-        'example_block_04': ("e.g. If you feel like your Overthinking is the most influential factor ", 
+        'example_block_04': ("Example: If you feel like your Overthinking is the most central factor ", 
                              "in your map, select it here. If you're unsure, you don't have to select one."),
         'hover-plots': "Switch between plots"
     },
@@ -261,7 +259,7 @@ translations = {
         'title_block_04': "Aus dem Kreislauf ausbrechen",
         'description_block_04': "Finde Ansätze für positive Veränderungen.",
         'video_link_block_01': "https://www.youtube.com/embed/VbtrHB-R8aQ?si=SLZj1ykaXey-shvZ&rel=0&modestbranding=1",
-        'placeholder_dd_01': "Wähle 5-10 Deiner persönlichen Faktoren aus",
+        'placeholder_dd_01': "Wähle bis zu 15 Deiner persönlichen Faktoren aus",
         'video_link_block_02': "https://www.youtube.com/embed/p3iVzuhIhrk?si=0YsKJkr-HgVDVJkN&rel=0&modestbranding=1",
         'placeholder_dd_02': "Wähle die Faktoren, die miteinander zusammenhängen",
         'example_block_02': ("Beispiel: Wenn Du merkst, dass Sorgen dich unkonzentriert machen, "
@@ -272,13 +270,11 @@ translations = {
                              "dadurch nur noch schlimmer wird, wähle diese Faktoren aus."),
         'video_link_block_04': "https://www.youtube.com/embed/gUMGu49w7o0?si=sUabGZ5BheGLgA_F&rel=0&modestbranding=1",
         'placeholder_dd_04': "Wähle den Faktor mit dem größten Einfluss.",
-        'finish_01': "Du bist mit psysys fertig.",
+        'finish_01': "Du hast PsySys abgeschlossen.",
         'finish_02': "Erkunde Deine Mental-Health-Map!",
-        'feedback_text': ("Glückwunsch! Du hast Deine persönliche Mental-Health-Map "
-                          "erstellt. Du kannst in Deine Map rein zoomen und Deine Faktoren verschieben um eine"
-                          " bessere Übersicht zu bekommen. Du kannst deine Map auch in die „Bearbeiten“-Ansicht laden "
-                          " und weiter anpassen, "
-                          "um die beste Darstellung Deiner Psyche zu erstellen. Frag Dich:"),
+        'feedback_text': ("Glückwunsch! Du hast PsySys abgeschlossen und Deine persönliche Mental-Health-Map "
+                          "erstellt. Du kannst diese in die „Bearbeiten“-Ansicht laden und weiter anpassen, "
+                          "um die beste Darstellung Deiner Psyche zu erstellen. Frag Dich selbst:"),
         'feedback_question_01': "Fehlen einige Faktoren oder Verbindungen?",
         'feedback_question_02': "Sind manche Verbindungen stärker als andere?",
         'feedback_question_03': "Ist der wichtigste Faktor wirklich der zentralste?",
@@ -403,13 +399,12 @@ translations = {
 }
 
 HEADER_STYLE = {
-    #"background-image": "linear-gradient(to right, #8793c9, #516395)",
+    "background-image": "linear-gradient(to right, #8793c9, #516395)",
     "padding": "75px",
     "width": "100vw",
     "position": "fixed",
     "top": "0",
-    #"left": '0',
-    "left": "300px",
+    "left": "0",
     "zIndex": "1000",
     "display": "flex",
     "flexDirection": "column",
@@ -417,10 +412,7 @@ HEADER_STYLE = {
 }
 
 COMMON_STYLE = {
-    #"backgroundColor": "#f0f0f0",
-    'backgroundColor': 'white',
-    #"background": "linear-gradient(135deg, #ffffff, #ffffff, #CB6CE6, ##004AAD)",
-    #"background-size": "200% 200%",
+    "backgroundColor": "#f0f0f0",
     "width": "100vw",
     "minHeight": "100vh",
     "paddingTop": "250px",
@@ -430,63 +422,36 @@ COMMON_STYLE = {
 }
 
 # Flex container for text and video alignment
-# CONTENT_CONTAINER_STYLE = {
-#     "display": "flex",
-#     "alignItems": "flex-start",
-#     "width": "80vw",                  # Full width container for flexible layout
-#     "justifyContent": "space-between",
-#     "maxWidth": "1500px",
-#     "margin": "0 auto",
-#     #"gap": "-100px",                    # Control space between text and video
-#     "flexWrap": "wrap", 
-#     'marginLeft': '150px'
-# }
-
 CONTENT_CONTAINER_STYLE = {
     "display": "flex",
-    "flexDirection": "row",  # Ensure video and text are side by side
-    "alignItems": "center",  # Align vertically
-    "justifyContent": "space-between",  # Distribute space evenly
-    "width": "100%",
-    #"padding": "-10px",  # Add padding to the container
-    "boxSizing": "border-box",  # Include padding in dimensions
-    "marginTop": "30px"
+    "alignItems": "flex-start",
+    "width": "90vw",                  # Full width container for flexible layout
+    "justifyContent": "space-between",
+    "maxWidth": "1500px",
+    "margin": "0 auto",
+    #"gap": "30px",                    # Control space between text and video
+    "flexWrap": "wrap", 
 }
 
 # Direct container for the video, with flex alignment
-# VIDEO_CONTAINER_STYLE = {
-#     "order": 2,
-#     "display": "flex",
-#     "alignItems": "center",
-#     #"width": "60.5%",                  # Matches specified video width
-#     "width": "50.5%",
-#     "maxWidth": "1000px",             # Prevents unexpected constraints
-#     "marginTop": '0px',
-#     'zIndex': '1500',
-#     # 'marginLeft': '-100px',
-#     'marginLeft': '30px'
-# }
-
 VIDEO_CONTAINER_STYLE = {
-    "order":2,
-    "width": "50%",  # Adjust to match your layout
-    "maxWidth": "600px",  # Ensure video doesn’t stretch too wide
-    "marginRight": "10px",  # Reduce space on the right
-    "marginLeft": "-500px",
-    "boxSizing": "border-box",  # Include padding in dimensions
-    "backgroundColor": "white",  # Optional styling
+    "display": "flex",
+    "alignItems": "center",
+    "width": "60.5%",                  # Matches specified video width
+    "maxWidth": "1000px",             # Prevents unexpected constraints
+    "marginTop": '-100px',
+    'zIndex': '1500',
+    'marginLeft': '-100px'
 }
 
 # Video style as specified
 VIDEO_STYLE = {
-    "maxWidth": "100%",                  # Full width within its container
-    "width": "770px", 
-    "height": "337.5px",
+    "width": "100%",                  # Full width within its container
+    "height": "53.8vh",
     "borderRadius": "15px",
     "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
     "backgroundColor": "white",
-    'marginLeft': '-50px',
-    'marginTop': '-10px'
+    'marginLeft': '-20px'
 }
 
 PLOT_WINDOW_STYLE = {
@@ -500,33 +465,16 @@ PLOT_WINDOW_STYLE = {
 
 # Adjusted text block style for alignment
 TEXT_BLOCK_STYLE = {
-    "order": 1,
     "width": "35%",                   # Adjusted for layout alongside video
     "color": "grey",
     "fontSize": "14px",
     "padding": "10px",
     'borderRadius': '15px', 
-    "marginLeft": "120px",
-    "marginTop": "5px"
 }
-# TEXT_BLOCK_STYLE = {
-#     "width": "45%",  # Adjust width as needed
-#     "marginLeft": "50px",  # Reduce space on the left
-#     "color": "grey",
-#     "fontSize": "14px",
-#     "padding": "10px",  # Optional padding inside the text block
-#     "backgroundColor": "white",  # Optional styling
-# }
-
 
 TEXT_STYLE = {
-    # "fontFamily": "Arial Black",
-    "fontFamily": "Outfit",
-    "fontWeight": 300,
-    #"color": "grey",
-    "color": "black",
-    "fontSize": '17px',
-    "lineHeight": "1.6"
+    "fontFamily": "Arial Black",
+    "color": "grey",
 }
 
 EDITING_WINDOW_STYLE = {
@@ -595,7 +543,3 @@ ABOUT_PARTNER_STYLE = {
     "width": "60%",  # Adjust width for responsiveness
     "maxWidth": "600px",
 }
-
-# Define the steps for the progress bar
-steps = [0,1,2,3,4,5]
-total_steps = len(steps)
