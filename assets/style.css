@@ -193,7 +193,7 @@ body {
 
 .nav-primary .nav-link.active {
     background-color: white !important; /* Your custom color */
-    color: #516395!important; /*#516395; #CB6CE6 Custom text color if needed */
+    color: #6F4CFF!important; /*#516395; #CB6CE6 Custom text color if needed */
 }
 
 /* Default NavLink styling */
@@ -218,7 +218,7 @@ body {
 
 /* Hover effects for NavLink */
 .nav-primary .nav-link:hover {
-    color: #0056b3; /* Hover text color */
+    color: #6F4CFF; /* Hover text color */
     background: none; /* No background change on hover */
 }
 
@@ -562,6 +562,15 @@ body {
 .custom-dropdown:hover {
     border-color: #6F4CFF;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.hover-enlarge {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-enlarge:hover {
+    transform: scale(1.1); /* Enlarges the image slightly */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow on hover */
 }
 
 
