@@ -771,6 +771,12 @@ def save_edge_type(n_clicks, edge_data, selected_type, edge_data_store):
         return edge_data_store
     return edge_data_store
 
+# Open color info modal 
+def factor_description_modal(n_clicks, is_open):
+    if n_clicks:
+        return not is_open
+    return is_open
+
 # Register the callbacks
 def register_editing_callbacks(app):
 
@@ -1114,6 +1120,12 @@ def register_editing_callbacks(app):
         State('edge-type-dropdown', 'value'),
         State('edge-type', 'data')]
     )(save_edge_type)
+
+    app.callback(
+        Output('modal-factor-description', 'is_open'),
+        [Input('help-factors', 'n_clicks')],
+        [State("modal-factor-description", 'is_open')],
+    )(factor_description_modal)
 
 
 

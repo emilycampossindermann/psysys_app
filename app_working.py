@@ -18,8 +18,6 @@ from dash import dcc, html
 
 # app.title = "PsySys"
 
-server = app.server
-
 # Import callbacks 
 from callbacks.layout_callbacks import register_layout_callbacks
 from callbacks.editing_callbacks import register_editing_callbacks
@@ -146,35 +144,6 @@ nav_col = html.Div(
     ],
 )
 
-
-
-# Layout elements: Translation toggle
-translation_toggle = dbc.Col([
-    dcc.Dropdown(
-        id='language-dropdown',
-        className="custom-dropdown",
-        options=[
-            {'label': 'en', 'value': 'en'},
-            {'label': 'de', 'value': 'de'}
-        ],
-        value='en',  # Default to English
-        clearable=False,
-        style={'float': 'right', 
-               'width': '60px', 
-               'borderRadius': "50px"
-               #'color': '#8793c9'
-               }
-    )], 
-    md=2, 
-    style={'position': 'absolute', 
-           'top': '15px', 
-           'right': '50px',
-           'textAlign': 'left', 
-           'padding': '10px', 
-           'zIndex': '3000',
-           'width': '300px',
-           'borderRadius': "50px"})
-
 # Layout elements: Page content
 content_col = dbc.Col(
     [
@@ -185,6 +154,68 @@ content_col = dbc.Col(
     ],
     md=9,
 )
+
+# Layout elements: Translation toggle
+translation_toggle = dbc.Col([
+    dcc.Dropdown(
+        id='language-dropdown',
+        className="custom-dropdown",
+        options=[
+            {
+                'label': html.Div([
+                    html.Img(
+                        src="/assets/us.png",  # Replace with your own US flag path
+                        style={
+                            "width": "20px",
+                            "height": "20px",
+                            "borderRadius": "50%",  # Round flag
+                            "marginRight": "20px",
+                            "marginTop": "7px"
+                        }
+                    ),
+                    #"English"
+                ], style={"display": "flex", "alignItems": "center"}),
+                'value': 'en'
+            },
+            {
+                'label': html.Div([
+                    html.Img(
+                        src="/assets/de.png",  # Replace with your own German flag path
+                        style={
+                            "width": "20px",
+                            "height": "20px",
+                            "borderRadius": "50%",  # Round flag
+                            "marginRight": "20px",
+                            "marginTop": "7px"
+                        }
+                    ),
+                    #"Deutsch"
+                ], style={"display": "flex", "alignItems": "center"}),
+                'value': 'de'
+            }
+        ],
+        value='en',  # Default to English
+        clearable=False,
+        style={
+            'float': 'right',
+            #'width': '120px',  # Adjust width to fit flags and text
+            "width": '60px',
+            'borderRadius': "50px",
+            'fontFamily': "Outfit",
+            'fontSize': "14px"
+        }
+    )],
+    md=2,
+    style={
+        'position': 'absolute',
+        'top': '15px',
+        'right': '60px',
+        'textAlign': 'left',
+        'padding': '10px',
+        'zIndex': '3000',
+        'width': '150px'  # Adjust to match dropdown width
+    })
+
 
 # Stylesheet for network 
 stylesheet = [{'selector': 'node',

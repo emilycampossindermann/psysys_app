@@ -48,7 +48,9 @@ def create_likert_scale(factor, initial_value=0):
             marks={
                     i: {
                         "label": str(i),
-                        "style": {"color": "#C9BEE7", "fontFamily": "Outfit", "fontWeight": 300},
+                        "style": {#"color": "#C9BEE7", 
+                            "color": "white",
+                            "fontFamily": "Outfit", "fontWeight": 300},
                     }
                     for i in range(11)
                 },
@@ -337,7 +339,270 @@ def generate_step_content(step, session_data, translation):
                                                 placeholder=translation["placeholder_dd_01"],
                                             ),
                                             className="dynamic-dropdown",
+                                            style={'width': "90%"}
                                             ),
+                                            dbc.Button(
+                                                [html.I(className="fas fa-solid fa-question")], 
+                                                id='help-factors', 
+                                                color="light", 
+                                                className='delete-button',
+                                                style={
+                                                    'border': '2px solid #6F4CFF', 
+                                                    'padding' : '3px 10px 3px 10px',
+                                                    'borderRadius': "50px",
+                                                    #'color': 'grey', 
+                                                    "backgroundColor": "transparent",
+                                                    "color": "#6F4CFF",
+                                                    "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                                                    'position': 'absolute', 'top': '87px', 'right': '15px', 'zIndex': '10'
+                                                }
+                                            ),
+                                            # dbc.Modal([
+                                            #     dbc.ModalHeader(
+                                            #         dbc.ModalTitle(translation['factor_description'])),
+                                            #         dbc.ModalBody("factor description", id='modal-factor-description-body')], 
+                                            #     id="modal-factor-description", is_open=False, backdrop=True, style={'fontFamily': "Outfit",
+                                            #                                         "fontWeight": 300,
+                                            #                                         'fontSize': '18px'}
+                                            # ),
+
+                                            dbc.Modal(
+                                                [
+                                                    dbc.ModalHeader(
+                                                        dbc.ModalTitle(translation['factor_description']),  # Replace with translation if needed
+                                                        style={"fontFamily": "Outfit", "fontWeight": 500, "fontSize": "22px"},
+                                                    ),
+                                                    dbc.ModalBody(
+                                                        html.Div(
+                                                            style={
+                                                                "fontFamily": "Outfit",
+                                                                "fontWeight": 300,
+                                                                "fontSize": "18px",
+                                                                "lineHeight": "1.6",
+                                                                "width": "100%",
+                                                                "overflowY": "auto",  # Enable vertical scrolling
+                                                                "maxHeight": "80vh", 
+                                                            },
+                                                            children=[
+                                                                # Anxiety description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][0],": "), style={"fontWeight": 500}),
+                                                                        translation["anxiety-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Changes in appetite description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][1],": "), style={"fontWeight": 500}),
+                                                                        translation["changes-appetite-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Concentration problems description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][2],": "), style={"fontWeight": 500}),
+                                                                        translation["concentration-problems-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Fear of the future description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][3],": "), style={"fontWeight": 500}),
+                                                                        translation["fear-of-future-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Guilt description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][4],": "), style={"fontWeight": 500}),
+                                                                        translation["guilt-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Hopelessness description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][5],": "), style={"fontWeight": 500}),
+                                                                        translation["hopelessness-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Interpersonal problems description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][6],": "), style={"fontWeight": 500}),
+                                                                        translation["interpersonal-problems-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Irritability description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][7],": "), style={"fontWeight": 500}),
+                                                                        translation["irritability-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Loss of interest description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][8],": "), style={"fontWeight": 500}),
+                                                                        translation["loss-of-interest-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Loss of motivation description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][9],": "), style={"fontWeight": 500}),
+                                                                        translation["loss-of-motivation-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Overthinking description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][10],": "), style={"fontWeight": 500}),
+                                                                        translation["overthinking-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Physical pain description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][11],": "), style={"fontWeight": 500}),
+                                                                        translation["physical-pain-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Procrastination description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][12],": "), style={"fontWeight": 500}),
+                                                                        translation["procrastination-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Reduced activity description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][13],": "), style={"fontWeight": 500}),
+                                                                        translation["reduced-activity-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Sadness description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][14],": "), style={"fontWeight": 500}),
+                                                                        translation["sadness-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Self-blame description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][15],": "), style={"fontWeight": 500}),
+                                                                        translation["self-blame-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Self-neglect description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][16],": "), style={"fontWeight": 500}),
+                                                                        translation["self-neglect-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Shame description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][17],": "), style={"fontWeight": 500}),
+                                                                        translation["shame-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Sleep problems description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][18],": "), style={"fontWeight": 500}),
+                                                                        translation["sleep-problems-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Social isolation description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][19],": "), style={"fontWeight": 500}),
+                                                                        translation["social-isolation-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Stress description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][20],": "), style={"fontWeight": 500}),
+                                                                        translation["stress-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Substance abuse description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][21],": "), style={"fontWeight": 500}),
+                                                                        translation["substance-abuse-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Suicidal thoughts description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][22],": "), style={"fontWeight": 500}),
+                                                                        translation["suicidal-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Tiredness description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][23],": "), style={"fontWeight": 500}),
+                                                                        translation["tiredness-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                                # Worry description
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Span((translation['factors'][24],": "), style={"fontWeight": 500}),
+                                                                        translation["worry-description"]
+                                                                    ],
+                                                                    style={"marginBottom": "20px"},  # Space after Factor 1
+                                                                ),
+                                                            ],
+                                                        )
+                                                    ),
+                                                ],
+                                                id="modal-factor-description",
+                                                is_open=False,
+                                                backdrop=True,
+                                                #size="lg",  # Larger size for the modal
+                                                style={
+                                                    #"maxWidth": "80%",  # Adjust the width of the modal
+                                                    #"margin": "0 auto",  
+                                                    "fontFamily": "Outfit",
+                                                    "fontWeight": 300,
+                                                    "fontSize": "18px",
+                                                    "borderRadius": "15px",  # Optional: Rounded corners for the modal
+                                                    "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",  # Subtle shadow for depth
+                                                },
+                                            )
+
                                         ],
                                     ),
                                     html.Br(),
@@ -1310,15 +1575,6 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                             #"border": "none"
                                                             }),
 
-                                            # dbc.Button([
-                                            #     html.I(
-                                            #         className="fas fa-solid fa-hand-holding-medical")], 
-                                            #         id="donate-btn", 
-                                            #         #color="primary",
-                                            #         style={"borderRadius":"50px",
-                                            #                "background": "linear-gradient(90deg, #FF6F61, #FFA07A)",
-                                            #                "border": "none"}),
-
                                             dbc.Button(
                                                 [
                                                     html.I(className="fas fa-solid fa-hand-holding-medical"),
@@ -1760,108 +2016,6 @@ def create_tracking_tab(track_data, translation):
             ],
         )
 
-# Function: Create Team page
-# def create_about(app, translation):
-#     return html.Div([
-#         html.Div(
-#             style=HEADER_STYLE,
-#             children=[
-#                 html.Div(style={"height": "20px"}),
-#                     ],
-#                 ),
-#         html.Div(
-#             style=ABOUT_SECTION_STYLE,
-#             children=[
-#                 # Member 1
-#                 html.Div(
-#                     style=ABOUT_MEMBER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('DSC_4985.JPG'), style=IMAGE_STYLE),
-#                         html.Div(
-#                             style=TEXT_CONTAINER_STYLE,
-#                             children=[
-#                                 html.P("Emily Campos Sindermann", style={"fontWeight": "bold", "color": "black","marginBottom": '1px', 'marginTop': '10px'}),
-#                                 html.P(translation['freelance'], style=TEXT_ELEMENT_STYLE),
-#                                 html.P(translation['role_01'], style=TEXT_ELEMENT_STYLE),
-#                             ]
-#                         ),
-#                     ]
-#                 ),
-#                 # Member 2
-#                 html.Div(
-#                     style=ABOUT_MEMBER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('profile_dennyborsboom.jpeg'), style=IMAGE_STYLE),
-#                         html.Div(
-#                             style=TEXT_CONTAINER_STYLE,
-#                             children=[
-#                                 html.P("Denny Borsboom", style={"fontWeight": "bold", "color": "black","marginBottom": '1px', 'marginTop': '10px'}),
-#                                 html.P("University of Amsterdam", style=TEXT_ELEMENT_STYLE),
-#                                 html.P(translation['role_02'], style=TEXT_ELEMENT_STYLE),
-#                             ]
-#                         ),
-#                     ]
-#                 ),
-#                 # Member 3
-#                 html.Div(
-#                     style=ABOUT_MEMBER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('profile_tessablanken.jpeg'), style=IMAGE_STYLE),
-#                         html.Div(
-#                             style=TEXT_CONTAINER_STYLE,
-#                             children=[
-#                                 html.P("Tessa Blanken", style={"fontWeight": "bold", "color": "black","marginBottom": '1px', 'marginTop': '10px'}),
-#                                 html.P("University of Amsterdam", style=TEXT_ELEMENT_STYLE),
-#                                 html.P(translation['role_03'], style=TEXT_ELEMENT_STYLE),
-#                             ]
-#                         ),
-#                     ]
-#                 ),
-#                 # Member 4
-#                 html.Div(
-#                     style=ABOUT_MEMBER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('profile_larsklintwall.jpeg'), style=IMAGE_STYLE),
-#                         html.Div(
-#                             style=TEXT_CONTAINER_STYLE,
-#                             children=[
-#                                 html.P("Lars Klintwall", style={"fontWeight": "bold", "color": "black","marginBottom": '1px', 'marginTop': '10px'}),
-#                                 html.P("Karolinska Institute", style=TEXT_ELEMENT_STYLE),
-#                                 html.P(translation['role_04'], style=TEXT_ELEMENT_STYLE),
-#                             ]
-#                         ),
-#                     ]
-#                 ),
-#                 # Member 5
-#                 html.Div(
-#                     style=ABOUT_MEMBER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('profile_julianburger.jpeg'), style=IMAGE_STYLE),
-#                         html.Div(
-#                             style=TEXT_CONTAINER_STYLE,
-#                             children=[
-#                                 html.P("Julian Burger", style={"fontWeight": "bold", "color": "black","marginBottom": '1px', 'marginTop': '10px'}),
-#                                 html.P("Yale University", style=TEXT_ELEMENT_STYLE),
-#                                 html.P(translation['role_03'], style=TEXT_ELEMENT_STYLE),
-#                             ]
-#                         ),
-#                     ]
-#                 ),
-#                 # Partner Section
-#                 html.Div(
-#                     style=ABOUT_PARTNER_STYLE,
-#                     children=[
-#                         html.Img(src=app.get_asset_url('Amsterdamuniversitylogo.svg.png'), style={
-#                             'width': '50px', 'height': '50px', 'borderRadius': '50%'}),
-#                         html.Img(src=app.get_asset_url('birdt-health-logo.jpeg'), style={
-#                             'width': '50px', 'height': '50px', 'borderRadius': '50%'}),
-#                         html.P(translation['birdt'], style={"textAlign": "left", "color": "grey", "maxWidth": "350px"}),
-#                     ]
-#                 ),
-#             ],
-#         ),
-#     ], style=COMMON_STYLE)
-
 # Function: Create demo page
 def create_demo_page(translation):
     return html.Div(
@@ -1906,7 +2060,8 @@ def create_demo_page(translation):
                             dbc.Button(
                                 translation['get-started'],
                                 href="/psychoeducation",
-                                className="glowing-button",
+                                #className="glowing-button",
+                                className='delete-button',
                                 style={
                                     "margin": "10px",
                                     "fontSize": "18px",
@@ -1920,6 +2075,7 @@ def create_demo_page(translation):
                             ),
                             dbc.Button(
                                 translation['learn-more'],
+                                className='delete-button',
                                 href="/output",
                                 style={
                                     "margin": "10px",
@@ -2371,6 +2527,7 @@ def create_landing_page(translation):
                         children=[
                             dbc.Button(
                                 translation['view-demo'],
+                                className = 'delete-button',
                                 href="/psysys-demo",
                                 style={
                                     "backgroundColor": "#6F4CFF",
@@ -2385,6 +2542,7 @@ def create_landing_page(translation):
                             ),
                             dbc.Button(
                                 translation['learn-more'],
+                                className = 'delete-button',
                                 href="/project-info",
                                 style={
                                     "backgroundColor": "transparent",
@@ -2425,7 +2583,8 @@ def create_about(app, translation):
             html.Div(
                 children=[
                     html.H3(
-                        "Our Team",
+                        #"Our Team",
+                        translation["team"],
                         #className="multi-color-text",
                         style={
                             "textAlign": "center",
@@ -2443,29 +2602,33 @@ def create_about(app, translation):
                                 "Emily Campos Sindermann",
                                 "DSC_5008.JPG",
                                 #translation['freelance'],
-                                "PsySys Lead & Developer",
+                                translation['emily-role'],
                                 translation['role_01'],
+                                link="https://www.linkedin.com/in/emily-campos-sindermann-2575652a8/?original_referer=https%3A%2F%2Fwww%2Egoogle%2Ecom%2F&originalSubdomain=de",  # Example link
                             ),
                             create_team_member(
                                 app,
                                 "Denny Borsboom",
                                 "profile_dennyborsboom.jpeg",
-                                "Professor @ Psychological Methods, University of Amsterdam",
+                                translation['denny-role'],
                                 translation['role_02'],
+                                link="https://dennyborsboom.com", 
                             ),
                             create_team_member(
                                 app,
                                 "Tessa Blanken",
                                 "profile_tessablanken.jpeg",
-                                "Assistant Professor @ Psychological Methods, University of Amsterdam",  
+                                translation['tessa-role'],  
                                 translation['role_03'],
+                                link="https://tfblanken.com/", 
                             ),
                             create_team_member(
                                 app,
                                 "Lars Klintwall",
                                 "profile_larsklintwall.jpeg",
-                                "Clinician & Post-Doc @ Clinical Neuroscience, Karolinska Institute",
+                                translation['lars-role'],
                                 translation['role_04'],
+                                 link="https://ki.se/en/people/lars-klintwall", 
                             ),
                         ],
                         justify="center",
@@ -2478,7 +2641,7 @@ def create_about(app, translation):
             html.Div(
                 children=[
                     html.H3(
-                        "Collaborators",
+                        translation["collaborators"],
                         style={
                             "textAlign": "center",
                             "fontSize": "36px",
@@ -2493,19 +2656,22 @@ def create_about(app, translation):
                                 "Julian Burger",
                                 "profile_julianburger.jpeg", 
                                 "Post-Doc @ Yale School of Public Health",
-                                translation['role_04']),
+                                translation['role_04'],
+                                link="https://ysph.yale.edu/profile/julian-burger/", ),
                             create_team_member(
                                 app, 
                                 "Mark Willems",
                                 "mark_willems_2.jpeg", 
-                                "Founder & CEO @ Birdt Health",
-                                translation['role_04'],),
+                                translation['mark-role'],
+                                translation['role_04'],
+                                link="https://www.birdthealth.nl/over-birdt/", ),
                             create_team_member(
                                 app, 
                                 "Felix Vogel",
                                 "felix_vogel.jpeg", 
-                                "Interim Professor @ University of Hamburg",
-                                translation['role_04'],),
+                                translation['felix-role'],
+                                translation['role_04'],
+                                link="https://www.researchgate.net/profile/Felix-Vogel-4", ),
                         ],
                         justify="center",
                         style={"gap": "30px"},  # Consistent spacing between collaborators
@@ -2518,7 +2684,7 @@ def create_about(app, translation):
             html.Div(
                 children=[
                     html.H3(
-                        "Supporters",
+                        translation["supporters"],
                         style={
                             "textAlign": "center",
                             "fontSize": "36px",
@@ -2528,9 +2694,9 @@ def create_about(app, translation):
                     ),
                     dbc.Row(
                         [
-                            create_supporter(app, 'uva-logo-3.png', translation['uva-support']),
-                            create_supporter(app, 'dptv-logo.png', translation["dptv-support"]),
-                            create_supporter(app, 'zü-logo.webp', translation['zu-support']),
+                            create_supporter(app, 'uva-logo-3.png', translation['uva-support'], link="https://psyres.uva.nl/research-groups/grants/grants.html?cb"),
+                            create_supporter(app, 'dptv-logo.png', translation["dptv-support"], link="https://www.dptv.de"),
+                            create_supporter(app, 'zentrum-1.jpeg', translation['zu-support'], link="https://www.ueberleben.org"),
                         ],
                         justify="center",
                         style={"gap": "30px"},  # Consistent spacing between supporters
@@ -2548,7 +2714,9 @@ def create_about(app, translation):
                 },
                 children=[
                     dbc.Button(
-                        "Contact Us",
+                        translation['contact'],
+                        className="button-hover-gradient",
+                        #className='delete-button',
                         href="mailto:campos.sindermann@gmail.com?subject=Inquiry%20for%20PsySys%20App&",
                         style={
                             "backgroundColor": "transparent",
@@ -2568,70 +2736,155 @@ def create_about(app, translation):
 
 
 # Helper Function for Team Member
-def create_team_member(app, name, img, institution, role):
+# def create_team_member(app, name, img, institution, role):
+#     return dbc.Col(
+#         html.Div(
+#             style={
+#                 "textAlign": "center",
+#                 "width": "200px",  # Fixed width ensures uniform spacing
+#                 "margin": "0 auto",
+#             },
+#             children=[
+#                 html.Img(
+#                     src=app.get_asset_url(img),
+#                     style={
+#                         "width": "160px",  # Increased size
+#                         "height": "160px",
+#                         "borderRadius": "50%",  # Circle images
+#                         "marginBottom": "10px",
+#                     },
+#                 ),
+#                 html.P(
+#                     name,
+#                     style={"fontWeight": 500, "color": "#4A4A8D", "fontSize": "19px"},
+#                 ),
+#                 html.P(institution, style={"color": "#black", "fontSize": "16px", "fontWeight": 300}),
+#                 # html.P(role, style={"color": "#6c757d", "fontSize": "14px"}),
+#             ],
+#         ),
+#         width="auto",  # Dynamically adjust to fit content
+#     )
+
+def create_team_member(app, name, img, institution, role, link):
     return dbc.Col(
-        html.Div(
-            style={
-                "textAlign": "center",
-                "width": "200px",  # Fixed width ensures uniform spacing
-                "margin": "0 auto",
-            },
-            children=[
-                html.Img(
-                    src=app.get_asset_url(img),
-                    style={
-                        "width": "160px",  # Increased size
-                        "height": "160px",
-                        "borderRadius": "50%",  # Circle images
-                        "marginBottom": "10px",
-                    },
-                ),
-                html.P(
-                    name,
-                    style={"fontWeight": 500, "color": "#4A4A8D", "fontSize": "19px"},
-                ),
-                html.P(institution, style={"color": "#black", "fontSize": "16px", "fontWeight": 300}),
-                # html.P(role, style={"color": "#6c757d", "fontSize": "14px"}),
-            ],
+        html.A(  # Wrap the entire block with an anchor tag to make it clickable
+            href=link,
+            target="_blank",  # Open link in a new tab
+            style={"textDecoration": "none"},  # Remove underline from the link
+            children=html.Div(
+                style={
+                    "textAlign": "center",
+                    "width": "200px",  # Fixed width ensures uniform spacing
+                    "margin": "0 auto",
+                    "transition": "transform 0.2s ease-in-out",  # Smooth transition for hover effect
+                },
+                children=[
+                    html.Img(
+                        src=app.get_asset_url(img),
+                        style={
+                            "width": "160px",  # Initial size
+                            "height": "160px",
+                            "borderRadius": "50%",  # Circle images
+                            "marginBottom": "10px",
+                            "transition": "transform 0.2s ease-in-out",  # Smooth scaling on hover
+                        },
+                        className="hover-enlarge",  # Optional class for additional styling
+                    ),
+                    html.P(
+                        name,
+                        style={"fontWeight": 500, "color": "#4A4A8D", "fontSize": "19px"},
+                    ),
+                    html.P(
+                        institution,
+                        style={
+                            "color": "#000000",
+                            "fontSize": "16px",
+                            "fontWeight": 300,
+                        },
+                    ),
+                ],
+            ),
         ),
         width="auto",  # Dynamically adjust to fit content
     )
 
 
-# Helper Function for Collaborator
 # Helper Function for Supporter with Logo and Text
-def create_supporter(app, img, description):
+# def create_supporter(app, img, description):
+#     return dbc.Col(
+#         html.Div(
+#             style={
+#                 "textAlign": "center",
+#                 "width": "230px",  # Consistent width for each supporter
+#                 "margin": "0 auto",
+#             },
+#             children=[
+#                 html.Img(
+#                     src=app.get_asset_url(img),
+#                     style={
+#                         "width": "200px",  # Adjust logo size
+#                         #"height": "130px",  # Maintain aspect ratio
+#                         "height": "120px",
+#                         "borderRadius": "15px",  # Rounded edges
+#                         "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)",  # Optional shadow
+#                         "marginBottom": "10px",
+#                     },
+#                 ),
+#                 html.P(
+#                     description,
+#                     style={
+#                         "fontSize": "16px",
+#                         "fontWeight": 300,
+#                         "color": "#black",  # Subtle gray text color
+#                         "marginTop": "5px",
+#                     },
+#                 ),
+#             ],
+#         ),
+#         width="auto",  # Dynamically adjust to fit content
+#     )
+
+def create_supporter(app, img, description, link):
     return dbc.Col(
-        html.Div(
-            style={
-                "textAlign": "center",
-                "width": "230px",  # Consistent width for each supporter
-                "margin": "0 auto",
-            },
-            children=[
-                html.Img(
-                    src=app.get_asset_url(img),
-                    style={
-                        "width": "200px",  # Adjust logo size
-                        "height": "130px",  # Maintain aspect ratio
-                        "borderRadius": "15px",  # Rounded edges
-                        "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)",  # Optional shadow
-                        "marginBottom": "10px",
-                    },
-                ),
-                html.P(
-                    description,
-                    style={
-                        "fontSize": "16px",
-                        "fontWeight": 300,
-                        "color": "#black",  # Subtle gray text color
-                        "marginTop": "5px",
-                    },
-                ),
-            ],
+        html.A(
+            href=link,
+            target="_blank",  # Open link in a new tab
+            style={"textDecoration": "none"},
+            children=html.Div(
+                style={
+                    "textAlign": "center",
+                    "width": "230px",  # Consistent width for each supporter
+                    "margin": "0 auto",
+                    "transition": "transform 0.2s ease-in-out",
+                },
+                children=[
+                    html.Img(
+                        src=app.get_asset_url(img),
+                        style={
+                            "width": "200px",  # Adjust logo size
+                            "height": "120px",  # Maintain aspect ratio
+                            "borderRadius": "15px",  # Rounded edges
+                            "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)",  # Optional shadow
+                            "marginBottom": "10px",
+                            "transition": "transform 0.2s ease-in-out",
+                        },
+                        className="hover-enlarge",
+                    ),
+                    html.P(
+                        description,
+                        style={
+                            "fontSize": "16px",
+                            "fontWeight": 300,
+                            "color": "#000000",  # Subtle gray text color
+                            "marginTop": "5px",
+                        },
+                    ),
+                ],
+            ),
         ),
-        width="auto",  # Dynamically adjust to fit content
+        width="auto",
     )
+
 
 
 # Styles
@@ -2653,7 +2906,97 @@ from dash import html
 
 def create_output_page(translation):
     # Helper function to create a single output box
-    def create_output_box(image, tag, title, action, action_link):
+    # def create_output_box(image, tag, title, action, action_link):
+    #     return html.A(  # Make the entire box a clickable link
+    #         href=action_link,  # The URL to redirect to
+    #         style={
+    #             "textDecoration": "none",  # Remove underline from link
+    #             "color": "inherit",  # Inherit text color for hover consistency
+    #         },
+    #         children=html.Div(
+    #             style={
+    #                 "width": "400px",
+    #                 "backgroundColor": "white",
+    #                 "borderRadius": "15px",
+    #                 "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    #                 "overflow": "hidden",
+    #                 "display": "flex",
+    #                 "flexDirection": "column",
+    #                 "transition": "transform 0.2s ease-in-out",  # Smooth hover animation
+    #             },
+    #             children=[
+    #                 # Image Section
+    #                 html.Div(
+    #                     style={"position": "relative"},
+    #                     children=[
+    #                         html.Img(
+    #                             src=image,
+    #                             style={
+    #                                 "width": "100%",
+    #                                 "height": "200px",
+    #                                 "objectFit": "cover",
+    #                             },
+    #                         ),
+    #                         # Tag
+    #                         html.Div(
+    #                             tag,
+    #                             style={
+    #                                 "position": "absolute",
+    #                                 "top": "10px",
+    #                                 "right": "10px",
+    #                                 "backgroundColor": "#6F4CFF",
+    #                                 "color": "white",
+    #                                 "padding": "5px 10px",
+    #                                 "borderRadius": "20px",
+    #                                 "fontSize": "12px",
+    #                                 "fontWeight": "bold",
+    #                             },
+    #                         ),
+    #                     ],
+    #                 ),
+    #                 # Content Section
+    #                 html.Div(
+    #                     style={
+    #                         "padding": "30px",
+    #                         "flex": "1",  # Ensure content takes up remaining space
+    #                         "display": "flex",
+    #                         "flexDirection": "column",
+    #                         "justifyContent": "space-between",
+    #                     },
+    #                     children=[
+    #                         # html.Br(),
+    #                         html.Div(style={"height": "-20px"}),
+    #                         # Title
+    #                         html.H4(
+    #                             title,
+    #                             style={
+    #                                 "marginBottom": "10px",
+    #                                 "color": "black",
+    #                                 "fontSize": "20px",
+    #                                 "fontWeight": 500,
+    #                             },
+    #                         ),
+    #                         # html.Br(),
+    #                         html.Div(style={"height": "-20px"}),
+    #                         # Action Link (kept for semantics but redundant since the box is clickable)
+    #                         html.A(
+    #                             action,
+    #                             href=action_link,
+    #                             style={
+    #                                 "fontSize": "16px",
+    #                                 "color": "#6F4CFF",
+    #                                 "fontWeight": 300,
+    #                                 "fontStyle": "italic",
+    #                                 "textDecoration": "none",
+    #                             },
+    #                         ),
+    #                     ],
+    #                 ),
+    #             ],
+    #         ),
+    #     )
+
+    def create_output_box(image, tag, title, action, action_link, language_flag):
         return html.A(  # Make the entire box a clickable link
             href=action_link,  # The URL to redirect to
             style={
@@ -2684,20 +3027,39 @@ def create_output_page(translation):
                                     "objectFit": "cover",
                                 },
                             ),
-                            # Tag
+                            # Tag and Language Flag Section
                             html.Div(
-                                tag,
                                 style={
                                     "position": "absolute",
                                     "top": "10px",
                                     "right": "10px",
-                                    "backgroundColor": "#6F4CFF",
-                                    "color": "white",
-                                    "padding": "5px 10px",
-                                    "borderRadius": "20px",
-                                    "fontSize": "12px",
-                                    "fontWeight": "bold",
+                                    "display": "flex",
+                                    "alignItems": "center",
+                                    "gap": "5px",  # Space between the tag and the flag
                                 },
+                                children=[
+                                    # Tag
+                                    html.Div(
+                                        tag,
+                                        style={
+                                            "backgroundColor": "#6F4CFF",
+                                            "color": "white",
+                                            "padding": "5px 10px",
+                                            "borderRadius": "20px",
+                                            "fontSize": "12px",
+                                            "fontWeight": "bold",
+                                        },
+                                    ),
+                                    # Language Flag
+                                    html.Img(
+                                        src=language_flag,
+                                        style={
+                                            "width": "20px",  # Adjust the size of the flag
+                                            "height": "20px",
+                                            "borderRadius": "50%",  # Make the flag circular
+                                        },
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -2711,8 +3073,7 @@ def create_output_page(translation):
                             "justifyContent": "space-between",
                         },
                         children=[
-                            # html.Br(),
-                            html.Div(style={"height": "-20px"}),
+                            html.Div(style={"height": "-20px"}),  # Spacer
                             # Title
                             html.H4(
                                 title,
@@ -2723,8 +3084,7 @@ def create_output_page(translation):
                                     "fontWeight": 500,
                                 },
                             ),
-                            # html.Br(),
-                            html.Div(style={"height": "-20px"}),
+                            html.Div(style={"height": "-20px"}),  # Spacer
                             # Action Link (kept for semantics but redundant since the box is clickable)
                             html.A(
                                 action,
@@ -2785,6 +3145,7 @@ def create_output_page(translation):
                                     #"Master Thesis",
                                     translation['read-more'],
                                     "/thesis",
+                                    "/assets/us.png",
                                 ),
                                 width=4,
                                 className="feature-box",
@@ -2798,6 +3159,7 @@ def create_output_page(translation):
                                     "PsySys: Wirksamkeit einer netzwerkbasierten Online-Psychoedukation bei Depression",
                                     translation['read-more'],
                                     "/article",
+                                    "/assets/de.png",
                                 ),
                                 width=4,
                                 className="feature-box",
@@ -2810,6 +3172,7 @@ def create_output_page(translation):
                                     "Depressionen besser verstehen: Entwicklung eines Netzwerkansatzes",
                                     html.Div(translation['read-more'],style={"marginTop":"23px"}),
                                     "/press",
+                                    "/assets/de.png",
                                 ),
                                 width=4,
                                 className="feature-box",
@@ -2828,6 +3191,7 @@ def create_output_page(translation):
                                     "Changing Perspectives: Taking a New Approach to Understand Your Mental Health",
                                     translation['read-more'],
                                     "/blog",
+                                    "/assets/us.png",
                                 ),
                                 width=4,
                                 className="feature-box",
@@ -2840,6 +3204,7 @@ def create_output_page(translation):
                                     "From Parts to Patterns: The Power of Systems Thinking",
                                     html.Div(translation['coming-soon'], style={"marginTop": "23px"}),
                                     "#",
+                                    "/assets/us.png",
                                 ),
                                 width=4,
                             ),
@@ -2850,6 +3215,7 @@ def create_output_page(translation):
                                     "Beyond Symptoms: Mental Health Through the Lens of Complexity",
                                     html.Div(translation['coming-soon'], style={"marginTop": "23px"}),
                                     "#",
+                                    "/assets/us.png",
                                 ),
                                 width=4,
                             ),
@@ -3087,6 +3453,7 @@ def create_blog_page(translation):
                 children=[
                     dbc.Button(
                         translation['back'],
+                        className='delete-button',
                         href="/output",
                         style={
                             "backgroundColor": "#6F4CFF",
@@ -3244,6 +3611,7 @@ def create_thesis_page(translation):
                     # Back Button
                     dbc.Button(
                         translation['back'],
+                        className='delete-button',
                         href="/output",
                         style={
                             "backgroundColor": "#6F4CFF",
@@ -3260,6 +3628,7 @@ def create_thesis_page(translation):
                     html.A(
                         dbc.Button(
                             translation['read-more'],
+                            className='delete-button',
                             style={
                                 "backgroundColor": "transparent",
                                 "color": "white",
@@ -3422,6 +3791,7 @@ def create_article_page(translation):
                     # Back Button
                     dbc.Button(
                         translation['back'],
+                        className='delete-button',
                         href="/output",
                         style={
                             "backgroundColor": "#6F4CFF",
@@ -3438,6 +3808,7 @@ def create_article_page(translation):
                     html.A(
                         dbc.Button(
                             "Download",
+                            className='delete-button',
                             style={
                                 "backgroundColor": "transparent",
                                 "color": "white",
@@ -3602,6 +3973,7 @@ def create_press_page(translation):
                     dbc.Button(
                         translation['back'],
                         href="/output",
+                        className='delete-button',
                         style={
                             "backgroundColor": "#6F4CFF",
                             "color": "white",
@@ -3617,6 +3989,7 @@ def create_press_page(translation):
                     html.A(
                         dbc.Button(
                             translation['read-more'],
+                            className='delete-button',
                             style={
                                 "backgroundColor": "transparent",
                                 "color": "white",
