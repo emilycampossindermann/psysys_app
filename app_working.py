@@ -565,6 +565,14 @@ stylesheet = [{'selector': 'node',
 
 # Define app layout
 app.layout = dbc.Container([
+    html.Script(src="https://www.googletagmanager.com/gtag/js?id=G-LWES2QJL7S"),
+    html.Script(children="""
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LWES2QJL7S');
+    """),
+    
     dbc.Row([nav_col,translation_toggle, content_col]),
     dcc.Store(id="psychoeducation-visited", data={"visited": False}),
     dcc.Store(id='dropdown-store', storage_type='memory'),
