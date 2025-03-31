@@ -7,9 +7,11 @@ from functions.map_build import (map_add_factors, map_add_chains, map_add_cycles
 from functions.map_style import (graph_color)
 from functions.page_content import (generate_step_content, create_mental_health_map_tab, create_tracking_tab, create_about,
                                     create_demo_page, create_landing_page, create_learn_more_page, create_output_page, 
-                                    create_blog_page, create_thesis_page, create_article_page, create_press_page)
+                                    create_blog_page, create_thesis_page, create_article_page, create_press_page,
+                                    create_complexity_page, create_systemsthinking_page)
 
 # Translate PsySys factors 
+
 def update_factors_based_on_language(selected_language, session_data, edit_map_data):
     # Initialize dropdowns if they don't exist in session_data or edit_map_data
     session_data['dropdowns'] = session_data.get('dropdowns', {'initial-selection': {'options': [], 'value': []}})
@@ -113,6 +115,16 @@ def update_page_and_buttons(pathname, edit_map_data, current_step_data, language
 
     elif pathname == "/blog":
         content = create_blog_page(translation)
+        back_button_style = hidden_style
+        next_button_style = hidden_style
+
+    elif pathname == "/complexity":
+        content = create_complexity_page(translation)
+        back_button_style = hidden_style
+        next_button_style = hidden_style
+    
+    elif pathname == "/systems-thinking":
+        content = create_systemsthinking_page(translation)
         back_button_style = hidden_style
         next_button_style = hidden_style
 
@@ -287,6 +299,10 @@ def toggle_collapse(n_clicks, is_open):
         return not is_open
     return is_open
 
+def toggle_navbar(n, is_open):
+    return not is_open
+
+
 # Register the callbacks
 def register_layout_callbacks(app):
 
@@ -383,5 +399,12 @@ def register_layout_callbacks(app):
         [Input("psysys-demo-link", "n_clicks")],
         [dash.dependencies.State("psysys-demo-collapse", "is_open")],
     )(toggle_collapse)
+
+    app.callback(
+        Output("navbar-collapse", "is_open"),
+        [Input("navbar-toggler", "n_clicks")],
+        [dash.State("navbar-collapse", "is_open")],
+        prevent_initial_call=True,
+    )(toggle_navbar)
 
 

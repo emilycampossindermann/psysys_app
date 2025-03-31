@@ -367,7 +367,7 @@ def update_stylesheet_02(uniform_switch, selected_value, marks, comparison_data,
             stylesheet = comparison_data[selected_date].get('stylesheet', [])
 
             if uniform_switch and 0 in uniform_switch:  # Uniform switch is on
-                uniform_color = '#9CD3E1'
+                uniform_color = '#0A44F2'
                 stylesheet = apply_uniform_style(elements, severity_scores, uniform_color, stylesheet)
             else:  # Uniform switch is off
                 if selected_date == "PsySys":
