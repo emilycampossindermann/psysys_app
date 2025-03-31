@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+import re
 import dash_cytoscape as cyto
 from dash import dcc, html
 from constants import (COMMON_STYLE, HEADER_STYLE, VIDEO_STYLE, VIDEO_CONTAINER_STYLE, TEXT_BLOCK_STYLE, 
@@ -11,7 +12,7 @@ def create_iframe(src):
     return html.Iframe(
         width="615",
         height="346",
-        src=src,
+        src=f"{src}?rel=0&modestbranding=1",
         allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen"
     )
 
@@ -203,7 +204,7 @@ def generate_step_content(step, session_data, translation):
                                                 #"backgroundColor": "rgba(201, 226, 255, 0.6)",
                                             },
                                             children=[
-                                                html.H5(translation['exercise-0'] , style={**TEXT_STYLE, "color": "black"}),
+                                                html.H5(dcc.Markdown(translation["exercise-0"], dangerously_allow_html=True) , style={**TEXT_STYLE, "color": "black"}),
                                                 html.Div(style={"height": "10px"}),
                                                 html.Ol(
                                                     [
@@ -244,6 +245,102 @@ def generate_step_content(step, session_data, translation):
                         ),
                     ],
                 ),
+            # html.Div(
+            #     style={**COMMON_STYLE, 
+            #         "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            #         "overflow": "auto",  # ✅ Allows scrolling if content is cut off
+            #         "height": "100vh",  # Ensures full viewport height
+            #         "maxHeight": "100vh",
+            #     },
+            #     children=[
+            #         html.Div(style={**HEADER_STYLE, "height": "228px"}),  # Header
+            #         html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
+            #         html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
+
+            #         # Main Content Container (Now Scrollable)
+            #         html.Div(
+            #             style={
+            #                 "display": "flex",
+            #                 "justifyContent": "center",
+            #                 "flexDirection": "column",  # ✅ Ensure stacking on mobile
+            #                 "alignItems": "center",
+            #                 "gap": "20px",
+            #                 "padding": "20px",
+            #                 "overflowY": "auto",  # ✅ Allows vertical scrolling inside content
+            #                 "maxHeight": "calc(100vh - 300px)",  # Prevents full viewport lock
+            #             },
+            #             children=[
+            #                 dbc.Row(
+            #                     style={"width": "100%", "alignItems": "flex-start"},
+            #                     children=[
+            #                         # Exercise Field
+            #                         dbc.Col(
+            #                             html.Div(
+            #                                 style={
+            #                                     "padding": "15px",
+            #                                     "borderRadius": "8px",
+            #                                     "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+            #                                     "backgroundColor": "rgba(255, 255, 255, 0.65)",
+            #                                 },
+            #                                 children=[
+            #                                     html.H5(dcc.Markdown(translation["exercise-0"], dangerously_allow_html=True), 
+            #                                             style={**TEXT_STYLE, "color": "black"}),
+            #                                     html.Div(style={"height": "10px"}),  # Spacer
+            #                                     html.Ol(
+            #                                         [
+            #                                             html.Li(translation['title_block_01'], 
+            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+            #                                             html.P(translation['description_block_01'], 
+            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+
+            #                                             html.Li(translation['title_block_02'], 
+            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+            #                                             html.P(translation['description_block_02'], 
+            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+
+            #                                             html.Li(translation['title_block_03'], 
+            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+            #                                             html.P(translation['description_block_03'], 
+            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+
+            #                                             html.Li(translation['title_block_04'], 
+            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+            #                                             html.P(translation['description_block_04'], 
+            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+            #                                         ],
+            #                                     ),
+            #                                 ],
+            #                             ),
+            #                             md=6, xs=11  # ✅ Side-by-side on large screens, stacked on mobile
+            #                         ),
+
+            #                         # Video Section
+            #                         dbc.Col(
+            #                             html.Div(
+            #                                 html.Iframe(
+            #                                     src=translation["video_link_intro"],
+            #                                     style={
+            #                                         **VIDEO_STYLE,
+            #                                         "width": "94%",  # ✅ Makes it responsive
+            #                                         "height": "315px",  # ✅ Keeps correct aspect ratio
+            #                                         "borderRadius": "10px",
+            #                                     },
+            #                                 ),
+            #                                 style={
+            #                                     "padding": "15px",
+            #                                     "position": "relative",
+            #                                     "textAlign": "center",  # ✅ Centers the video on mobile
+            #                                 },
+            #                             ),
+            #                             md=6, xs=12  # ✅ Side-by-side on large screens, stacked on mobile
+            #                         ),
+            #                     ],
+            #                 ),
+            #             ],
+            #         ),
+            #     ],
+            # )
+
             )
     
 
@@ -327,7 +424,7 @@ def generate_step_content(step, session_data, translation):
                                         },
                                         children=[
                                             html.H5(
-                                                translation['exercise-1'],
+                                                dcc.Markdown(translation["exercise-1"], dangerously_allow_html=True),
                                                 style=TEXT_STYLE,
                                             ),
                                             html.Div(style={"height": "10px"}),
@@ -357,14 +454,14 @@ def generate_step_content(step, session_data, translation):
                                                     'position': 'absolute', 'top': '87px', 'right': '15px', 'zIndex': '10'
                                                 }
                                             ),
-                                            # dbc.Modal([
-                                            #     dbc.ModalHeader(
-                                            #         dbc.ModalTitle(translation['factor_description'])),
-                                            #         dbc.ModalBody("factor description", id='modal-factor-description-body')], 
-                                            #     id="modal-factor-description", is_open=False, backdrop=True, style={'fontFamily': "Outfit",
-                                            #                                         "fontWeight": 300,
-                                            #                                         'fontSize': '18px'}
-                                            # ),
+
+                                            dbc.Tooltip(
+                                                translation['factor-description-btn'],
+                                                target='help-factors',  # Matches the button id
+                                                placement="top",
+                                                autohide=True, 
+                                                delay={"show": 200, "hide": 100}
+                                            ),
 
                                             dbc.Modal(
                                                 [
@@ -712,7 +809,7 @@ def generate_step_content(step, session_data, translation):
                                         #"backgroundColor": "#f8f9fa"
                                     },
                                     children=[
-                                        html.H5(translation['exercise-2'],
+                                        html.H5(dcc.Markdown(translation["exercise-2"], dangerously_allow_html=True),
                                                 style=TEXT_STYLE,
                                                 ),
                                         html.Div(style={"height": "10px"}),
@@ -842,7 +939,7 @@ def generate_step_content(step, session_data, translation):
                                         #"backgroundColor": "#f8f9fa"
                                     },
                                     children=[
-                                        html.H5(translation["exercise-3"],
+                                        html.H5(dcc.Markdown(translation["exercise-3"], dangerously_allow_html=True),
                                                 style=TEXT_STYLE,
                                                 ),
                                         html.Div(style={"height": "10px"}),
@@ -966,7 +1063,7 @@ def generate_step_content(step, session_data, translation):
                                         #"backgroundColor": "#f8f9fa"
                                     },
                                     children=[
-                                        html.H5(translation['exercise-4'],
+                                        html.H5(dcc.Markdown(translation["exercise-4"], dangerously_allow_html=True),
                                                 style=TEXT_STYLE,
                                                 ),
                                         html.Div(style={"height": "10px"}),
@@ -1071,7 +1168,7 @@ def generate_step_content(step, session_data, translation):
                                         "backgroundColor": "rgba(255, 255, 255, 0.65)"
                                     },
                                     children=[
-                                        html.H5(translation['feedback_text'] , style={**TEXT_STYLE, "color": "black"}),
+                                        html.H5(dcc.Markdown(translation["feedback_text"], dangerously_allow_html=True), style={**TEXT_STYLE, "color": "black"}),
                                         html.Div(style={"height": "10px"}),
                                         html.Ol(
                                             [
@@ -1116,6 +1213,26 @@ def generate_step_content(step, session_data, translation):
                                     stylesheet = session_data.get('stylesheet', []),
                                     style={**VIDEO_STYLE, "marginLeft": "0px", "marginTop": "0px"}
                                 ), 
+
+                                html.Div(
+                                    [
+                                        html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
+                                        html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
+                                    ],
+                                    style={
+                                        "position": "absolute",
+                                        "top": "25px",  # Position at bottom-right of graph
+                                        "right": "25px",
+                                        "font-size": "20px",  # Make it visible
+                                        "color": "#888",  # Subtle gray
+                                        "background": "rgba(255, 255, 255, 0.7)",  # Light background
+                                        "padding": "5px 10px",
+                                        "border-radius": "10px",
+                                        "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
+                                        "z-index": "1000",
+                                        "cursor": "pointer",
+                                        },
+                                    ),
                             ],
                         ),
                     ],
@@ -1463,21 +1580,58 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                             zoom=1,
                                             pan={'x': 200, 'y': 200},
                                             stylesheet=edit_map_data['stylesheet'] + [
-                                                            # {
-                                                            #     'selector': 'node',
-                                                            #     'style': {
-                                                            #         'label': 'data(label)',  # Use the label data
-                                                            #         'font-family': 'Outfit',  # Set font family to "Outfit"
-                                                            #         'font-size': '12px',  # Optional: adjust font size
-                                                            #         'color': '#000',  # Adjust text color as needed
-                                                            #         'text-valign': 'center',  # Vertical alignment
-                                                            #         'text-halign': 'center'   # Horizontal alignment
-                                                            #     }
-                                                            # },
+                                                           {
+                                                                "selector": "node",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "label": "data(label)",
+                                                                    "text-halign": "center",
+                                                                    "text-valign": "center",
+                                                                    "font-size": "14px",
+                                                                    "color": "#333333",  # Adjust text color if needed
+                                                                },
+                                                            },
+                                                            {
+                                                                "selector": "edge",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "font-size": "12px",
+                                                                    "text-opacity": 1,
+                                                                    "text-background-opacity": 0,
+                                                                    "text-background-color": "#ffffff",
+                                                                },
+                                                            },
+                                                            {
+                                                                "selector": "label",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "font-size": "16px",
+                                                                    "font-weight": "300",
+                                                                },
+                                                            },
                                                         ],
                                             style={**VIDEO_STYLE, "marginLeft": "-140px"},
                                             generateImage={'type': 'jpg', 'action': 'store'},
                                             ), 
+                                html.Div(
+                                    [
+                                        html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
+                                        html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
+                                    ],
+                                    style={
+                                        "position": "absolute",
+                                        "top": "15px",  # Position at bottom-right of graph
+                                        "right": "165px",
+                                        "font-size": "20px",  # Make it visible
+                                        "color": "#888",  # Subtle gray
+                                        "background": "rgba(255, 255, 255, 0.7)",  # Light background
+                                        "padding": "5px 10px",
+                                        "border-radius": "10px",
+                                        "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
+                                        "z-index": "1000",
+                                        "cursor": "pointer",
+                                        },
+                                    ),
 
                                 html.Div(
                                     style={'display': 'flex', 'justifyContent': 'center', 'gap': '10px', 
@@ -2114,6 +2268,8 @@ def create_demo_page(translation):
                                     style={"textDecoration": "none"},  # Remove underline
                                     children=html.Div(
                                         children=[
+                                            html.Div(translation['step-1'], style={"width": "80px", "height": "40px", "borderRadius": "50px", "backgroundColor": "#6F4CFF", "color": "white", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "18px", "margin": "auto", "font": "Outfit", "fontWeight": "500"}),
+                                            #html.Span("①", style={"font": "Outfit","fontSize": "24px", "color": "#6F4CFF", "marginRight": "10px"}),
                                             html.H4(
                                                 translation['psychoeducation'],
                                                 style={
@@ -2153,6 +2309,8 @@ def create_demo_page(translation):
                                     style={"textDecoration": "none"},
                                     children=html.Div(
                                         children=[
+                                            html.Div(translation['step-2'], style={"width": "80px", "height": "40px", "borderRadius": "50px", "backgroundColor": "#6F4CFF", "color": "white", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "18px", "margin": "auto", "font": "Outfit", "fontWeight": "500"}),
+                                            #html.Span("②", style={"fontSize": "24px", "color": "#6F4CFF", "marginRight": "10px"}),
                                             html.H4(
                                                 translation['editor'],
                                                 style={
@@ -2190,6 +2348,8 @@ def create_demo_page(translation):
                                     style={"textDecoration": "none"},
                                     children=html.Div(
                                         children=[
+                                            html.Div(translation['step-3'], style={"width": "80px", "height": "40px", "borderRadius": "50px", "backgroundColor": "#6F4CFF", "color": "white", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "18px", "margin": "auto", "font": "Outfit", "fontWeight": "500"}),
+                                            #html.Span("③", style={"fontSize": "24px", "color": "#6F4CFF", "marginRight": "10px"}),
                                             html.H4(
                                                 translation['tracker'],
                                                 style={
@@ -3202,22 +3362,24 @@ def create_output_page(translation):
                                     "/assets/system_thinking.jpg",
                                     "BLOG",
                                     "From Parts to Patterns: The Power of Systems Thinking",
-                                    html.Div(translation['coming-soon'], style={"marginTop": "23px"}),
-                                    "#",
+                                    html.Div(translation['read-more'], style={"marginTop": "23px"}),
+                                    "/systems-thinking",
                                     "/assets/us.png",
                                 ),
                                 width=4,
+                                className="feature-box",
                             ),
                             dbc.Col(
                                 create_output_box(
                                     "/assets/complex_systems.jpg",
                                     "BLOG",
                                     "Beyond Symptoms: Mental Health Through the Lens of Complexity",
-                                    html.Div(translation['coming-soon'], style={"marginTop": "23px"}),
-                                    "#",
+                                    html.Div(translation['read-more'], style={"marginTop": "23px"}),
+                                    "/complexity",
                                     "/assets/us.png",
                                 ),
                                 width=4,
+                                className="feature-box",
                             ),
                         ],
                         justify="center",
@@ -3228,7 +3390,7 @@ def create_output_page(translation):
     )
 
 def create_blog_page(translation):
-    # Main Blog Page Layout
+# Main Blog Page Layout
     return html.Div(
         style={
             "width": "100vw",
@@ -3279,7 +3441,7 @@ def create_blog_page(translation):
                             "fontWeight": "600",
                             "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "900px",  # Restrict width for better readability
+                            "maxWidth": "950px",  # Restrict width for better readability
                             "marginLeft": "250px",
                         },
                     ),
@@ -3331,9 +3493,9 @@ def create_blog_page(translation):
                     html.Div(
                         children=[
                             html.H4(  # Subtitle 1
-                                "Understanding the 'invisible': What defines a mental disorder?",
+                                "Understanding the 'Invisible': What Defines a Mental Disorder?",
                                 style={
-                                    "fontSize": "20px",  # Larger subtitle
+                                    "fontSize": "25px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "600",
                                     "marginBottom": "15px",
@@ -3348,14 +3510,14 @@ def create_blog_page(translation):
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "300",
-                                    "marginBottom": "15px",
+                                    "marginBottom": "25px",
                                 },
                             ),
 
                             html.H4(  # Subtitle 2
                                 "Beyond One-Size-Fits-All: Rethinking Mental Health Diagnosis",
                                 style={
-                                    "fontSize": "20px",
+                                    "fontSize": "25px",
                                     "color": "black",
                                     "fontWeight": "600",
                                     "marginBottom": "15px",
@@ -3370,14 +3532,14 @@ def create_blog_page(translation):
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "300",
-                                    "marginBottom": "15px",
+                                    "marginBottom": "25px",
                                 },
                             ),
 
                             html.H4(  # Subtitle 3
                                 "Breaking the Silence: Addressing Stigma to Normalise Mental Health Conversations",
                                 style={
-                                    "fontSize": "20px",
+                                    "fontSize": "25px",
                                     "color": "black",
                                     "fontWeight": "600",
                                     "marginBottom": "10px",
@@ -3391,14 +3553,14 @@ def create_blog_page(translation):
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "300",
-                                    "marginBottom": "15px",
+                                    "marginBottom": "25px",
                                 },
                             ),
 
                             html.H4(  # Subtitle 4
                                 "Mapping Mental Health: A Personalised Approach Through the Network Lens",
                                 style={
-                                    "fontSize": "20px",
+                                    "fontSize": "25px",
                                     "color": "black",
                                     "fontWeight": "600",
                                     "marginBottom": "10px",
@@ -3412,14 +3574,14 @@ def create_blog_page(translation):
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "300",
-                                    "marginBottom": "15px",
+                                    "marginBottom": "25px",
                                 },
                             ),
 
                             html.H4(  # Subtitle 5
                                 "Evolving Perspectives: Toward Personalised and Compassionate Mental Health Care",
                                 style={
-                                    "fontSize": "20px",
+                                    "fontSize": "25px",
                                     "color": "black",
                                     "fontWeight": "600",
                                     "marginBottom": "10px",
@@ -3430,6 +3592,365 @@ def create_blog_page(translation):
                                 "understanding evolves over time. As we continue to explore new perspectives on mental "
                                 "health, the hope is to develop more effective, personalised treatments that address the specific "
                                 "needs of each individual.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "25px",
+                                },
+                            ),
+                        ],
+                        style={
+                            "color": "#333333",  # Dark grey for body text
+                            "fontSize": "18px",  # Normal text size
+                            "lineHeight": "1.6",  # Spacing between lines
+                            "textAlign": "left",
+                        },
+                    ),
+                ]),
+
+            # Back to Output Button
+            html.Div(
+                style={"textAlign": "center", "marginTop": "50px"},
+                children=[
+                    dbc.Button(
+                        translation['back'],
+                        className='delete-button',
+                        href="/output",
+                        style={
+                            "backgroundColor": "#6F4CFF",
+                            "color": "white",
+                            "padding": "15px 30px",
+                            "borderRadius": "50px",
+                            "fontSize": "18px",
+                            "fontWeight": "500",
+                            "border": "none",
+                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                        },
+                    ),
+                ],
+            ),
+
+        ],
+    )
+
+def create_complexity_page(translation):
+# Main Blog Page Layout
+    return html.Div(
+        style={
+            "width": "100vw",
+            "minHeight": "100vh",
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "padding": "50px 20px",
+            "fontFamily": "Outfit",
+            "color": "#333333",
+            "overflowX": "hidden",
+            "marginLeft": "-12px"
+        },
+        children=[
+            # Image at the Top with Rounded Edges
+            html.Div(
+                style={
+                    "textAlign": "center",
+                    "marginBottom": "30px",
+                    "marginTop": "60px"
+                },
+                children=[
+                    html.Img(
+                        src="/assets/complex_systems.jpg",  # Replace with your blog cover image path
+                        style={
+                            "width": "100%",
+                            "maxWidth": "900px",
+                            #"height": "auto",
+                            "height": "400px",
+                            "objectFit": "cover",
+                            "borderRadius": "20px",  # Rounded edges
+                            "boxShadow": "0px 6px 12px rgba(0, 0, 0, 0.15)",
+                        },
+                    )
+                ],
+            ),
+            # Header Section
+            html.Div(
+                style={
+                    "textAlign": "center",
+                    "marginBottom": "50px",
+                },
+                children=[
+                    html.H1(
+                        "Beyond Symptoms: Mental Health Through the Lens of Complexity",
+                        style={
+                            "fontSize": "45px",
+                            #"color": "#4A4A8D",
+                            "color": "black",
+                            "fontWeight": "600",
+                            "marginBottom": "10px",
+                            "textAlign": "left",  # Aligns text to the left
+                            "maxWidth": "890px",  # Restrict width for better readability
+                            "marginLeft": "250px",
+                        },
+                    ),
+                    html.Div(
+                        style={
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "alignItems": "flex-start",
+                            "color": "grey",
+                            "fontSize": "16px",
+                            "fontWeight": "300",
+                            "marginTop": "10px",
+                            "marginBottom": "20px",
+                            "maxWidth": "900px",
+                            "marginLeft": "250px",  # Align to the left
+                        },
+                        children=[
+                            html.Span(
+                                "Blogpost · March 2025",
+                                style={
+                                    "marginBottom": "5px",
+                                    "fontSize": "18px",
+                                },
+                            ),
+                            html.Span(
+                                "Author: Emily Campos Sindermann",
+                                style={
+                                    "fontSize": "18px",
+                                    "fontStyle": "italic",
+                                },
+                            ),
+                        ],
+                    ),
+
+                ],
+            ),
+            # Blog Sections
+            html.Div(
+                style={
+                    #"backgroundColor": "rgba(255, 255, 255, 0.85)",  # Semi-transparent white
+                    "backgroundColor": "transparent",
+                    "borderRadius": "15px",  # Rounded corners
+                    "padding": "35px",  # Inner spacing
+                    "margin": "30px auto",  # Center the box with margins
+                    "maxWidth": "910px",  # Restrict max width for readability
+                    #"boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",  # Subtle shadow
+                },
+                children=[
+                    html.Div(
+                        children=[
+                            html.H4(  # Subtitle 1
+                                "Defining “Mental Health”",
+                                style={
+                                    "fontSize": "25px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+                            html.P(
+                                "While we’ve reached a common societal awareness for mental-health - being it on social media, "
+                                "schools or in the workplace - clearly defining “mental health”, and “mental disorder” for that "
+                                "matter, remains a challenge. Unlike physical illnesses, which often have a clear biological cause "
+                                "and a straightforward treatment, mental health conditions don’t work the same way. They often cannot "
+                                "be reduced to a single source or fixed with a one-size-fits-all approach.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "Rather than adopting a simple cause (e.g. depression) and effect (e.g. symptoms, such as sad mood) "
+                                "relationship, we can look at mental health as a system that is highly individualized and composed "
+                                "of various interconnected factors that play a role in our well-being.  We can think of it as a "
+                                "personalized mental-health-map, in which internal factors including emotions, behavior and physiological "
+                                "symptoms as well as external factors, such as major life events (e.g. getting a new job or losing a loved one), "
+                                "interact with each other. This interplay of the systems parts shapes how we feel in a certain moment - it forms "
+                                "our overall state of mental well-being.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "30px"}),
+
+                            html.Div(
+                                style={"textAlign": "center", "marginBottom": "30px"},
+                                children=[
+                                    html.Img(
+                                        src="/assets/Mental-health-map-gif.gif",  # Ensure GIF is in 'assets' folder
+                                        style={
+                                            "width": "80%",  # Adjust size as needed
+                                            "maxWidth": "600px",
+                                            "borderRadius": "30px",
+                                            #"boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                                        },
+                                    )
+                                ],
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 2
+                                "Moving Through Mental States",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+                            html.P(
+                                "Understanding our mental-health system as a whole is not as simple as adding up all of the factors "
+                                "we are dealing with. Two people might experience similar symptoms but respond in different ways. "
+                                "Take, for example, fatigue, lack of motivation, and social withdrawal. Peter, a 32-year old engineer, "
+                                "who has been experiencing these factors for months, feeling persistently exhausted and disconnected "
+                                "without a clear external cause, might be diagnosed with depression. Meanwhile, Mary, a 24-year-old "
+                                "student, going through similar struggles after moving to a new city may simply be adjusting to a "
+                                "significant life change — her symptoms improve naturally over time as she adapts. Thus, mental health "
+                                "is not just a sum of individual factors; it is a self-organizing system where its different parts "
+                                "interact over time. What looks like depression in one person might be a temporary and natural reaction "
+                                "in another, shaped by the dynamic interplay of their environment, biology, and personal experiences.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "Mental health is not a static phenomenon. Your system is constantly in motion, it dynamically adapts and "
+                                "re-organizes itself in response to internal and external changes over time. You can think of your system "
+                                "as a ball rolling through a landscape with hills and valleys representing all possible states of your "
+                                "mental well-being, from happy and calm to stressed or depressed. How this state space looks is highly "
+                                "individual. Some valleys are shallow, meaning you can move in and out of them easily — like Mary, who is "
+                                "struggling after moving to a new city but will naturally regain balance as she adjusts. We all experience "
+                                "emotional setbacks, but many of them are temporary dips. In contrast, some valleys are deep, making it much "
+                                "harder to climb out — these are stable states. Peter, for example, has been experiencing a persistent vicious "
+                                "cycle of negative thoughts and low energy for months — he feels stuck in a depressive state. Thus, a disordered "
+                                "state is not solely attributed to the presence of symptoms, but the inability to disengage from them.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "30px"}),
+
+                            html.Div(
+                                style={"textAlign": "center", "marginBottom": "30px"},
+                                children=[
+                                    html.Img(
+                                        src="/assets/state-space-gif.gif",  # Ensure GIF is in 'assets' folder
+                                        style={
+                                            "width": "80%",  # Adjust size as needed
+                                            "maxWidth": "600px",
+                                            "borderRadius": "30px",
+                                            #"boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                                        },
+                                    )
+                                ],
+                            ),
+
+                            html.Div(style={"height": "10px"}),
+
+                            html.P(
+                                "A sudden, qualitative change in our mental health — being the onset, relapse or recovery from a distressed state — "
+                                "is called a phase transition. As smaller changes within the system accumulate, there occurs a destabilization "
+                                "of the current state. We can think of this as the valley gradually becoming more shallow. As a consequence "
+                                "the system might take longer to recover from minor perturbations. Similarly, someone approaching a mental "
+                                "health crisis may take longer to bounce back from stress or emotional setbacks. This is also known as critical "
+                                "slowing down and can be seen as an early warning sign before a major phase transition driving the system into "
+                                "a new stable state. For example, before entering his depressive episode, Peter might have noticed that what "
+                                "once felt like minor stressors started lingering on for days or weeks — he was losing resilience. Such dynamics "
+                                "can be “slow” like the onset and recovery of a depression which can take several months. Other dynamics are "
+                                "“fast”, such as experiencing a panic attack.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "30px"}),
+
+                            html.Div(
+                                style={"textAlign": "center", "marginBottom": "30px"},
+                                children=[
+                                    html.Img(
+                                        src="/assets/phase-transition.gif",  # Ensure GIF is in 'assets' folder
+                                        style={
+                                            "width": "80%",  # Adjust size as needed
+                                            "maxWidth": "600px",
+                                            "borderRadius": "30px",
+                                            #"boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                                        },
+                                    )
+                                ],
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 4
+                                "Bouncing Back",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+                            html.P(
+                                "Your mental landscape consists of both disordered and healthy stable states. Thus, in the same way you can fall, "
+                                "and get stuck in a negative state of mind, you can settle into a positive one. Just like mental health systems "
+                                "vary across people, so does their resistance to change. While this is certainly favourable for healthy patterns, "
+                                "some people might have more difficulty to bounce back after falling into an unhealthy state. Oftentimes reversing "
+                                "a negative shift is not as easy as resolving what triggered it in the first place. For instance, after an "
+                                "increase in stress, caused by a difficult university course, has led to a shift into a depressed state, "
+                                "dropping the course might not suffice for the person to recover. Thus,  it is always easier to prevent a "
+                                "negative shift from happening than it is to reverse it. ",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 5
+                                "Rethinking Mental Health",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+                            html.P(
+                                "Adopting a complexity lens invites us to rethink how we view and approach mental health. It helps us "
+                                "to embrace a rather fuzzy boundary between not only the notions of “healthy” and “unhealthy”, but also "
+                                "between distinct mental disorder categories. Positive and negative states coexist in a dynamic "
+                                "environment and our mental-health is constantly in motion, interacting with and adapting to the outside "
+                                "world. Rather than viewing pathology as a determined fixed condition, we can understand it as a "
+                                "changeable state — one that emerges from the interactions between a persons’  biological, psychological, "
+                                "and social factors. This perspective shifts the focus from merely treating symptoms to strengthening the "
+                                "underlying system as a whole. In clinical practice this encourages treatments that are adaptive and "
+                                "personalized, responding to an individual's shifting needs rather than just targeting symptoms in "
+                                "isolation. By focusing on strengthening resilience, enhancing flexibility, and fostering healthier states, "
+                                "we can create interventions that not only help people recover but also make them more resistant to future "
+                                "setbacks. Ultimately, embracing complexity in mental health allows for a more compassionate, nuanced, and "
+                                "effective approach — one that sees individuals not as collections of symptoms, but as dynamic systems "
+                                "capable of change.",
                                 style={
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
@@ -3468,6 +3989,500 @@ def create_blog_page(translation):
                     ),
                 ],
             ),
+
+        ],
+    )
+
+def create_systemsthinking_page(translation):
+# Main Blog Page Layout
+    return html.Div(
+        style={
+            "width": "100vw",
+            "minHeight": "100vh",
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "padding": "50px 20px",
+            "fontFamily": "Outfit",
+            "color": "#333333",
+            "overflowX": "hidden",
+            "marginLeft": "-12px"
+        },
+        children=[
+            # Image at the Top with Rounded Edges
+            html.Div(
+                style={
+                    "textAlign": "center",
+                    "marginBottom": "30px",
+                    "marginTop": "60px"
+                },
+                children=[
+                    html.Img(
+                        src="/assets/system_thinking.jpg",  # Replace with your blog cover image path
+                        style={
+                            "width": "100%",
+                            "maxWidth": "900px",
+                            #"height": "auto",
+                            "height": "400px",
+                            "objectFit": "cover",
+                            "borderRadius": "20px",  # Rounded edges
+                            "boxShadow": "0px 6px 12px rgba(0, 0, 0, 0.15)",
+                        },
+                    )
+                ],
+            ),
+            # Header Section
+            html.Div(
+                style={
+                    "textAlign": "center",
+                    "marginBottom": "50px",
+                },
+                children=[
+                    html.H1(
+                        "From Parts to Patterns: The Power of Systems Thinking",
+                        style={
+                            "fontSize": "45px",
+                            #"color": "#4A4A8D",
+                            "color": "black",
+                            "fontWeight": "600",
+                            "marginBottom": "10px",
+                            "textAlign": "left",  # Aligns text to the left
+                            "maxWidth": "890px",  # Restrict width for better readability
+                            "marginLeft": "250px",
+                        },
+                    ),
+                    html.Div(
+                        style={
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "alignItems": "flex-start",
+                            "color": "grey",
+                            "fontSize": "16px",
+                            "fontWeight": "300",
+                            "marginTop": "10px",
+                            "marginBottom": "20px",
+                            "maxWidth": "900px",
+                            "marginLeft": "250px",  # Align to the left
+                        },
+                        children=[
+                            html.Span(
+                                "Blogpost · April 2025",
+                                style={
+                                    "marginBottom": "5px",
+                                    "fontSize": "18px",
+                                },
+                            ),
+                            html.Span(
+                                "Author: Emily Campos Sindermann",
+                                style={
+                                    "fontSize": "18px",
+                                    "fontStyle": "italic",
+                                },
+                            ),
+                        ],
+                    ),
+
+                ],
+            ),
+            # Blog Sections
+            html.Div(
+                style={
+                    #"backgroundColor": "rgba(255, 255, 255, 0.85)",  # Semi-transparent white
+                    "backgroundColor": "transparent",
+                    "borderRadius": "15px",  # Rounded corners
+                    "padding": "35px",  # Inner spacing
+                    "margin": "30px auto",  # Center the box with margins
+                    "maxWidth": "910px",  # Restrict max width for readability
+                    #"boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",  # Subtle shadow
+                },
+                children=[
+                    html.Div(
+                        children=[
+                            html.H4(  # Subtitle 1
+                                "How We Think Shapes How We See the World",
+                                style={
+                                    "fontSize": "25px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+                            html.P(
+                                "Our minds are wired to simplify the world around us. We take in vast amounts of information every day, "
+                                "and to make sense of it, we rely on mental models — patterns, categories, and straight forward "
+                                "cause-and-effect explanations. This helps us navigate life efficiently, but it also means we sometimes "
+                                "oversimplify complex problems.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "This tendency to simplify makes a lot of sense. Evolutionarily speaking, we need to make quick "
+                                "decisions to survive. For instance, if you saw a tiger attack a member of your family, you shouldn’t need "
+                                "repeated evidence to conclude that tigers are dangerous. Rather, you would categorize tigers as threats and "
+                                "adapt your behavior accordingly. Our ability to draw this connection from limited information helps us to "
+                                "survive, but it also means we instinctively seek simple explanations — even for problems that are more complex, "
+                                "although they may seem simple at first glance. ",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "For example, when we see a sick plant, we might assume it just needs more water. But in reality, its health is "
+                                "influenced by multiple factors: soil quality, sunlight, surrounding plants, and even the insects in its environment. "
+                                "Similarly, when we look at other problems — whether in health, the economy, or society — we tend to focus on single "
+                                "causes rather than seeing the bigger picture. Systems thinking helps us shift our perspective, allowing us to see not "
+                                "just individual parts, but how they interact to create larger patterns of behavior.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 2
+                                "A School of Fish: Simple Rules, Complex Patterns",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "A great way to understand systems thinking is by looking at a school of fish. At first glance, it appears as though the "
+                                "fish are moving as a single, coordinated unit, but their behavior emerges from simple local rules followed by individual "
+                                "fish. No single fish is leading or directing the school, yet they move as a group. Each fish follows three basic principles:",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Ol(
+                                children=[
+                                    html.Li(
+                                        children=[
+                                            html.Span("Alignment", style={"fontWeight": "500"}), " – A fish adjusts its direction to match its nearest neighbors."
+                                        ]
+                                    ),
+                                    html.Li(
+                                        children=[
+                                            html.Span("Separation", style={"fontWeight": "500"}), " – A fish maintains a certain distance to avoid collisions."
+                                        ]
+                                    ),
+                                    html.Li(
+                                        children=[
+                                            html.Span("Cohesion", style={"fontWeight": "500"}), " – A fish moves toward the average position of nearby fish."
+                                        ]
+                                    ),
+                                ],
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "These simple rules create an emergent pattern — the entire school moves as a dynamic, flexible system, able to quickly shift "
+                                "direction in response to predators or environmental changes. Even though we can predict some aspects of individual fish "
+                                "behavior, the exact movements of the entire school are not easy to foresee because they arise from countless interactions "
+                                "happening in real time.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "30px"}),
+
+                            html.Div(
+                                style={"textAlign": "center", "marginBottom": "30px"},
+                                children=[
+                                    html.Img(
+                                        src="/assets/school of fish.gif",  # Ensure GIF is in 'assets' folder
+                                        style={
+                                            "width": "60%",  # Adjust size as needed
+                                            "maxWidth": "450px",
+                                            "borderRadius": "30px",
+                                            #"boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                                        },
+                                    )
+                                ],
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 3
+                                "So, What is a System?",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "A system is a collection of elements that are interconnected in a way that produces a pattern "
+                                "of behavior over time. Systems exist all around us — from ecosystems and economies to our own "
+                                "bodies and minds. A system isn't just a random collection of parts; it has structure, relationships, "
+                                "and purpose. To know whether you are looking at a system or just a bunch of stuff, ask yourself: ",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Ol(
+                                children=[
+                                    html.Li("Can you identify parts? ", style={"fontStyle": "italic", "fontWeight": "300"}),
+                                    html.Li("Do the parts affect each other?", style={"fontStyle": "italic", "fontWeight": "300"}),
+                                    html.Li("Do the parts together produce a different effect from the effect of each part on its own?", style={"fontStyle": "italic", "fontWeight": "300"}),
+                                    html.Li("Does the effect, the behavior over time, persist in a variety of circumstances?", style={"fontStyle": "italic", "fontWeight": "300"}),
+                                ],
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 4
+                                "Systems Thinking in Action",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "20px",
+                                },
+                            ),
+
+                            html.H4(  
+                                "Ecology: A Lake Ecosystem",
+                                style={
+                                    "fontSize": "20px",
+                                    "color": "black",
+                                    "fontWeight": "500",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+
+                            html.P(
+                                "A lake is an interconnected system of water, plants, fish, bacteria, and external influences like weather and pollution. "
+                                "When one part of the system changes — such as a rise in temperature — it affects everything else. Increased warmth can lead "
+                                "to algal blooms, which deplete oxygen in the water, harming the fish and impacting local communities that rely on the "
+                                "lake for fishing.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "20px",
+                                },
+                            ),
+
+                            html.H4(  
+                                "The Economy",
+                                style={
+                                    "fontSize": "20px",
+                                    "color": "black",
+                                    "fontWeight": "500",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+
+                            html.P(
+                                "The economy isn’t just about money changing hands. It’s a vast network of businesses, consumers, governments, and global trade. "
+                                "A sudden disruption — like a supply chain breakdown — can have ripple effects that influence jobs, prices, and even social stability. "
+                                "Systems thinking helps economists and policymakers anticipate these complex interactions rather than reacting to isolated factors.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "20px",
+                                },
+                            ),
+
+                            html.H4(  
+                                "Mental Health",
+                                style={
+                                    "fontSize": "20px",
+                                    "color": "black",
+                                    "fontWeight": "500",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+
+                            html.P([
+                                "Mental health can also be seen as a dynamic system influenced by genetics, personal experiences, relationships, "
+                                "and environmental stressors. Someone experiencing depression might not be struggling due to just one factor — "
+                                "like a stressful job — but rather a combination of influences: lack of sleep, social isolation, diet, and past "
+                                "experiences. Systems thinking helps us move beyond simple diagnostic criteria and consider the whole picture of "
+                                "well-being. For a deeper exploration of how systems thinking applies specifically to mental health, see our other "
+                                "blog post ",
+
+                                html.A(
+                                    "Beyond Symptoms: Mental Health Through the Lens of Complexity",
+                                    href="/complexity",  # Internal link to your blog page
+                                    style={"color": "black", "textDecoration": "underline"}  # Turquoise link
+                                ),
+                                ".",
+                                ],
+                                
+                                #Beyond Symptoms: Mental Health Through the Lens of Complexity.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "20px",
+                                },
+                            ),
+
+                            html.Div(style={"height": "20px"}),
+
+                            html.H4(  # Subtitle 5
+                                "How Can Systems Thinking Help Us?",
+                                style={
+                                    "fontSize": "25px",
+                                    "color": "black",
+                                    "fontWeight": "600",
+                                    "marginBottom": "10px",
+                                },
+                            ),
+                            html.P(
+                                "Adopting a systems perspective allows us to better navigate complexity in various areas of life. It can help us to:",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.Ol(
+                                children=[
+                                    html.Li(
+                                        children=[
+                                            html.Span("See the bigger picture", style={"fontWeight": "500"}), ": Instead of looking for a single cause, we recognize how multiple factors interact."
+                                        ]
+                                    ),
+                                    html.Li(
+                                        children=[
+                                            html.Span("Anticipate consequences", style={"fontWeight": "500"}), ": Systems thinking helps us understand unintended ripple effects, reducing the risk of short-term fixes that create long-term problems."
+                                        ]
+                                    ),
+                                    html.Li(
+                                        children=[
+                                            html.Span("Find leverage points for change", style={"fontWeight": "500"}), ": By identifying the key areas where small shifts can create big improvements, we can develop smarter interventions."
+                                        ]
+                                    ),
+                                    html.Li(
+                                        children=[
+                                            html.Span("Improve Resilience", style={"fontWeight": "500"}), ": Understanding how systems adapt over time allows us to strengthen their ability to recover from disruptions."
+                                        ]
+                                    ),
+                                ],
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "15px",
+                                },
+                            ),
+
+                            html.P(
+                                "Whether in mental health, environmental conservation, business, or policymaking, systems thinking provides a powerful way to approach problems. "
+                                "By shifting our focus from isolated parts to the patterns and relationships that shape outcomes, we can develop more effective, sustainable solutions "
+                                "for the complex world we live in.",
+                                style={
+                                    "fontSize": "20px",  # Larger subtitle
+                                    "color": "black",
+                                    "fontWeight": "300",
+                                    "marginBottom": "40px",
+                                },
+                            ),
+
+                            html.P(
+                            [
+                                "This blogpost is largely based on the book ",
+                                html.A(
+                                    "Thinking in Systems",
+                                    href="https://www.amazon.com/Thinking-Systems-Donella-Meadows/dp/1603580557",  # Link to the book
+                                    target="_blank",  # Opens link in a new tab #40E0D0
+                                    style={"color": "black", "textDecoration": "underline"}  # Optional styling for the link
+                                ),
+                                " by Donella H. Meadows. If the reader is interested in deepening their understanding in systems thinking, we recommend ",
+
+                                html.A(
+                                    "LOOPY",
+                                    href="https://ncase.me/loopy/",  # Link to the book
+                                    target="_blank",  # Opens link in a new tab #40E0D0
+                                    style={"color": "black", "textDecoration": "underline"}  # Optional styling for the link
+                                ),
+                                ", an interactive systems thinking tool by Nicky Case.",
+                            ],
+                            style={
+                                "fontSize": "20px",  # Larger subtitle
+                                "fontStyle": "italic",
+                                "color": "black",
+                                "fontWeight": "300",
+                                "marginBottom": "20px",
+                            },
+                        ),
+
+                        ],
+                        style={
+                            "color": "#333333",  # Dark grey for body text
+                            "fontSize": "18px",  # Normal text size
+                            "lineHeight": "1.6",  # Spacing between lines
+                            "textAlign": "left",
+                        },
+                    ),
+                ]),
+
+            # Back to Output Button
+            html.Div(
+                style={"textAlign": "center", "marginTop": "50px"},
+                children=[
+                    dbc.Button(
+                        translation['back'],
+                        className='delete-button',
+                        href="/output",
+                        style={
+                            "backgroundColor": "#6F4CFF",
+                            "color": "white",
+                            "padding": "15px 30px",
+                            "borderRadius": "50px",
+                            "fontSize": "18px",
+                            "fontWeight": "500",
+                            "border": "none",
+                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                        },
+                    ),
+                ],
+            ),
+
         ],
     )
 
@@ -3766,7 +4781,7 @@ def create_article_page(translation):
                                 },
                             ),
                             html.P(
-                                "Depression zählt weltweit zu den häufigsten psychischen Erkrankungen. Studien zeigen, dass innere Krankheitsrepräsenta- tionen bei den Patient*innen den Verlauf und die Wirksamkeit der Behandlung beeinflussen. Eine verbesserte Perspektive der Betroffenen könnte demnach die Behandlungsergebnisse positiv beeinflussen. Diese Masterarbeit untersucht dies durch die Einführung von PsySys – der ersten digitalen Psychoedukation für Depressionen, die auf dem Netzwerkansatz der Psy- chopathologie basiert. In einer 30-minütigen Online-Sitzung vermittelt PsySys die Grundlagen des Netzwerkansatzes mittels Erklärungsvideos und Übungen. Nach nur einer Sitzung berichteten die Teilnehmer*innen von reduziertem prognostischem Pessimismus sowie einem gesteigerten Gefühl der Kontrolle und einem besseren Verständnis ihrer Beschwerden. Unsere Ergebnisse legen nahe, dass eine kurze netzwerkbasierte Psychoedukation die Einstellung der Betroffenen verbessern und dadurch ihre Motivation während der Behandlung steigern kann.",
+                                "Depression zählt weltweit zu den häufigsten psychischen Erkrankungen. Studien zeigen, dass innere Krankheitsrepräsentationen bei den Patient*innen den Verlauf und die Wirksamkeit der Behandlung beeinflussen. Eine verbesserte Perspektive der Betroffenen könnte demnach die Behandlungsergebnisse positiv beeinflussen. Diese Masterarbeit untersucht dies durch die Einführung von PsySys – der ersten digitalen Psychoedukation für Depressionen, die auf dem Netzwerkansatz der Psy- chopathologie basiert. In einer 30-minütigen Online-Sitzung vermittelt PsySys die Grundlagen des Netzwerkansatzes mittels Erklärungsvideos und Übungen. Nach nur einer Sitzung berichteten die Teilnehmer*innen von reduziertem prognostischem Pessimismus sowie einem gesteigerten Gefühl der Kontrolle und einem besseren Verständnis ihrer Beschwerden. Unsere Ergebnisse legen nahe, dass eine kurze netzwerkbasierte Psychoedukation die Einstellung der Betroffenen verbessern und dadurch ihre Motivation während der Behandlung steigern kann.",
                                 style={
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
@@ -4002,6 +5017,27 @@ def create_press_page(translation):
                             },
                         ),
                         href="https://www.dptv.de/fileadmin/Redaktion/Bilder_und_Dokumente/Aktuelles_News/Pressemitteilungen/2024/2024-06-05-Masterpreis_2024.pdf",
+                        download="Pressemitteilung-preis.pdf",  # Enables file download
+                        target="_blank",  # Opens in a new tab
+                        style={"textDecoration": "none"},  # Remove underline from link
+                    ),
+
+                    html.A(
+                        dbc.Button(
+                            translation['award-ceremony'],
+                            className='delete-button',
+                            style={
+                                "backgroundColor": "transparent",
+                                "color": "white",
+                                "padding": "15px 30px",
+                                "borderRadius": "50px",
+                                "fontSize": "18px",
+                                "fontWeight": "500",
+                                "border": "2px solid white",  # Transparent button with white border
+                                "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
+                            },
+                        ),
+                        href="https://youtu.be/wXa4D_e_5tI?feature=shared",
                         download="Pressemitteilung-preis.pdf",  # Enables file download
                         target="_blank",  # Opens in a new tab
                         style={"textDecoration": "none"},  # Remove underline from link

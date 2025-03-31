@@ -6,11 +6,24 @@ def normalize(value, max_degree, min_degree):
     return (value - min_degree) / (max_degree - min_degree)
 
 # Color gradient
+# def get_color(value):
+#     b = 255
+#     r = int(173 * (1 - value))
+#     g = int(216 * (1 - value))
+#     return r, g, b
+
 def get_color(value):
-    b = 255
-    r = int(173 * (1 - value))
-    g = int(216 * (1 - value))
-    return r, g, b
+    """ Generates a lightness-based blue gradient from dark (#0A44F2) to light (#AEC2FF). """
+    min_color = (174, 194, 255)  # Lightest blue (like low opacity)
+    max_color = (10, 68, 242)    # Deep blue (full opacity effect)
+
+    # Interpolate between min_color and max_color based on value (0 to 1)
+    r = int(min_color[0] + (max_color[0] - min_color[0]) * value)
+    g = int(min_color[1] + (max_color[1] - min_color[1]) * value)
+    b = int(min_color[2] + (max_color[2] - min_color[2]) * value)
+
+    return f'rgb({r}, {g}, {b})'  # ✅ Cytoscape-compatible
+
 
 # Calculate degree centrality
 def calculate_degree_centrality(elements, degrees):
@@ -29,7 +42,8 @@ def apply_uniform_color_styles(stylesheet):
     uniform_color_style = {
         'selector': 'node',
         'style': {
-            'background-color': '#9CD3E1',
+            'background-color': '#0A44F2',
+            'font-family': 'Outfit, sans-serif',
             'label': 'data(label)'  # Ensure labels are maintained
         }
     }
@@ -54,12 +68,15 @@ def apply_severity_color_styles(type, stylesheet, severity_scores, default_style
         if max_severity == min_severity:
             # Apply the same color for all nodes (no normalization)
             for node_id, severity in severity_scores.items():
-                r, g, b = get_color(1.0)  # Use a default value like 1.0 or any fixed color
+                #r, g, b = get_color(1.0)  # Use a default value like 1.0 or any fixed color
+                background_color = get_color(1.0)  # ✅ Correct: store the RGBA string directly
 
                 severity_style = {
                     'selector': f'node[id="{node_id}"]',
                     'style': {
-                        'background-color': f'rgb({r},{g},{b})'
+                        #'background-color': f'rgb({r},{g},{b})'
+                        'background-color': background_color,
+                        'font-family': 'Outfit, sans-serif'
                     }
                 }
                 # Append the style for this node
@@ -68,12 +85,15 @@ def apply_severity_color_styles(type, stylesheet, severity_scores, default_style
             # Normalize and apply color based on severity
             for node_id, severity in severity_scores.items():
                 normalized_severity = (severity - min_severity) / (max_severity - min_severity)
-                r, g, b = get_color(normalized_severity)  # Assuming get_color is defined
+                #r, g, b = get_color(normalized_severity)  # Assuming get_color is defined
+                background_color = get_color(normalized_severity)
 
                 severity_style = {
                     'selector': f'node[id="{node_id}"]',
                     'style': {
-                        'background-color': f'rgb({r},{g},{b})'
+                        #'background-color': f'rgb({r},{g},{b})'
+                        'background-color': background_color,
+                        'font-family': 'Outfit, sans-serif' 
                     }
                 }
                 # Append the style for this node
@@ -118,12 +138,15 @@ def apply_centrality_color_styles(type, stylesheet, elements):
         else:
             normalized_degree = 0.5 
 
-        r, g, b = get_color(normalized_degree) 
+        #r, g, b = get_color(normalized_degree) 
+        background_color = get_color(normalized_degree)
 
         degree_style = {
             'selector': f'node[id="{node_id}"]',
             'style': {
-                'background-color': f'rgb({r},{g},{b})'
+                #'background-color': f'rgb({r},{g},{b})'
+                'background-color': background_color,
+                'font-family': 'Outfit, sans-serif'
             }
         }
         stylesheet.append(degree_style)
@@ -134,7 +157,7 @@ def apply_centrality_color_styles(type, stylesheet, elements):
 def color_scheme(chosen_scheme, graph_data, severity_scores):
     elements = graph_data['elements']
     stylesheet = graph_data['stylesheet']
-    default_style = [{'selector': 'node','style': {'background-color': '#9CD3E1', 'label': 'data(label)'}},
+    default_style = [{'selector': 'node','style': {'background-color': '#0A44F2', 'label': 'data(label)', 'font-family': 'Outfit, sans-serif'}},
                      {'selector': 'edge','style': {'curve-style': 'bezier', 'target-arrow-shape': 'triangle'}}]
     
     if chosen_scheme == "Uniform":
@@ -154,7 +177,7 @@ def update_stylesheet(graph_data, edge_id, edge_type, strength):
     color_map = {
         'amplifier': '#C54B47',  # Red
         'reliever': '#004AAD',   # Blue
-        'default': '#9CD3E1'     # Default color
+        'default': '#0A44F2'     # Default color
     }
 
     # Determine color based on edge type
@@ -195,7 +218,7 @@ def apply_uniform_size_styles(stylesheet):
     # Define the uniform size style
     uniform_size_style = {
         'selector': 'node',
-        'style': {'width': 25, 'height': 25}  # Example sizes
+        'style': {'width': 25, 'height': 25, 'font-family': 'Outfit, sans-serif'}  # Example sizes
     }
     # Apply this style to the stylesheet
     stylesheet = [style for style in stylesheet if 'width' not in style.get('style', {})]
@@ -224,7 +247,7 @@ def apply_severity_size_styles(type, stylesheet, severity_scores, default_style)
 
             severity_style = {
                 'selector': f'node[id="{node_id}"]',
-                'style': {'width': size,'height': size}
+                'style': {'width': size,'height': size, 'font-family': 'Outfit, sans-serif'}
                 }
             
             # Append the style for this node
@@ -272,7 +295,7 @@ def apply_centrality_size_styles(type, stylesheet, elements):
 
         degree_style = {
             'selector': f'node[id="{node_id}"]',
-            'style': {'width': size, 'height': size}
+            'style': {'width': size, 'height': size, 'font-family': 'Outfit, sans-serif'}
         }
 
         # Append the style for this node
@@ -285,7 +308,7 @@ def node_sizing(chosen_scheme, graph_data, severity_scores):
     print(severity_scores)
     elements = graph_data['elements']
     stylesheet = graph_data['stylesheet']
-    default_style = [{'selector': 'node','style': {'background-color': '#9CD3E1', 'label': 'data(label)'}},
+    default_style = [{'selector': 'node','style': {'background-color': '#0A44F2', 'label': 'data(label)', 'font-family': 'Outfit, sans-serif'}},
                      {'selector': 'edge','style': {'curve-style': 'bezier', 'target-arrow-shape': 'triangle'}}]
     
     if chosen_scheme == "Uniform":
@@ -304,7 +327,7 @@ def color_target(graph_data):
 
     if influential_factor:
         stylesheet.append({'selector': f'node[id = "{influential_factor[0]}"]',
-                           'style': {'border-color': 'red','border-width': '2px'}})
+                           'style': {'border-color': '#BF00FF','border-width': '2px', 'font-family': 'Outfit, sans-serif'}})
         
     graph_data['stylesheet'] = stylesheet
     return graph_data
@@ -313,7 +336,7 @@ def color_target(graph_data):
 def reset_target(graph_data):
     stylesheet = graph_data['stylesheet']
     new_stylesheet = [style for style in stylesheet 
-                      if not (style.get('style', {}).get('border-color') == 'red')]
+                      if not (style.get('style', {}).get('border-color') == '#BF00FF')]
     graph_data['stylesheet'] = new_stylesheet
     return graph_data
 
@@ -351,7 +374,8 @@ def apply_uniform_style(elements, severity_scores, uniform_color, stylesheet):
             uniform_style = {
                 'selector': f'node[id="{node_id}"]',
                 'style': {
-                    'background-color': uniform_color
+                    'background-color': uniform_color,
+                    'font-family': 'Outfit, sans-serif'
                 }
             }
             stylesheet.append(uniform_style)

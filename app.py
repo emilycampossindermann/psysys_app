@@ -13,3 +13,24 @@ app = dash.Dash(
 )
 
 app.title = "PsySys"
+
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+<head>
+    <script defer data-domain="psysys-proto.onrender.com" src="https://plausible.io/js/script.js"></script>
+    {%metas%}
+    <title>{%title%}</title>
+    {%favicon%}
+    {%css%}
+</head>
+<body>
+    {%app_entry%}
+    <footer>
+        {%config%}
+        {%scripts%}
+        {%renderer%}
+    </footer>
+</body>
+</html>
+'''
