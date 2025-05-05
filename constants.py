@@ -601,33 +601,17 @@ HEADER_STYLE = {
 }
 
 COMMON_STYLE = {
-    #"backgroundColor": "#f0f0f0",
     'backgroundColor': 'white',
-    #"background": "linear-gradient(135deg, #ffffff, #ffffff, #CB6CE6, ##004AAD)",
-    #"background-size": "200% 200%",
-    #"width": "100vw",
-    "width": "100%",
+    "width": "100vw",
+    #"width": "100%",
     "minHeight": "100vh",
     "paddingTop": "250px",
-    "paddingLeft": "100px",
     #"margin": "0 auto",
     "marginLeft": "-12px",
     'position': 'fixed'
 }
 
 # Flex container for text and video alignment
-# CONTENT_CONTAINER_STYLE = {
-#     "display": "flex",
-#     "alignItems": "flex-start",
-#     "width": "80vw",                  # Full width container for flexible layout
-#     "justifyContent": "space-between",
-#     "maxWidth": "1500px",
-#     "margin": "0 auto",
-#     #"gap": "-100px",                    # Control space between text and video
-#     "flexWrap": "wrap", 
-#     'marginLeft': '150px'
-# }
-
 CONTENT_CONTAINER_STYLE = {
     "display": "flex",
     "flexDirection": "row",  # Ensure video and text are side by side
@@ -671,8 +655,8 @@ VIDEO_STYLE = {
     "borderRadius": "15px",
     "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
     "backgroundColor": "white",
-    'marginLeft': '-50px',
-    'marginTop': '-10px'
+    #'marginLeft': '-50px',
+    'marginTop': '-17px'
 }
 
 PLOT_WINDOW_STYLE = {
