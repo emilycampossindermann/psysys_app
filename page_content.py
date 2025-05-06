@@ -370,9 +370,6 @@ def generate_step_content(step, session_data, translation):
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
 
         left = styled_col([
-            # html.H5(translation["finish_01"], style={**TEXT_STYLE, "textAlign": "center", "color": "black"}),
-            # html.P(translation["finish_02"], style={**TEXT_STYLE, "textAlign": "center", "color": "black"}),
-            # html.Hr(),
             dcc.Markdown(translation["feedback_text"], style={**TEXT_STYLE, "color": "black"}, dangerously_allow_html=True,),
             html.Ul([
                 html.Li(translation["feedback_question_01"], style={**TEXT_STYLE, "color": "black"}),
@@ -447,21 +444,13 @@ def generate_step_content(step, session_data, translation):
             html.Div(progress, style={"textAlign": "center"}),
             divider,
             suicide_prevention_message_block,
-            # dbc.Row([
-            #     dbc.Col(left, xs=12, md=6, style={"paddingRight": "5%", "paddingBottom": '5%'}),
-            #     dbc.Col(right, xs=12, md=6, style={"paddingRight": "3%"})
-            # ], style={"padding": "1%", "marginTop": ""})
 
             html.Div([
                 html.Div(left, style={
-                    # "flex": "1 1 100%",
-                    # "minWidth": "300px",
-                    # "maxWidth": "600px",
-                    # "margin": "10px",
                     "flex": "1 1 400px",    # ← More flexible
                     "minWidth": "300px",
                     "maxWidth": "600px",
-                    "margin": "0 auto",     # ✅ Center when stacked!
+                    #"margin": "0 auto",     # ✅ Center when stacked!
                     "display": "flex",
                     "flexDirection": "column",
                     "alignItems": "center",
@@ -479,8 +468,6 @@ def generate_step_content(step, session_data, translation):
                 "display": "flex",
                 "flexWrap": "wrap",
                 "justifyContent": "center",
-                # "alignItems": "flex-start",  # ✅ Prevents vertical centering
-                # "justifyContent": "center",
                 "gap": "50px",
                 "padding": "0 10%",    # ✅ Add left and right padding!
                 "boxSizing": "border-box",
@@ -1594,35 +1581,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                   'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
     color_schemes = [{'label': color, 'value': color} for color in translation['schemes']]
     sizing_schemes = [{'label': size, 'value': size} for size in translation['schemes']]
-    return html.Div(
-        style={**COMMON_STYLE, 
-               "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-               #"marginLeft": "-12px"
-               },
-            children=[
-                # Header with Welcome Message
-                html.Div(
-                    #style=HEADER_STYLE,
-                    children=[
-                        html.H2(
-                            translation['edit-map-title_01'],
-                            style={"fontFamily": "Outfit", 
-                                   #"fontWeight": "normal", 
-                                   #"color": "black", 
-                                   "fontSize": "36px",
-                                   "color": "#4A4A8D",
-                                   "fontWeight": 500,
-                                   "textAlign": "center",
-                                   "marginLeft": "-150px",
-                                   "marginTop": "-95px"},
-                        ),
-                    ],
-                ),
 
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "40px"}),
-
-                # Main content container (text and video)
-                html.Div(
+    left_content = html.Div(
                     style={**CONTENT_CONTAINER_STYLE},
                     children=[
                         # Plot section with question mark button
@@ -1855,8 +1815,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                     id='back-btn', 
                                                                     color="light",
                                                                     className='delete-button', 
-                                                                    style={'marginTop': '-32px',
-                                                                           'marginLeft': '70px',
+                                                                    style={'marginTop': '-50px',
+                                                                           'marginLeft': '540px',
                                                                             "backgroundColor": "#6F4CFF",
                                                                             "color": "white",
                                                                             #"border": "2px solid #6F4CFF",
@@ -1876,17 +1836,15 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                         style={'display': 'flex', 
                                                                   'alignItems': 'center', 
                                                                   'marginTop': '55px', 
-                                                                  'marginLeft': '365px'}),
+                                                                  }),
                                                         
                                                         ]), 
 
                                                     ], 
                                                     id = 'editing-window', 
-                                                    style={'width': '500px', 
+                                                    style={'width': '600px', 
                                                            'height':"auto", 
                                                            'padding': '10px', 
-                                                           'marginTop': '-0px', 
-                                                           'marginLeft':'-290px', 
                                                            'backgroundColor': 'white', 
                                                            'borderRadius': '15px', 
                                                            'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 
@@ -1894,32 +1852,35 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                            #"backgroundColor": "rgba(201, 226, 255, 0.4)",
                                                            "backgroundColor": "rgba(255, 255, 255, 0.65)"}),
 
-                        # Cytoscape graph section with vertically stacked controls
-                        html.Div(
+                    ],
+                )
+
+    
+    
+    right_content = html.Div(
                             style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "height": "50%",
-                                "padding": "15px",
-                                "position": "relative",
-                                "marginLeft": "-150px",
-                                "marginTop": "-10px"
+                                "position": "relative",     # <-- KEY: allows absolute icons to float over cytoscape
+                                "width": "100%",
+                                "height": "400px"
                             },
                             children=[
                                 cyto.Cytoscape(
                                     id='my-mental-health-map',
                                     elements=edit_map_data['elements'],
-                                    layout={'name': 'cose', 
-                                            "padding": 10,
-                                            "nodeRepulsion": 3500,
-                                            "idealEdgeLength": 10, 
-                                            "edgeElasticity": 5000,
-                                            "nestingFactor": 1.2,
-                                            "gravity": 1,
-                                            "numIter": 1000,
-                                            "initialTemp": 200,
-                                            "coolingFactor": 0.95,
-                                            "minTemp": 1.0,
-                                            'fit': True},
+                                    layout={
+                                        'name': 'cose',
+                                        "padding": 10,
+                                        "nodeRepulsion": 3500,
+                                        "idealEdgeLength": 10,
+                                        "edgeElasticity": 5000,
+                                        "nestingFactor": 1.2,
+                                        "gravity": 1,
+                                        "numIter": 1000,
+                                        "initialTemp": 200,
+                                        "coolingFactor": 0.95,
+                                        "minTemp": 1.0,
+                                        'fit': True
+                                    },
                                             zoom=1,
                                             pan={'x': 200, 'y': 200},
                                             stylesheet=edit_map_data['stylesheet'] + [
@@ -1953,32 +1914,22 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                 },
                                                             },
                                                         ],
-                                            style={**VIDEO_STYLE, "marginLeft": "-140px"},
+                                            style={**VIDEO_STYLE, 
+                                                "backgroundColor": "rgba(255, 255, 255, 0.65)",
+                                                "backdropFilter": "blur(6px)",
+                                                "WebkitBackdropFilter": "blur(6px)"
+                                                   },
                                             generateImage={'type': 'jpg', 'action': 'store'},
                                             ), 
-                                html.Div(
-                                    [
-                                        html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
-                                        html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
-                                    ],
-                                    style={
-                                        "position": "absolute",
-                                        "top": "15px",  # Position at bottom-right of graph
-                                        "right": "165px",
-                                        "font-size": "20px",  # Make it visible
-                                        "color": "#888",  # Subtle gray
-                                        "background": "rgba(255, 255, 255, 0.7)",  # Light background
-                                        "padding": "5px 10px",
-                                        "border-radius": "10px",
-                                        "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
-                                        "z-index": "1000",
-                                        "cursor": "pointer",
-                                        },
-                                    ),
 
                                 html.Div(
-                                    style={'display': 'flex', 'justifyContent': 'center', 'gap': '10px', 
-                                           'marginTop': '40px', "marginLeft": "-300px"},
+                                    style={
+                                        "marginTop": "30px",
+                                        "display": "flex",
+                                        "justifyContent": "center",
+                                        "gap": "12px",
+                                        "flexWrap": "wrap"  # ✅ Allows wrapping on small screens
+                                    },
                                     children=[
                                         dbc.Button([
                                             html.I(
@@ -1987,14 +1938,9 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                 #className="me-2", 
                                                 className='delete-button',
                                                 style={'border': 'none',
-                                                        #'color': '#8793c9',
                                                        'color': "white",
-                                                        #'backgroundColor': 'lightgray',
-                                                        #"backgroundColor": "#6F4CFF",
-                                                        #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
                                                         "backgroundColor": "transparent",
                                                         "border": "2px solid white",
-                                                        #"border": "none",
                                                         'fontFamily': "Outfit",
                                                         'fontWeight': 300,
                                                         "borderRadius": "50px",
@@ -2010,16 +1956,10 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                         id='upload-map-btn',
                                                         className='delete-button',
                                                         style={'border': 'none',
-                                                            #    'color': '#8793c9',
-                                                            #    'backgroundColor': 'lightgray', 
                                                                'padding': '7px',
                                                                'color': "white",
-                                                                #'backgroundColor': 'lightgray',
-                                                                #"backgroundColor": "#6F4CFF",
                                                                 "backgroundColor": "transparent",
                                                                 "border": "2px solid white",
-                                                                #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
-                                                                #"border": "none",
                                                                 'fontFamily': "Outfit",
                                                                 'fontWeight': 300,
                                                                 "borderRadius": "50px",
@@ -2035,14 +1975,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     id='download-file-btn',
                                                     className='delete-button',
                                                     style={'border': 'none',
-                                                        #    'color': '#8793c9',
-                                                        #    'backgroundColor': 'lightgray', 
-                                                           'marginLeft':'8px',
                                                            'color': "white",
-                                                            #'backgroundColor': 'lightgray',
                                                             "backgroundColor": "#6F4CFF",
-                                                            #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
-                                                            #"border": "none",
                                                             "backgroundColor": "transparent",
                                                             "border": "2px solid white",
                                                             'fontFamily': "Outfit",
@@ -2055,21 +1989,14 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     className='delete-button',
                                                     id='download-image-btn',
                                                     style={'border': 'none',
-                                                        #    'color': '#8793c9',
-                                                        #    'backgroundColor': 'lightgray', 
-                                                           'marginLeft':'8px', 
-                                                           'marginRight':'8px',
                                                            'color': "white",
-                                                            #'backgroundColor': 'lightgray',
                                                             "backgroundColor": "#6F4CFF",
-                                                            #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
                                                             "backgroundColor": "transparent",
                                                             "border": "2px solid white",
                                                             'fontFamily': "Outfit",
                                                             'fontWeight': 300,
                                                             "borderRadius": "50px",
                                                             "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                                                            #"border": "none"
                                                             }),
 
                                             dbc.Button(
@@ -2149,9 +2076,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                 max=10, 
                                                                 step=1),
                                                         html.Br(),
-                                                        #    html.Div("Color:"),
-                                                        #    dcc.Dropdown(id='custom-node-color', options=["blue", "purple", "yellow", "green", "red", "orange"], value=None, placeholder='Select a custom color', multi=False, style={'width': '70%', 'borderRadius': '10px'}),
-                                                        #    html.Br(),
+
                                                         html.Div(translation['note']),
                                                         dcc.Textarea(
                                                             id='note-input',
@@ -2250,21 +2175,746 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                      "fontWeight": 300,
                                                                      'fontSize': '18px'}),
 
-                                            ]
+                                            ],
                                         ),
                             ],
+                        )
+
+    return html.Div(
+        style={
+            **COMMON_STYLE,
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
+        },
+        children=[
+            html.Div(
+                children=[
+                    html.H2(
+                        translation['edit-map-title_01'],
+                        style={"fontFamily": "Outfit", 
+                               "fontSize": "36px",
+                               "color": "#4A4A8D",
+                               "fontWeight": 500,
+                               "textAlign": "center",
+                               "marginTop": "-95px",
+                               },
                         ),
                     ],
                 ),
-            ],
-        )
+
+            html.Hr(style={"margin": "5.7% auto 0% auto","width": "90%"}),
+
+            html.Div([
+                html.Div(left_content, style={
+                    "flex": "1 1 400px",    # ← More flexible
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    #"margin": "0 auto",     # ✅ Center when stacked!
+                    "display": "flex",
+                    "flexDirection": "column",
+                    "alignItems": "center",
+                }),
+                html.Div(right_content, style={
+                    "flex": "1 1 100%",
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    "marginTop": "48px",
+                    #"margin": "3% auto 0% auto",
+                    "alignItems": "center",
+                    "alignSelf": "flex-start",
+                    
+                }),
+            ], style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "gap": "50px",
+                "padding": "0 5%",    # ✅ Add left and right padding!
+                "boxSizing": "border-box",
+            })
+        ]
+    )
+
+
+# def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme_data, custom_color_data, translation):   
+#     cytoscape_elements = edit_map_data.get('elements', [])
+#     options_1 = [{'label': element['data'].get('label', element['data'].get('id')), 
+#                   'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
+#     color_schemes = [{'label': color, 'value': color} for color in translation['schemes']]
+#     sizing_schemes = [{'label': size, 'value': size} for size in translation['schemes']]
+#     return html.Div(
+#         style={**COMMON_STYLE, 
+#                "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+#                #"marginLeft": "-12px"
+#                },
+#             children=[
+#                 # Header with Welcome Message
+#                 html.Div(
+#                     #style=HEADER_STYLE,
+#                     children=[
+#                         html.H2(
+#                             translation['edit-map-title_01'],
+#                             style={"fontFamily": "Outfit", 
+#                                    #"fontWeight": "normal", 
+#                                    #"color": "black", 
+#                                    "fontSize": "36px",
+#                                    "color": "#4A4A8D",
+#                                    "fontWeight": 500,
+#                                    "textAlign": "center",
+#                                    "marginLeft": "-150px",
+#                                    "marginTop": "-95px"},
+#                         ),
+#                     ],
+#                 ),
+
+#                 html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "40px"}),
+
+#                 # Main content container (text and video)
+#                 html.Div(
+#                     style={**CONTENT_CONTAINER_STYLE},
+#                     children=[
+#                         # Plot section with question mark button
+                        
+                        
+#                                         html.Br(),
+#                                         html.Br(),
+#                                         html.Div([
+#                                             html.Div([
+#                                                 html.Div(translation['edit-text'],
+#                                                          style=TEXT_STYLE),
+#                                                 html.Div(style={"height":"20px"}),
+#                                                 html.Div([
+#                                                     dbc.Input(id='edit-node',
+#                                                               type='text', 
+#                                                               placeholder=translation['placeholder_enter_factor'], 
+#                                                               style={'marginRight': '10px', 
+#                                                                      'borderRadius': '50px',
+#                                                                      'fontFamily': "Outfit",
+#                                                                      "fontWeight": 300,
+#                                                                      'fontSize': '17px'}),
+#                                                     dbc.Button([
+#                                                         html.I(
+#                                                             className="fas fa-solid fa-plus")], 
+#                                                             id='btn-plus-node', 
+#                                                             color="primary", 
+#                                                             className='delete-button',
+#                                                             style={'border': 'none',
+#                                                                    #'color': '#8793c9',
+#                                                                    'color': 'white',
+#                                                                     #'backgroundColor': 'lightgray', 
+#                                                                     'backgroundColor': "#A7DCA7",
+#                                                                     'marginLeft':'8px',
+#                                                                     "borderRadius": "50px",
+#                                                                     "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                     dbc.Button([
+#                                                         html.I(className="fas fa-solid fa-minus")], 
+#                                                                 id='btn-minus-node', 
+#                                                                 color="danger", 
+#                                                                 className='delete-button',
+#                                                                 style={'border': 'none',
+#                                                                         'color': 'white',
+#                                                                         'backgroundColor': '#F4A3A3', 
+#                                                                         'marginLeft':'8px',
+#                                                                         "borderRadius": "50px",
+#                                                                         "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",})
+#                                                         ], style={'display': 'flex', 
+#                                                                   'alignItems': 'right', 
+#                                                                   'marginBottom': '10px'}),
+
+#                                                         html.Div([
+#                                                             dcc.Dropdown(id='edit-edge', 
+#                                                                          options=options_1, 
+#                                                                          placeholder=translation['placeholder_enter_connection'], 
+#                                                                          multi=True, 
+#                                                                          style={'width': '96%', 
+#                                                                                 'borderRadius': '50px',
+#                                                                                 'fontFamily': "Outfit",
+#                                                                                 "fontWeight": 300,
+#                                                                                 'fontSize': '17px'}),
+#                                                             dbc.Button([
+#                                                                 html.I(className="fas fa-solid fa-plus")], 
+#                                                                        id='btn-plus-edge', 
+#                                                                        color="primary",
+#                                                                        className='delete-button',
+#                                                                        style={'border': 'none',
+#                                                                               #'color': '#8793c9',
+#                                                                               'color': 'white',
+#                                                                               #'backgroundColor': 'lightgray',
+#                                                                               'backgroundColor': "#A7DCA7",
+#                                                                               'marginLeft':'8px',
+#                                                                               "borderRadius": "50px",
+#                                                                               'padding': '7px 12px',
+#                                                                               "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                             dbc.Button([
+#                                                                 html.I(className="fas fa-solid fa-minus")], 
+#                                                                        id='btn-minus-edge', 
+#                                                                        color="danger", 
+#                                                                        className='delete-button',
+#                                                                        style={'border': 'none',
+#                                                                               #'color': '#8793c9',
+#                                                                               'color': 'white',
+#                                                                               #'backgroundColor': 'lightgray', 
+#                                                                               'backgroundColor': '#F4A3A3',
+#                                                                               'marginLeft':'8px',
+#                                                                               "borderRadius": "50px",
+#                                                                               'padding': '7px 12px',
+#                                                                               "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                         ], style={'display': 'flex', 
+#                                                                   'alignItems': 'center', 
+#                                                                   'marginBottom': '10px'}),
+                                                    
+#                                                         html.Div([
+#                                                             dcc.Dropdown(id='color-scheme', 
+#                                                                          options=color_schemes, 
+#                                                                          value=color_scheme_data, 
+#                                                                          placeholder=translation['placeholder_color_scheme'], 
+#                                                                          multi=False, 
+#                                                                          style={'width': '96%', 
+#                                                                                 #'borderRadius': '10px'
+#                                                                                 "borderRadius": "50px",
+#                                                                                 'fontFamily': "Outfit",
+#                                                                                 "fontWeight": 300,
+#                                                                                 'fontSize': '17px'}),
+#                                                             dbc.Button([
+#                                                                 html.I(className="fas fa-solid fa-question")], 
+#                                                                        id='help-color', 
+#                                                                        color="light", 
+#                                                                        className='delete-button',
+#                                                                        style={#'border': 'none',
+#                                                                               "backgroundColor": "transparent",
+#                                                                               "color": "#6F4CFF",
+#                                                                               "border": "2px solid #6F4CFF",
+#                                                                               #'color': 'grey', 
+#                                                                               'marginLeft':'8px',
+#                                                                               "borderRadius": "50px",
+#                                                                                'padding' : '3px 10px 3px 10px',
+#                                                                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                             dbc.Modal([
+#                                                                 dbc.ModalHeader(
+#                                                                     dbc.ModalTitle(translation['color_modal_title'])),
+#                                                                     dbc.ModalBody("", 
+#                                                                                   id='modal-color-scheme-body')
+#                                                                     ], 
+#                                                                     id="modal-color-scheme",
+#                                                                     backdrop = "False", 
+#                                                                     style={"display": "flex", 
+#                                                                            "gap": "5px", 
+#                                                                            'zIndex':'8000',
+#                                                                            'fontFamily': "Outfit",
+#                                                                            "fontWeight": 300,
+#                                                                            'fontSize': '18px'}),
+#                                                         ], style={'display': 'flex', 
+#                                                                   'alignItems': 'center', 
+#                                                                   'marginBottom': '10px', 
+#                                                                   'zIndex':'8000'}),
+
+#                                                         html.Div([
+#                                                             dcc.Dropdown(id='sizing-scheme', 
+#                                                                          options=sizing_schemes, 
+#                                                                          value=sizing_scheme_data, 
+#                                                                          placeholder=translation['placeholder_sizing_scheme'], 
+#                                                                          multi=False,
+#                                                                          style={'width': '96%', 
+#                                                                                 #'borderRadius': '10px'
+#                                                                                 "borderRadius": "50px",
+#                                                                                 'fontFamily': "Outfit",
+#                                                                                 "fontWeight": 300,
+#                                                                                 'fontSize': '17px'}),
+#                                                             dbc.Button([
+#                                                                 html.I(className="fas fa-solid fa-question")], 
+#                                                                        id='help-size', 
+#                                                                        color="light", 
+#                                                                        className='delete-button',
+#                                                                        style={
+#                                                                             #   'border': 'none',
+#                                                                             #   'color': 'grey', 
+#                                                                               "backgroundColor": "transparent",
+#                                                                               "color": "#6F4CFF",
+#                                                                               "border": "2px solid #6F4CFF",
+#                                                                               'marginLeft':'8px',
+#                                                                               "borderRadius": "50px",
+#                                                                                'padding' : '3px 10px 3px 10px',
+#                                                                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                             dbc.Modal([
+#                                                                 dbc.ModalHeader(
+#                                                                     dbc.ModalTitle(translation['sizing_modal_title'])),
+#                                                                     dbc.ModalBody("", 
+#                                                                                   id='modal-sizing-scheme-body')
+#                                                                     ], 
+#                                                                     id="modal-sizing-scheme", 
+#                                                                     style={"display": "flex", 
+#                                                                            "gap": "5px", 
+#                                                                            'zIndex':'8000',
+#                                                                            'fontFamily': "Outfit",
+#                                                                            "fontWeight": 300,
+#                                                                            'fontSize': '18px'}),
+#                                                         ], style={'display': 'flex', 
+#                                                                   'alignItems': 'center', 
+#                                                                   'marginBottom': '10px', 
+#                                                                   'zIndex':'8000'}),
+#                                                         html.Br(),
+
+#                                                         html.Div([
+#                                                             dbc.Checklist(
+#                                                                 options=[{"label": html.Span(html.I(className="fas fa-magnifying-glass"),style={'color': '#8793c9'}), 
+#                                                                           "value": 0}],
+#                                                                 value=[1],
+#                                                                 id="inspect-switch",
+#                                                                 switch=True),
+#                                                             dbc.Button([
+#                                                                 html.I(
+#                                                                     className="fas fa-solid fa-question")], 
+#                                                                     id='help-inspect', 
+#                                                                     color="light", 
+#                                                                     className='delete-button',
+#                                                                     style={
+#                                                                         #    'border': 'none',
+#                                                                         #    'color': 'grey', 
+#                                                                             "backgroundColor": "transparent",
+#                                                                             "color": "#6F4CFF",
+#                                                                             "border": "2px solid #6F4CFF",
+#                                                                            'marginLeft':'8px',
+#                                                                            'borderRadius': '50px',
+#                                                                            'padding' : '3px 10px 3px 10px',
+#                                                                            "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                             dbc.Modal([
+#                                                                 dbc.ModalHeader(
+#                                                                     dbc.ModalTitle(translation['inspect_modal_title'])),
+#                                                                     dbc.ModalBody(translation['inspect_modal_text'], 
+#                                                                                   id='modal-inspect-body')
+#                                                                     ], 
+#                                                                     id="modal-inspect", 
+#                                                                     style={"display": "flex",
+#                                                                            "gap": "5px", 
+#                                                                            'zIndex':'8000',
+#                                                                            'fontFamily': "Outfit",
+#                                                                             "fontWeight": 300,
+#                                                                             'fontSize': '18px'}
+#                                                                            ),
+#                                                                     ], style={'display': 'flex', 
+#                                                                               'alignItems': 'center', 
+#                                                                               'marginBottom': '10px', 
+#                                                                               'zIndex':'8000'}),
+                                                                    
+#                                                         html.Div([
+#                                                             dbc.Button([
+#                                                                 html.I(
+#                                                                     className="fas fa-solid fa-backward")], 
+#                                                                     id='back-btn', 
+#                                                                     color="light",
+#                                                                     className='delete-button', 
+#                                                                     style={'marginTop': '-32px',
+#                                                                            'marginLeft': '70px',
+#                                                                             "backgroundColor": "#6F4CFF",
+#                                                                             "color": "white",
+#                                                                             #"border": "2px solid #6F4CFF",
+#                                                                             "border": "none",
+#                                                                            'borderRadius': '50px',
+#                                                                             'padding' : '7px 11px 7px 11px',
+#                                                                             "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+                                                            
+#                                                             dbc.Tooltip(
+#                                                                 translation['hover-back-edit'],
+#                                                                 target='back-btn',  # Matches the button id
+#                                                                 placement="top",
+#                                                                 autohide=True, 
+#                                                                 delay={"show": 500, "hide": 100}
+#                                                             ),
+#                                                         ], 
+#                                                         style={'display': 'flex', 
+#                                                                   'alignItems': 'center', 
+#                                                                   'marginTop': '55px', 
+#                                                                   'marginLeft': '365px'}),
+                                                        
+#                                                         ]), 
+
+#                                                     ], 
+#                                                     id = 'editing-window', 
+#                                                     style={'width': '500px', 
+#                                                            'height':"auto", 
+#                                                            'padding': '10px', 
+#                                                            'marginTop': '-0px', 
+#                                                            'marginLeft':'-290px', 
+#                                                            'backgroundColor': 'white', 
+#                                                            'borderRadius': '15px', 
+#                                                            'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 
+#                                                            'zIndex': '2000',
+#                                                            #"backgroundColor": "rgba(201, 226, 255, 0.4)",
+#                                                            "backgroundColor": "rgba(255, 255, 255, 0.65)"}),
+
+#                         # Cytoscape graph section with vertically stacked controls
+#                         html.Div(
+#                             style={
+#                                 "width": "48.5%",  # Adjusted to align with the left section
+#                                 "height": "50%",
+#                                 "padding": "15px",
+#                                 "position": "relative",
+#                                 "marginLeft": "-150px",
+#                                 "marginTop": "-10px"
+#                             },
+#                             children=[
+#                                 cyto.Cytoscape(
+#                                     id='my-mental-health-map',
+#                                     elements=edit_map_data['elements'],
+#                                     layout={'name': 'cose', 
+#                                             "padding": 10,
+#                                             "nodeRepulsion": 3500,
+#                                             "idealEdgeLength": 10, 
+#                                             "edgeElasticity": 5000,
+#                                             "nestingFactor": 1.2,
+#                                             "gravity": 1,
+#                                             "numIter": 1000,
+#                                             "initialTemp": 200,
+#                                             "coolingFactor": 0.95,
+#                                             "minTemp": 1.0,
+#                                             'fit': True},
+#                                             zoom=1,
+#                                             pan={'x': 200, 'y': 200},
+#                                             stylesheet=edit_map_data['stylesheet'] + [
+#                                                            {
+#                                                                 "selector": "node",
+#                                                                 "style": {
+#                                                                     "font-family": "Outfit",
+#                                                                     "label": "data(label)",
+#                                                                     "text-halign": "center",
+#                                                                     "text-valign": "center",
+#                                                                     "font-size": "14px",
+#                                                                     "color": "#333333",  # Adjust text color if needed
+#                                                                 },
+#                                                             },
+#                                                             {
+#                                                                 "selector": "edge",
+#                                                                 "style": {
+#                                                                     "font-family": "Outfit",
+#                                                                     "font-size": "12px",
+#                                                                     "text-opacity": 1,
+#                                                                     "text-background-opacity": 0,
+#                                                                     "text-background-color": "#ffffff",
+#                                                                 },
+#                                                             },
+#                                                             {
+#                                                                 "selector": "label",
+#                                                                 "style": {
+#                                                                     "font-family": "Outfit",
+#                                                                     "font-size": "16px",
+#                                                                     "font-weight": "300",
+#                                                                 },
+#                                                             },
+#                                                         ],
+#                                             style={**VIDEO_STYLE, "marginLeft": "-140px"},
+#                                             generateImage={'type': 'jpg', 'action': 'store'},
+#                                             ), 
+#                                 html.Div(
+#                                     [
+#                                         html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
+#                                         html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
+#                                     ],
+#                                     style={
+#                                         "position": "absolute",
+#                                         "top": "15px",  # Position at bottom-right of graph
+#                                         "right": "165px",
+#                                         "font-size": "20px",  # Make it visible
+#                                         "color": "#888",  # Subtle gray
+#                                         "background": "rgba(255, 255, 255, 0.7)",  # Light background
+#                                         "padding": "5px 10px",
+#                                         "border-radius": "10px",
+#                                         "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
+#                                         "z-index": "1000",
+#                                         "cursor": "pointer",
+#                                         },
+#                                     ),
+
+#                                 html.Div(
+#                                     style={'display': 'flex', 'justifyContent': 'center', 'gap': '10px', 
+#                                            'marginTop': '40px', "marginLeft": "-300px"},
+#                                     children=[
+#                                         dbc.Button([
+#                                             html.I(
+#                                                 className="fas fa-solid fa-upload"), " ","PsySys Map"], 
+#                                                 id='load-map-btn',
+#                                                 #className="me-2", 
+#                                                 className='delete-button',
+#                                                 style={'border': 'none',
+#                                                         #'color': '#8793c9',
+#                                                        'color': "white",
+#                                                         #'backgroundColor': 'lightgray',
+#                                                         #"backgroundColor": "#6F4CFF",
+#                                                         #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
+#                                                         "backgroundColor": "transparent",
+#                                                         "border": "2px solid white",
+#                                                         #"border": "none",
+#                                                         'fontFamily': "Outfit",
+#                                                         'fontWeight': 300,
+#                                                         "borderRadius": "50px",
+#                                                         "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+#                                                         }),
+                                        
+#                                         dcc.Upload(
+#                                                 id='upload-data',
+#                                                 children= dbc.Button([
+#                                                     html.I(
+#                                                         className="fas fa-solid fa-upload"), " ", "file"], 
+#                                                         color="secondary", 
+#                                                         id='upload-map-btn',
+#                                                         className='delete-button',
+#                                                         style={'border': 'none',
+#                                                             #    'color': '#8793c9',
+#                                                             #    'backgroundColor': 'lightgray', 
+#                                                                'padding': '7px',
+#                                                                'color': "white",
+#                                                                 #'backgroundColor': 'lightgray',
+#                                                                 #"backgroundColor": "#6F4CFF",
+#                                                                 "backgroundColor": "transparent",
+#                                                                 "border": "2px solid white",
+#                                                                 #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
+#                                                                 #"border": "none",
+#                                                                 'fontFamily': "Outfit",
+#                                                                 'fontWeight': 300,
+#                                                                 "borderRadius": "50px",
+#                                                                 "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                                 style={
+#                                                     'display': 'inline-block',
+#                                                 },
+#                                             ),
+                                            
+#                                             dbc.Button([
+#                                                 html.I(
+#                                                     className="fas fa-solid fa-download"), " ","file"], 
+#                                                     id='download-file-btn',
+#                                                     className='delete-button',
+#                                                     style={'border': 'none',
+#                                                         #    'color': '#8793c9',
+#                                                         #    'backgroundColor': 'lightgray', 
+#                                                            'marginLeft':'8px',
+#                                                            'color': "white",
+#                                                             #'backgroundColor': 'lightgray',
+#                                                             "backgroundColor": "#6F4CFF",
+#                                                             #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
+#                                                             #"border": "none",
+#                                                             "backgroundColor": "transparent",
+#                                                             "border": "2px solid white",
+#                                                             'fontFamily': "Outfit",
+#                                                             'fontWeight': 300,
+#                                                             "borderRadius": "50px",
+#                                                             "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}),
+#                                             dbc.Button([
+#                                                 html.I(
+#                                                     className="fas fa-solid fa-download"), " ","image"], 
+#                                                     className='delete-button',
+#                                                     id='download-image-btn',
+#                                                     style={'border': 'none',
+#                                                         #    'color': '#8793c9',
+#                                                         #    'backgroundColor': 'lightgray', 
+#                                                            'marginLeft':'8px', 
+#                                                            'marginRight':'8px',
+#                                                            'color': "white",
+#                                                             #'backgroundColor': 'lightgray',
+#                                                             "backgroundColor": "#6F4CFF",
+#                                                             #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
+#                                                             "backgroundColor": "transparent",
+#                                                             "border": "2px solid white",
+#                                                             'fontFamily': "Outfit",
+#                                                             'fontWeight': 300,
+#                                                             "borderRadius": "50px",
+#                                                             "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+#                                                             #"border": "none"
+#                                                             }),
+
+#                                             dbc.Button(
+#                                                 [
+#                                                     html.I(className="fas fa-solid fa-hand-holding-medical"),
+#                                                     " Donate"  # Optional: Include text next to the icon for clarity
+#                                                 ], 
+#                                                 id="donate-btn", 
+#                                                 style={
+#                                                     "borderRadius": "50px",  # Fully rounded corners
+#                                                     "background": "linear-gradient(90deg, #6F4CFF, #9B84FF)",  # Distinct purple gradient
+#                                                     "border": "none",  # No border
+#                                                     "color": "white",  # White text/icon for contrast
+#                                                     "padding": "10px 20px",  # Balanced padding for icon and optional text
+#                                                     "fontSize": "16px",  # Slightly larger text/icon size for emphasis
+#                                                     "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",  # Subtle shadow for depth
+#                                                     "transition": "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"  # Smooth hover effects
+#                                                 },
+#                                                 className='delete-button',
+#                                                 n_clicks=0  # Optional: initialize with zero clicks
+#                                             ),
+
+
+#                                             # Tooltips 
+#                                             dbc.Tooltip(
+#                                                 translation['hover-load-psysys'],
+#                                                 target='load-map-btn',  # Matches the button id
+#                                                 placement="top",
+#                                                 autohide=True, 
+#                                                 delay={"show": 500, "hide": 100}
+#                                             ),
+
+#                                             dbc.Tooltip(
+#                                                 translation['hover-upload-map'],
+#                                                 target='upload-map-btn',  # Matches the button id
+#                                                 placement="top",
+#                                                 autohide=True, 
+#                                                 delay={"show": 500, "hide": 100}
+#                                             ),
+
+#                                             dbc.Tooltip(
+#                                                 translation['hover-download-map'],
+#                                                 target='download-file-btn',  # Matches the button id
+#                                                 placement="top",
+#                                                 autohide=True, 
+#                                                 delay={"show": 500, "hide": 100}
+#                                             ),
+
+#                                             dbc.Tooltip(
+#                                                 translation['hover-save-image'],
+#                                                 target='download-image-btn',  # Matches the button id
+#                                                 placement="top",
+#                                                 autohide=True, 
+#                                                 delay={"show": 500, "hide": 100}
+#                                             ),
+
+#                                             dbc.Tooltip(
+#                                                 translation['hover-donate'],
+#                                                 target='donate-btn',  # Matches the button id
+#                                                 placement="top",
+#                                                 autohide=True, 
+#                                                 delay={"show": 500, "hide": 100}
+#                                             ),
+
+#                                             # Modals
+#                                             dbc.Modal([
+#                                                 dbc.ModalHeader(
+#                                                 dbc.ModalTitle(translation['factor_edit_title'])),
+#                                                     dbc.ModalBody([
+#                                                         html.Div(translation['factor_edit_name']),
+#                                                         dbc.Input(id='modal-node-name', 
+#                                                                 type='text'),
+#                                                         html.Br(),
+#                                                         html.Div(translation['factor_edit_severity']),
+#                                                         dcc.Slider(id='modal-severity-score', 
+#                                                                 min=0, 
+#                                                                 max=10, 
+#                                                                 step=1),
+#                                                         html.Br(),
+#                                                         #    html.Div("Color:"),
+#                                                         #    dcc.Dropdown(id='custom-node-color', options=["blue", "purple", "yellow", "green", "red", "orange"], value=None, placeholder='Select a custom color', multi=False, style={'width': '70%', 'borderRadius': '10px'}),
+#                                                         #    html.Br(),
+#                                                         html.Div(translation['note']),
+#                                                         dcc.Textarea(
+#                                                             id='note-input',
+#                                                             value='',
+#                                                             className='custom-textarea',
+#                                                             style={
+#                                                                 'flex': '1',  # Flex for input to take available space 
+#                                                                 'fontSize': '0.9em',  # Adjust font size to make textbox smaller
+#                                                                 'resize': 'none',
+#                                                                 'width': '25em',
+#                                                                 'height': '10em'
+#                                                                 }
+#                                                             )
+#                                                         ]),
+#                                                         dbc.ModalFooter(
+#                                                             dbc.Button(translation['save_changes'], 
+#                                                                     id="modal-save-btn", 
+#                                                                     className="ms-auto", 
+#                                                                     n_clicks=0))    
+#                                                             ],
+#                                                             id='node-edit-modal',
+#                                                             is_open=False,
+#                                                             style = {'zIndex':'2000',
+#                                                                      'fontFamily': "Outfit",
+#                                                                      "fontWeight": 300,
+#                                                                      'fontSize': '18px'}),
+
+#                                             # Modal for edge info
+#                                             dbc.Modal([
+#                                                 dbc.ModalHeader(
+#                                                     dbc.ModalTitle(translation['connection_edit_title'])),
+#                                                     dbc.ModalBody([
+#                                                         html.Div(id='edge-explanation'),
+#                                                         html.Br(),
+#                                                         html.Div(translation['connection_edit_strength']),
+#                                                         dcc.Slider(id='edge-strength', 
+#                                                                 min=1, 
+#                                                                 max=5, 
+#                                                                 step=1),
+#                                                         html.Br(),
+#                                                         html.Div(translation['connection_types']),
+#                                                         dcc.Dropdown(id='edge-type-dropdown', 
+#                                                                     options=[#{'label': 'Default', 'value': 'default'},
+#                                                                             {'label': translation['type_01'], 
+#                                                                             'value': 'amplifier'},
+#                                                                             {'label': translation['type_02'], 
+#                                                                             'value': 'reliever'}],
+#                                                                     placeholder='Select a custom color', 
+#                                                                     multi=False, 
+#                                                                     style={'width': '70%', 
+#                                                                             'borderRadius': '10px'}),
+#                                                         html.Br(),
+#                                                         html.Div(translation['note']),
+#                                                         dcc.Textarea(
+#                                                             id='edge-annotation',
+#                                                             value='',
+#                                                             className='custom-textarea',
+#                                                             style={
+#                                                                 'flex': '1',  # Flex for input to take available space 
+#                                                                 'fontSize': '0.9em',  # Adjust font size to make textbox smaller
+#                                                                 'resize': 'none',
+#                                                                 'width': '25em',
+#                                                                 'height': '10em'
+#                                                                 }
+#                                                             )
+#                                                         ]),
+#                                                         dbc.ModalFooter(
+#                                                             dbc.Button(translation['save_changes'], 
+#                                                                 id="edge-save-btn", 
+#                                                                 className="ms-auto", 
+#                                                                 n_clicks=0))    
+#                                                             ],
+#                                                             id='edge-edit-modal',
+#                                                             is_open=False,
+#                                                             style = {'zIndex':'2000',
+#                                                             'fontFamily': "Outfit",
+#                                                                      "fontWeight": 300,
+#                                                                      'fontSize': '18px'}),
+
+#                                             # Modal for Donation info
+#                                             dbc.Modal([
+#                                                 dbc.ModalHeader(
+#                                                     dbc.ModalTitle(translation['donation_title'])),
+#                                                     dbc.ModalBody(translation['donation_info'], 
+#                                                                 id = 'donation-info'),
+#                                                     dbc.ModalFooter(
+#                                                         dbc.Button(translation['donation_button'], 
+#                                                                 id="donation-agree", 
+#                                                                 className="ms-auto", 
+#                                                                 n_clicks=0))    
+#                                                             ],
+#                                                             id='donation-modal', 
+#                                                             is_open=False, 
+#                                                             style={'zIndex': '5000',
+#                                                             'fontFamily': "Outfit",
+#                                                                      "fontWeight": 300,
+#                                                                      'fontSize': '18px'}),
+
+#                                             ]
+#                                         ),
+#                             ],
+#                         ),
+#                     ],
+#                 ),
+#             ],
+#         )
 
 
 def create_tracking_tab(track_data, translation):
     return html.Div(
             style= {**COMMON_STYLE, 
                "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-               #"marginLeft": "-12px"
                },
             children=[
                 # Header with Welcome Message
@@ -2292,7 +2942,7 @@ def create_tracking_tab(track_data, translation):
                     ],
                 ),
 
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "40px"}),
+                html.Hr(style={"margin": "4% auto 2% auto","width": "90%"}),
 
                 # Navbar above the plot, overlapping with header
                 dbc.Navbar(
