@@ -12,9 +12,9 @@ from functions.descriptive_plots import (current_centrality_plot, prepare_graph_
 def upload_tracking_graph(contents, existing_marks, current_max, current_value, graph_data, map_store, track_data, stylesheet, edge_data):
     new_elements = graph_data
     filename = None
+    options = [{'label': value, 'value': value} for value in existing_marks.values()]
+    
     if contents:
-
-        print("contents")
 
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
@@ -34,8 +34,6 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
         filename = data['date']
         #match = re.search(r"(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})", filename)
         match = re.search(r"(\d{2}/\d{2}/\d{2}-\d{2}:\d{2})", filename)
-
-        print(match)
         
         if match:
             date_time = match.group(1)
@@ -64,10 +62,14 @@ def upload_tracking_graph(contents, existing_marks, current_max, current_value, 
                                        'severity': data.get('severity-scores', {}),
                                        'annotations': annotations,
                                        'edge-data': edge_data}
+                
+                options = [{'label': value, 'value': value} for value in existing_marks.values()]
 
-        return existing_marks, current_value, current_value, new_elements, map_store, track_data, filename
 
-    return existing_marks, current_max, current_value, new_elements, map_store, track_data, filename
+        return existing_marks, current_value, current_value, new_elements, map_store, track_data, filename, options, date_time
+
+    return existing_marks, current_max, current_value, new_elements, map_store, track_data, filename, options, current_value
+
 
 # Callback - NETWORK COMPARISON: Network comparison timeline navigation
 # When user navigates across timeline
@@ -78,7 +80,8 @@ def update_cytoscape_elements(selected_value, marks, comparison_data, session_da
     filename = None
     
     if comparison_data is not None:
-        label = marks.get(str(selected_value))  # Fetch label based on the slider's value
+        #label = marks.get(str(selected_value))  # Fetch label based on the slider's value
+        label = selected_value
 
         if label in comparison_data:  # Check if the label exists in comparison_data keys
             selected_date = label
@@ -111,65 +114,188 @@ def update_track(session_data, track_data, map_store, severity_scores):
 
     return track_data, map_store
 
-# CDelete current map from map store & mark & reduce max_value
-def delete_current_map(n_clicks, existing_marks, current_max, current_value, graph_data, map_store, track_data):
-    if n_clicks:
-        selected_date = None
+# Delete current map from map store & mark & reduce max_value
+# def delete_current_map(n_clicks, existing_marks, current_max, current_value, graph_data, map_store, track_data):
+#     if n_clicks:
+#         selected_date = None
 
-        # Ensure the marks dictionary has integer keys
-        existing_marks = {int(k): v for k, v in existing_marks.items()}
-        current_value = int(current_value)
+#         # Ensure the marks dictionary has integer keys
+#         existing_marks = {int(k): v for k, v in existing_marks.items()}
+#         current_value = int(current_value)
 
-        # Find the map corresponding to the current slider value
-        for key, value in existing_marks.items():
-            if key == current_value:
-                selected_date = value
-                break
+#         # Find the map corresponding to the current slider value
+#         for key, value in existing_marks.items():
+#             if key == current_value:
+#                 selected_date = value
+#                 break
 
-        # Prevent deletion of the "PsySys" map
-        if selected_date == "PsySys":
-            return existing_marks, current_max, current_value, map_store, track_data
+#         # Prevent deletion of the "PsySys" map
+#         if selected_date == "PsySys":
+#             return existing_marks, current_max, current_value, map_store, track_data
 
-        # Proceed with deletion if a map other than "PsySys" is selected
-        if selected_date and selected_date in map_store:
-            # Remove the selected map from the map_store and the existing_marks
-            del map_store[selected_date]
-            existing_marks = {k: v for k, v in existing_marks.items() if v != selected_date}
+#         # Proceed with deletion if a map other than "PsySys" is selected
+#         if selected_date and selected_date in map_store:
+#             # Remove the selected map from the map_store and the existing_marks
+#             del map_store[selected_date]
+#             existing_marks = {k: v for k, v in existing_marks.items() if v != selected_date}
 
-            # Adjust the max and current slider value after deletion
-            if current_value > current_max:
-                current_max = current_value
+#             # Adjust the max and current slider value after deletion
+#             if current_value > current_max:
+#                 current_max = current_value
 
-            if current_value == current_max:
-                current_value -= 1
+#             if current_value == current_max:
+#                 current_value -= 1
 
-            new_marks = {}
-            for key, value in existing_marks.items():
-                if key > current_value:
-                    new_marks[key - 1] = value
-                else:
-                    new_marks[key] = value
+#             new_marks = {}
+#             for key, value in existing_marks.items():
+#                 if key > current_value:
+#                     new_marks[key - 1] = value
+#                 else:
+#                     new_marks[key] = value
 
-            current_max -= 1
+#             current_max -= 1
 
-            # Set current_value to 1 if no marks are left
-            current_value = 0 if not new_marks else current_value
+#             # Set current_value to 1 if no marks are left
+#             current_value = 0 if not new_marks else current_value
 
-            print('new-marks:', new_marks)
+#             print('new-marks:', new_marks)
 
-            # Update the track_data timeline
-            track_data['timeline-marks'] = new_marks
-            track_data['timeline-max'] = current_max
-            track_data['timeline-value'] = current_value
+#             # Update the track_data timeline
+#             track_data['timeline-marks'] = new_marks
+#             track_data['timeline-max'] = current_max
+#             track_data['timeline-value'] = current_value
 
-            return new_marks, current_max, current_value, map_store, track_data
+#             return new_marks, current_max, current_value, map_store, track_data
 
-        # Return the updated track data
-        track_data['timeline-marks'] = existing_marks
-        track_data['timeline-max'] = current_max
-        track_data['timeline-value'] = current_value
+#         # Return the updated track data
+#         track_data['timeline-marks'] = existing_marks
+#         track_data['timeline-max'] = current_max
+#         track_data['timeline-value'] = current_value
+
+#     return existing_marks, current_max, current_value, map_store, track_data
+
+# def delete_current_map(n_clicks, existing_marks, current_max, current_value, graph_data, map_store, track_data):
+
+#     # Initialize options early to ensure it's always defined
+#     existing_marks = {int(k): v for k, v in existing_marks.items()}
+#     options = [{'label': value, 'value': value} for value in existing_marks.values()]
+
+#     if n_clicks:
+#         selected_date = None
+
+#         # Ensure the marks dictionary has integer keys
+#         # existing_marks = {int(k): v for k, v in existing_marks.items()}
+#         # options = [{'label': value, 'value': value} for value in existing_marks.values()]
+#         current_value = int(current_value)
+
+#         # Find the map corresponding to the current slider value
+#         for key, value in existing_marks.items():
+#             if key == current_value:
+#                 selected_date = value
+#                 break
+
+#         # Prevent deletion of the "PsySys" map
+#         if selected_date == "PsySys":
+#             return existing_marks, current_max, current_value, map_store, track_data, options
+
+#         # Proceed with deletion if a map other than "PsySys" is selected
+#         if selected_date and selected_date in map_store:
+#             # Remove the selected map from the map_store and the existing_marks
+#             del map_store[selected_date]
+#             existing_marks = {k: v for k, v in existing_marks.items() if v != selected_date}
+
+#             # Adjust the max and current slider value after deletion
+#             if current_value > current_max:
+#                 current_max = current_value
+
+#             if current_value == current_max:
+#                 current_value -= 1
+
+#             new_marks = {}
+#             for key, value in existing_marks.items():
+#                 if key > current_value:
+#                     new_marks[key - 1] = value
+#                 else:
+#                     new_marks[key] = value
+
+#             current_max -= 1
+
+#             # Set current_value to 1 if no marks are left
+#             current_value = 0 if not new_marks else current_value
+
+#             print('new-marks:', new_marks)
+
+#             # Update the track_data timeline
+#             track_data['timeline-marks'] = new_marks
+#             track_data['timeline-max'] = current_max
+#             track_data['timeline-value'] = current_value
+
+#             options = [{'label': value, 'value': value} for value in existing_marks.values()]
+
+#             return new_marks, current_max, current_value, map_store, track_data, options
+
+#         # Return the updated track data
+#         track_data['timeline-marks'] = existing_marks
+#         track_data['timeline-max'] = current_max
+#         track_data['timeline-value'] = current_value
+
+#         options = [{'label': value, 'value': value} for value in existing_marks.values()]
+
+#     return existing_marks, current_max, current_value, map_store, track_data, options
+
+def delete_current_map(n_clicks, existing_marks, current_max, current_value, dropdown_value, map_store, track_data):
+    if not n_clicks:
+        return existing_marks, current_max, current_value, map_store, track_data, 
+
+    existing_marks = {int(k): v for k, v in existing_marks.items()}
+    selected_value = dropdown_value or existing_marks.get(int(current_value))
+
+    if selected_value == "PsySys":
+        return existing_marks, current_max, current_value, map_store, track_data
+
+    if selected_value in map_store:
+        del map_store[selected_value]
+        existing_marks = {k: v for k, v in existing_marks.items() if v != selected_value}
+
+        # Adjust values
+        new_marks = {}
+        new_val = 0
+        for i, (k, v) in enumerate(sorted(existing_marks.items())):
+            new_marks[i] = v
+            if v != selected_value and v == dropdown_value:
+                new_val = i
+        current_max = len(new_marks) - 1
+        current_value = new_val
+
+        track_data["timeline-marks"] = new_marks
+        track_data["timeline-max"] = current_max
+        track_data["timeline-value"] = current_value
+
+        return new_marks, current_max, current_value, map_store, track_data
 
     return existing_marks, current_max, current_value, map_store, track_data
+
+# def delete_current_map(n_clicks, map_to_delete, current_options, map_store):
+
+#     new_value = 'PsySys'
+
+#     if n_clicks:
+#         # Prevent deletion of the "PsySys" map
+#         if map_to_delete == "PsySys":
+#             return current_options, new_value
+
+#         # Proceed with deletion if a map other than "PsySys" is selected
+#         if map_to_delete in map_store:
+#             # Remove the selected map from the map_store and the existing_marks
+#             del map_store[map_to_delete]
+
+#             current_options = [option for option in current_options if option['value'] != map_to_delete]
+
+#             print('new options', current_options)
+
+#             return new_value, current_options, map_store
+
+#     return new_value, current_options, map_store
 
 # Plotting mode switch 
 def update_plotting_mode(current_clicks, overall_clicks, current_mode):
@@ -291,8 +417,9 @@ def update_graph(selected_map, current_mode, comparison_data, track_data, marks,
             },
             yaxis_title=translation['plot_02_y'],
             template='plotly_white',
-            width=420,
-            height=450,
+            autosize=True,
+            # width=420,
+            # height=450,
             margin={'l': 20, 'r': 20, 't': 100, 'b': 5},
             xaxis=dict(
                 showticklabels=show_vertical_lines,  # Show ticks only if there's more than one map
@@ -452,6 +579,34 @@ def display_annotation_edges(tapEdgeData, map_store, filename, is_open, language
     # If no element is clicked, close the modal or keep it closed
     return False, dash.no_update
 
+
+def update_store_from_dropdown(selected_map):
+    return selected_map
+
+def update_dropdown_options(track_data, current_selection):
+    marks = track_data.get("timeline-marks", {})
+
+    # Convert marks to dropdown options
+    options = [{"label": label, "value": label} for label in marks.values()]
+
+    # Keep current selection if it's still valid
+    new_value = current_selection if current_selection in [opt["value"] for opt in options] else (
+        options[-1]["value"] if options else None
+    )
+
+    return options, new_value
+
+def sync_slider_with_dropdown(dropdown_value, marks):
+    if not dropdown_value or not marks:
+        return dash.no_update
+
+    # Find the slider key corresponding to the dropdown value
+    for key, label in marks.items():
+        if label == dropdown_value:
+            return int(key)
+
+    return dash.no_update  # fallback if not found
+
 # Register the callbacks
 def register_comparison_callbacks(app):
 
@@ -462,7 +617,9 @@ def register_comparison_callbacks(app):
         Output('track-graph', 'elements'),
         Output('comparison', 'data'),
         Output('track-map-data', 'data'),
-        Output('current-filename-store', 'data')],
+        Output('current-filename-store', 'data'),
+        Output('map-selection-dropdown', 'options'),
+        Output('map-selection-dropdown', 'value')],
         Input('upload-graph-tracking', 'contents'), 
         [State('timeline-slider', 'marks'), 
         State('timeline-slider', 'max'),
@@ -478,7 +635,8 @@ def register_comparison_callbacks(app):
         [Output('track-graph', 'elements', allow_duplicate=True),
         Output('track-graph', 'stylesheet'),
         Output('current-filename-store', 'data', allow_duplicate=True)],
-        [Input('timeline-slider', 'value')],
+        # [Input('timeline-slider', 'value')],
+        [Input('map-selection-dropdown', 'value')],
         [State('timeline-slider', 'marks'),
         State('comparison', 'data'),
         State('session-data', 'data'),
@@ -496,30 +654,49 @@ def register_comparison_callbacks(app):
         prevent_initial_call=True
     )(update_track)
 
+    # app.callback(
+    #     [Output('timeline-slider', 'marks', allow_duplicate=True),
+    #     Output('timeline-slider', 'max', allow_duplicate=True),
+    #     Output('timeline-slider', 'value', allow_duplicate=True),
+    #     Output('comparison', 'data', allow_duplicate=True),
+    #     Output('track-map-data', 'data', allow_duplicate=True),
+    #     Output('map-selection-dropdown', 'options', allow_duplicate=True)],
+    #     Input('delete-tracking-map', 'n_clicks'),
+    #     [State('timeline-slider', 'marks'),
+    #     State('timeline-slider', 'max'),
+    #     State('timeline-slider', 'value'),
+    #     State('track-graph', 'elements'),
+    #     State('comparison', 'data'),
+    #     State('track-map-data', 'data')],
+    #     prevent_initial_call=True
+    # )(delete_current_map)
+
     app.callback(
-        [Output('timeline-slider', 'marks', allow_duplicate=True),
-        Output('timeline-slider', 'max', allow_duplicate=True),
-        Output('timeline-slider', 'value', allow_duplicate=True),
-        Output('comparison', 'data', allow_duplicate=True),
-        Output('track-map-data', 'data', allow_duplicate=True)],
-        Input('delete-tracking-map', 'n_clicks'),
-        [State('timeline-slider', 'marks'),
-        State('timeline-slider', 'max'),
-        State('timeline-slider', 'value'),
-        State('track-graph', 'elements'),
-        State('comparison', 'data'),
-        State('track-map-data', 'data')],
+        Output("timeline-slider", "marks", allow_duplicate=True),
+        Output("timeline-slider", "max", allow_duplicate=True),
+        Output("timeline-slider", "value", allow_duplicate=True),
+        Output("comparison", "data", allow_duplicate=True),
+        Output("track-map-data", "data", allow_duplicate=True),
+        Input("delete-tracking-map", "n_clicks"),
+        State("timeline-slider", "marks"),
+        State("timeline-slider", "max"),
+        State("timeline-slider", "value"),
+        State("map-selection-dropdown", "value"),  # <- ADD THIS
+        State("comparison", "data"),
+        State("track-map-data", "data"),
         prevent_initial_call=True
     )(delete_current_map)
 
     # app.callback(
-    #     Output('editing-mode', 'data'),
-    #     #Output('edit-map-data', 'data', allow_duplicate=True)],
-    #     [Input('mode-1', 'n_clicks'), Input('mode-2', 'n_clicks'), Input('mode-3', 'n_clicks'), Input('mode-4', 'n_clicks')],
-    #     [State('edit-map-data', 'data'), 
-    #     State('my-mental-health-map', 'elements')],
+    #     [Output('map-selection-dropdown', 'value', allow_duplicate=True),
+    #     Output('map-selection-dropdown', 'options', allow_duplicate=True),
+    #     Output('comparison', 'data', allow_duplicate=True)],
+    #     Input('delete-tracking-map', 'n_clicks'),
+    #     [State('map-selection-dropdown', 'value'),
+    #     State('map-selection-dropdown', 'options'),
+    #     State('comparison', 'data')],
     #     prevent_initial_call=True
-    # )(set_editing_mode)
+    # )(delete_current_map)
 
     app.callback(
         [Output('plot-mode', 'data'),
@@ -592,4 +769,23 @@ def register_comparison_callbacks(app):
           State('language-dropdown', 'value')],
           prevent_initial_call=True
     )(display_annotation_edges)
-    
+
+    app.callback(
+        Output('selected-map-store', 'data'),
+        Input('map-selection-dropdown', 'value')
+    )(update_store_from_dropdown)
+
+    app.callback(
+        Output("map-selection-dropdown", "options", allow_duplicate=True),
+        Output("map-selection-dropdown", "value", allow_duplicate=True),
+        Input("track-map-data", "data"),
+        State("map-selection-dropdown", "value"),
+        prevent_initial_call=True
+    )(update_dropdown_options)
+
+    app.callback(
+        Output("timeline-slider", "value", allow_duplicate=True),
+        Input("map-selection-dropdown", "value"),
+        State("timeline-slider", "marks"),
+        prevent_initial_call=True
+    )(sync_slider_with_dropdown)

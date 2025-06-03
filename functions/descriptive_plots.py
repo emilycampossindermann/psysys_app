@@ -87,7 +87,7 @@ def current_centrality_plot(track_data, comparison_data, selected_map, marks, tr
                 # Return the figure
                 return fig
 
-    return None
+    return go.Figure()
 
 # Create overall centrality line plot
 def calculate_degree_ratios(elements):

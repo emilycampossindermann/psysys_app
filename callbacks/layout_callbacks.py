@@ -302,6 +302,23 @@ def toggle_collapse(n_clicks, is_open):
 def toggle_navbar(n, is_open):
     return not is_open
 
+def show_suicide_warning(selected_factors):
+    if selected_factors and (
+        "Suicidal thoughts" in selected_factors or
+        "Suizidgedanken" in selected_factors
+    ):
+        return {
+            #"display": "block",
+            "opacity": "1",
+            "transition": "opacity 0.5s ease",
+            "paddingTop": "20px"
+        }
+    return {
+        #"display": "none",
+        "opacity": "0",
+        "transition": "opacity 0.5s ease",
+        "paddingTop": "20px"
+    }
 
 # Register the callbacks
 def register_layout_callbacks(app):
@@ -406,5 +423,11 @@ def register_layout_callbacks(app):
         [dash.State("navbar-collapse", "is_open")],
         prevent_initial_call=True,
     )(toggle_navbar)
+
+    app.callback(
+        Output("suicide-prevention-hotline", "style", allow_duplicate=True),
+        Input({"type": "dynamic-dropdown", "step": 1}, "value"),
+        prevent_initial_call=True,
+    )(show_suicide_warning)
 
 

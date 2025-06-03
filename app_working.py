@@ -1,3 +1,4 @@
+#new
 from app import app
 from constants import factors, hidden_style, visible_style
 import dash_bootstrap_components as dbc
@@ -40,28 +41,32 @@ button_group = html.Div(
                    id='go-to-edit', 
                    n_clicks=0, 
                    style=hidden_style, 
-                   color="light"),
+                   #color="light",
+                   color='dark',
+                   className="rounded-circle btn-sm m-1",),
         dbc.Button(html.I(className="fas fa-solid fa-angle-right"), 
                    id='next-button', 
                    n_clicks=0, 
                    style=hidden_style, 
-                   color="light"),
+                   color="light",
+                   className="rounded-circle btn-sm m-1"),
         dbc.Button(html.I(className="fas fa-solid fa-angle-left"), 
                    id='back-button', 
                    n_clicks=0, 
                    style=hidden_style, 
-                   color="light"),
+                   color="light",
+                   className="rounded-circle btn-sm m-1"),
     ],
    style={
-        'position': 'fixed',
-        #'bottom': '70px',
-        "bottom": "40px",
+        'position': 'absolute',
+        "bottom": "25px",
         'right': '100px',
         'display': 'flex',
         'flexDirection': 'row-reverse',  # Align buttons to the right
         'gap': '10px',                   # Adds space between the buttons
         'zIndex': '5000',                 # Ensure it's above other content
-        "borderRadius": "50px"
+        "borderRadius": "50px",
+        'flexWrap': 'wrap',
     }
 )
 
@@ -79,270 +84,6 @@ buttons_map = html.Div(
 )
 
 # Layout elements: Navigation sidebar
-# nav_col = html.Div(
-#     style={
-#         "position": "fixed",
-#         "top": "25px",
-#         "left": "18%",
-#         "width": "65%",
-#         "background": "rgba(255, 255, 255, 0.85)",
-#         "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
-#         "borderRadius": "15px",
-#         "backdropFilter": "blur(8px)",
-#         "padding": "10px 10px",
-#         "zIndex": 1000,
-#         "display": "flex",
-#         "alignItems": "center",
-#     },
-#     children=[
-#         # Logo Section
-#         html.A(
-#             html.Img(
-#                 src="/assets/logo-clean.png",
-#                 className="glowing-button",
-#                 style={
-#                     "height": "50px",
-#                     "width": "50px",
-#                     "borderRadius": "50%",
-#                     "objectFit": "cover",
-#                     "marginLeft": "10px",
-#                     "marginRight": "200px",
-#                 },
-#             ),
-#             href="/",
-#             style={"textDecoration": "none"},
-#         ),
-#         # Nav Links
-#         dbc.Nav(
-#             [
-#                 dbc.NavItem(dbc.NavLink(html.Div("About",), href="/project-info", className="nav-link-custom")),
-#                 html.Div(
-#                     className="dropdown-container",
-#                     children=[
-#                         dbc.NavLink(
-#                             ["Demo", html.Span(" ▼", style={"fontSize": "12px", "fontFamily": "Outfit"})],
-#                             href="/psysys-demo",
-#                             className="nav-link-custom dropdown-hover",
-#                         ),
-#                         html.Div(
-#                             className="dropdown-content",
-#                             children=[
-#                                 html.Div(
-#                                     className="dropdown-item",
-#                                     children=[
-#                                         dbc.NavLink("Psychoeducation", href="/psychoeducation", className="dropdown-link"),
-#                                         dbc.NavLink("Map Editor", href="/my-mental-health-map", className="dropdown-link"),
-#                                         dbc.NavLink("Map Tracker", href="/track-my-mental-health-map", className="dropdown-link"),
-#                                     ],
-#                                 )
-#                             ],
-#                         ),
-#                     ],
-#                 ),
-#                 dbc.NavItem(dbc.NavLink("Output", href="/output", className="nav-link-custom")),
-#                 dbc.NavItem(dbc.NavLink("Team", href="/about", className="nav-link-custom")),
-#             ],
-#             className="justify-content-center",
-#         ),
-#     ],
-# )
-
-# Define navbar items separately
-# nav_col = html.Div(
-#     style={
-#         "position": "fixed",
-#         "top": "10px",
-#         "left": "50%",
-#         "transform": "translateX(-50%)",
-#         "width": "85%",
-#         "max-width": "900px",
-#         "background": "rgba(255, 255, 255, 0.85)",
-#         "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
-#         "borderRadius": "15px",
-#         "padding": "15px 15px",
-#         "zIndex": 1000,
-#         "display": "flex",
-#         "alignItems": "center",
-#         "justifyContent": "space-between",
-#         "flexWrap": "wrap",
-#     },
-#     children=[
-#         # Logo (Left-Aligned)
-#         html.A(
-#             html.Img(
-#                 src="/assets/logo-clean.png",
-#                 className="glowing-button",
-#                 style={
-#                     "height": "50px",
-#                     "width": "50px",
-#                     "borderRadius": "50%",
-#                     "objectFit": "cover",
-#                     "marginLeft": "10px",
-#                 },
-#             ),
-#             href="/",
-#             style={"textDecoration": "none"},
-#         ),
-
-#         # Navigation Links (Centered)
-#         html.Div(
-#             dbc.Nav(
-#                 [
-#                     dbc.NavItem(dbc.NavLink("About", href="/project-info", style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"})),
-#                     dbc.DropdownMenu(
-#                         label="Demo",
-#                         children=[
-#                             dbc.DropdownMenuItem("Psychoeducation", href="/psychoeducation"),
-#                             dbc.DropdownMenuItem("Map Editor", href="/my-mental-health-map"),
-#                             dbc.DropdownMenuItem("Map Tracker", href="/track-my-mental-health-map"),
-#                         ],
-#                         nav=True,
-#                         in_navbar=True,
-#                         style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"},
-#                     ),
-#                     dbc.NavItem(dbc.NavLink("Output", href="/output", style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"})),
-#                     dbc.NavItem(dbc.NavLink("Team", href="/about", style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"})),
-#                 ],
-#                 className="justify-content-center",  # 🔹 Ensures center alignment
-#             ),
-#             style={"flex": "1", "textAlign": "center"},  # 🔹 Centers the nav bar within the div
-#         ),
-    
-
-#     ],
-# )
-
-
-# nav_col = html.Div(
-#     style={
-#         "position": "fixed",
-#         "top": "10px",
-#         "left": "50%",
-#         "transform": "translateX(-50%)",
-#         "width": "85%",
-#         "max-width": "900px",
-#         "background": "rgba(255, 255, 255, 0.85)",
-#         "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
-#         "borderRadius": "15px",
-#         "padding": "15px 15px",
-#         "zIndex": 1000,
-#         "display": "flex",
-#         "alignItems": "center",
-#         "justifyContent": "space-between",
-#         "flexWrap": "wrap",
-#     },
-#     children=[
-#         # Logo (Left-Aligned)
-#         html.A(
-#             html.Img(
-#                 src="/assets/logo-clean.png",
-#                 className="glowing-button",
-#                 style={
-#                     "height": "50px",
-#                     "width": "50px",
-#                     "borderRadius": "50%",
-#                     "objectFit": "cover",
-#                     "marginLeft": "10px",
-#                 },
-#             ),
-#             href="/",
-#             style={"textDecoration": "none"},
-#         ),
-
-#         # Navigation Links (Centered)
-#         html.Div(
-#             dbc.Nav(
-#                 [
-#                     dbc.NavItem(
-#                         dbc.NavLink(
-#                             "About", href="/project-info",
-#                             style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"}
-#                         )
-#                     ),
-#                     dbc.DropdownMenu(
-#                         label="Demo",
-#                         children=[
-#                             dbc.DropdownMenuItem("Psychoeducation", href="/psychoeducation"),
-#                             dbc.DropdownMenuItem("Map Editor", href="/my-mental-health-map"),
-#                             dbc.DropdownMenuItem("Map Tracker", href="/track-my-mental-health-map"),
-#                         ],
-#                         nav=True,
-#                         in_navbar=True,
-#                         style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"},
-#                     ),
-#                     dbc.NavItem(
-#                         dbc.NavLink(
-#                             "Output", href="/output",
-#                             style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"}
-#                         )
-#                     ),
-#                     dbc.NavItem(
-#                         dbc.NavLink(
-#                             "Team", href="/about",
-#                             style={"color": "black", "font-family": "Outfit", "font-size": "18px", "font-weight": "300"}
-#                         )
-#                     ),
-#                 ],
-#                 className="justify-content-center",  # 🔹 Ensures center alignment
-#             ),
-#             style={"flex": "1", "textAlign": "center"},  # 🔹 Centers the nav bar within the div
-#         ),
-
-#         # Translation Toggle (Right-Aligned)
-#         html.Div(
-#             dcc.Dropdown(
-#                 id='language-dropdown',
-#                 className="custom-dropdown",
-#                 options=[
-#                     {
-#                         'label': html.Div([
-#                             html.Img(
-#                                 src="/assets/us.png",  # Replace with your own US flag path
-#                                 style={
-#                                     "width": "20px",
-#                                     "height": "20px",
-#                                     "borderRadius": "50%",  # Round flag
-#                                     "marginRight": "10px",
-#                                     "marginTop": "7px"
-#                                 }
-#                             ),
-#                         ], style={"display": "flex", "alignItems": "center"}),
-#                         'value': 'en'
-#                     },
-#                     {
-#                         'label': html.Div([
-#                             html.Img(
-#                                 src="/assets/de.png",  # Replace with your own German flag path
-#                                 style={
-#                                     "width": "20px",
-#                                     "height": "20px",
-#                                     "borderRadius": "50%",  # Round flag
-#                                     "marginRight": "10px",
-#                                     "marginTop": "7px"
-#                                 }
-#                             ),
-#                         ], style={"display": "flex", "alignItems": "center"}),
-#                         'value': 'de'
-#                     }
-#                 ],
-#                 value='en',  # Default to English
-#                 clearable=False,
-#                 style={
-#                     'width': '60px',
-#                     'borderRadius': "50px",
-#                     'fontFamily': "Outfit",
-#                     'fontSize': "14px"
-#                 }
-#             ),
-#             style={
-#                 "marginRight": "20px",  # Adjusts spacing on the right
-#                 "display": "flex",
-#                 "alignItems": "center"
-#             }
-#         ),
-#     ],
-# )
-
 nav_col = html.Div(
     style={
         "position": "fixed",
@@ -431,49 +172,6 @@ nav_col = html.Div(
             ),
             style={"flex": "1", "textAlign": "center"},
         ),
-
-        # Translation Toggle (Right-Aligned)
-        # html.Div(
-        #     dcc.Dropdown(
-        #         id='language-dropdown',
-        #         className="custom-dropdown",
-        #         options=[
-        #             {
-        #                 'label': html.Div([
-        #                     html.Img(
-        #                         src="/assets/us.png",
-        #                         style={"width": "20px", "height": "20px", "borderRadius": "50%", "marginRight": "10px"}
-        #                     ),
-        #                     "English"
-        #                 ], style={"display": "flex", "alignItems": "center"}),
-        #                 'value': 'en'
-        #             },
-        #             {
-        #                 'label': html.Div([
-        #                     html.Img(
-        #                         src="/assets/de.png",
-        #                         style={"width": "20px", "height": "20px", "borderRadius": "50%", "marginRight": "10px"}
-        #                     ),
-        #                     "Deutsch"
-        #                 ], style={"display": "flex", "alignItems": "center"}),
-        #                 'value': 'de'
-        #             }
-        #         ],
-        #         value='en',  # Default to English
-        #         clearable=False,
-        #         style={
-        #             'width': '120px',
-        #             'borderRadius': "50px",
-        #             'fontFamily': "Outfit",
-        #             'fontSize': "14px"
-        #         }
-        #     ),
-        #     style={
-        #         "marginRight": "20px",
-        #         "display": "flex",
-        #         "alignItems": "center"
-        #     }
-        # ),
     ],
 )
 
@@ -542,8 +240,8 @@ translation_toggle = dbc.Col([
     md=2,
     style={
         'position': 'absolute',
-        'top': '15px',
-        'right': '60px',
+        #'top': '15px',
+        #'right': '60px',
         'textAlign': 'left',
         'padding': '10px',
         'zIndex': '3000',
@@ -575,7 +273,8 @@ app.layout = dbc.Container([
     
     dbc.Row([nav_col,translation_toggle, content_col]),
     dcc.Store(id="psychoeducation-visited", data={"visited": False}),
-    dcc.Store(id='dropdown-store', storage_type='memory'),
+    dcc.Store(id='dropdown-options-store', data=[]),
+    #dcc.Store(id='dropdown-store', storage_type='memory'),
     dcc.Store(id='history-store', data=[]),
     dcc.Store(id="now-step", data=1, storage_type="session"),
     dcc.Store(id='current-step', data={'step': 0}, storage_type='session'),
@@ -587,6 +286,7 @@ app.layout = dbc.Container([
     dcc.Store(id='selected-nodes', data=[]), 
     dcc.Store(id='editing-mode', data=[]),
     dcc.Store(id='plot-mode', data=[]),
+    dcc.Store(id='selected-map-store', storage_type='session'),
     dcc.Store(id='current-filename-store', storage_type='session'),
     dcc.Store(id='session-data', data={
         'dropdowns': {

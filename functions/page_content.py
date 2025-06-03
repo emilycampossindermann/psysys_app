@@ -64,404 +64,193 @@ def create_likert_scale(factor, initial_value=0):
 
 # Function: Create progress bar
 def create_progress_bar(current_step, translation):
-    # Define labels directly within the function
     labels = translation['psysys-steps']
+    num_steps = len(labels)
 
-    # Circle elements
-    progress_circles = []
+    progress_items = []
+
     for i, label in enumerate(labels):
         completed = i < current_step
         is_current = i == current_step
 
-        progress_circles.append(
-            html.Div(
-                style={
-                    "display": "flex",
-                    "flexDirection": "column",
-                    "alignItems": "center",
-                    "zIndex": "2",  # Ensure circles are above the line
-                },
-                children=[
-                    html.Div(
-                        style={
-                            "width": "30px",
-                            "height": "30px",
-                            "borderRadius": "50%",
-                            #"background": "linear-gradient(to bottom, #9B84FF, #6F4CFF)" if completed else "#ffffff",
-                            "background": "#6F4CFF" if completed else "#ffffff",
-                            "border": "2px solid #6F4CFF" if completed or is_current else "#ccc",
-                            "display": "flex",
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                            "color": "#ffffff" if completed else "#6F4CFF",
-                            "fontWeight": "400",
-                            "fontFamily": "Outfit",
-                            "boxShadow": "0px 4px 6px rgba(111, 76, 255, 0.3)" if is_current else "none",
-                        },
-                        children=html.Span("✔" if completed else str(i + 1)),
-                    ),
-                    html.Div(
-                        style={
-                            "marginTop": "5px",
-                            "color": "#6F4CFF" if is_current else "#999",
-                            "fontWeight": "300",
-                            "fontFamily": "Outfit",
-                            "fontSize": "15px",
-                        },
-                        children=label,  # Use the predefined label
-                    ),
-                ],
-            )
+        circle = html.Div(
+            html.Span("✓" if completed else str(i + 1)),
+            style={
+                "width": "25px",
+                "height": "25px",
+                "fontSize": "12px",
+                "borderRadius": "50%",
+                "background": "#6F4CFF" if completed or is_current else "#fff",
+                "border": "1px solid #6F4CFF",
+                "color": "#fff" if completed or is_current else "#6F4CFF",
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "center",
+                "fontWeight": "400",
+                "fontFamily": "Outfit",
+                "zIndex": "5000",
+                #"marginTop": "-10px"
+            }
         )
 
-    # Progress bar container
-    return html.Div(
-        style={
+        label_text = html.Div(
+            label,
+            style={
+                "fontSize": "12px",
+                "fontWeight": 300,
+                "color": "#6F4CFF" if is_current else "#999",
+                "textAlign": "center",
+                "marginTop": "4px",
+                "maxWidth": "70px",
+                "whiteSpace": "normal",
+                "lineHeight": "1.1"
+            }
+        )
+
+        progress_items.append(
+            html.Div([circle, label_text], style={
+                "display": "flex",
+                "flexDirection": "column",
+                "alignItems": "center",
+                "minWidth": "60px",
+                "padding": "0 10px",
+                "flex": "0 0 auto"
+            })
+        )
+
+    progress_width = f"{int((current_step / (num_steps - 1)) * 100)}%" if current_step > 0 else "0%"
+
+    return html.Div([
+        html.Div(style={
+            "position": "absolute",
+            "top": "12px",
+            "left": "0",
+            "right": "0",
+            "height": "3px",
+            "background": "#eee",
+            "zIndex": "1",
+            "width": "100%",
+            "borderRadius": "2px"
+        }),
+        html.Div(style={
+            "position": "absolute",
+            "top": "12px",
+            "left": "0",
+            "height": "3px",
+            "background": "linear-gradient(to right, #6F4CFF, #9b84ff)",
+            "width": progress_width,
+            "zIndex": "2",
+            "borderRadius": "2px",
+            "transition": "width 0.3s ease"
+        }),
+        html.Div(progress_items, style={
             "position": "relative",
             "display": "flex",
-            "alignItems": "center",
-            "justifyContent": "space-between",  # Distribute circles evenly
-            "marginLeft": "120px",
-            "marginRight": "0px",
-            "marginBottom": "20px",
-            "maxWidth": "1000px"
-        },
-        children=[
-            # Line connecting the circles
-            html.Div(
-                style={
-                    "position": "absolute",
-                    "top": "15px",  # Move the line to the vertical center of the circles
-                    "left": "2%",
-                    "right": "2%",
-                    "height": "4px",
-                    "background": "linear-gradient(to right, #d6ccff, #9b84ff, #6F4CFF)" if current_step > 0 else "#ccc",
-                    "zIndex": "1",  # Line is behind the circles
-                    "borderRadius": "2px",
-                }
-            ),
-            # Add the circles on top of the line
-            *progress_circles,
-        ],
-    )
+            "justifyContent": "center",
+            "alignItems": "flex-start",
+            "overflowX": "auto",
+            "gap": "10%",
+            "zIndex": "3",
+            "marginTop": "22px",
+            "paddingBottom": "4px",
+            "fontFamily": "Outfit"
+        })
+    ], style={
+        "position": "relative",
+        "maxWidth": "100%",
+        "padding": "0px 0px 0px 0px",  # Adjust top space for compact look
+        "overflow": "hidden",
+    })
 
 # Function: Generate step content based on session data
 def generate_step_content(step, session_data, translation):
-    # Function content
-    if step == 0:
+
+    def styled_col(content):
         return html.Div(
-            html.Div(
-                    style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-                    children=[
-                        # Header Section
+            content,
+            style={
+                "padding": "20px",
+                "borderRadius": "12px",
+                "backgroundColor": "rgba(255, 255, 255, 0.65)",
+                "boxShadow": "0 8px 16px rgba(0, 0, 0, 0.1)",
+                "backdropFilter": "blur(6px)",
+                "WebkitBackdropFilter": "blur(6px)",
+                "fontFamily": "Outfit"
+            }
+        )
 
-                        html.Div(
-                            style={
-                                **HEADER_STYLE,
-                                "height": "228px"  # Set a consistent height for the empty header
-                            }
-                        ),
-
-                        html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
-
-                        #html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "31px"}),
-                        html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
-
-                        # Main Content Container
-                        html.Div(
-                            style={
-                                "display": "flex",
-                                "flexDirection": "row",
-                                "gap": "20px",
-                                "alignItems": "flex-start",
-                                "padding": "20px",
-                                "marginTop": "-25px"
-                            },
-                            children=[
-                                # Left Section: Fixed Text Block and Likert Scales
-                                html.Div(
-                                    style={
-                                        "width": "40%",
-                                        "padding": "15px",
-                                        #"marginLeft": "100px",
-                                        "marginLeft": "0px"
-                                    },
-                                    children=[
-                                        # Exercise Description and Dropdown
-                                        html.Div(
-                                            style={
-                                                "position": "sticky",
-                                                "top": "20px",
-                                                "zIndex": "10",
-                                                "padding": "15px",
-                                                "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                                "borderRadius": "8px",
-                                                #"backgroundColor": "#F4F3FE",
-                                                "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                                #"backgroundColor": "rgba(201, 226, 255, 0.6)",
-                                            },
-                                            children=[
-                                                html.H5(dcc.Markdown(translation["exercise-0"], dangerously_allow_html=True) , style={**TEXT_STYLE, "color": "black"}),
-                                                html.Div(style={"height": "10px"}),
-                                                html.Ol(
-                                                    [
-                                                        html.Li(translation['title_block_01'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.P(translation['description_block_01'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.Li(translation['title_block_02'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.P(translation['description_block_02'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.Li(translation['title_block_03'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.P(translation['description_block_03'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.Li(translation['title_block_04'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                        html.P(translation['description_block_04'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-                                                    ],
-                                                )
-                                            ],
-                                        ),
-                                    ],
-                                ),
-
-                                # Right Section: Video
-                                html.Div(
-                                    style={
-                                        "width": "48.5%",  # Adjusted to align with the left section
-                                        "padding": "15px",
-                                        "position": "relative",
-                                    },
-                                    children=[
-                                        html.Iframe(
-                                            src=translation["video_link_intro"],
-                                            style={
-                                                **VIDEO_STYLE,
-                                                "marginTop": "0px",
-                                                "marginLeft": "0px",
-                                            },
-                                        ),
-                                    ],
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            # html.Div(
-            #     style={**COMMON_STYLE, 
-            #         "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            #         "overflow": "auto",  # ✅ Allows scrolling if content is cut off
-            #         "height": "100vh",  # Ensures full viewport height
-            #         "maxHeight": "100vh",
-            #     },
-            #     children=[
-            #         html.Div(style={**HEADER_STYLE, "height": "228px"}),  # Header
-            #         html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
-            #         html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
-
-            #         # Main Content Container (Now Scrollable)
-            #         html.Div(
-            #             style={
-            #                 "display": "flex",
-            #                 "justifyContent": "center",
-            #                 "flexDirection": "column",  # ✅ Ensure stacking on mobile
-            #                 "alignItems": "center",
-            #                 "gap": "20px",
-            #                 "padding": "20px",
-            #                 "overflowY": "auto",  # ✅ Allows vertical scrolling inside content
-            #                 "maxHeight": "calc(100vh - 300px)",  # Prevents full viewport lock
-            #             },
-            #             children=[
-            #                 dbc.Row(
-            #                     style={"width": "100%", "alignItems": "flex-start"},
-            #                     children=[
-            #                         # Exercise Field
-            #                         dbc.Col(
-            #                             html.Div(
-            #                                 style={
-            #                                     "padding": "15px",
-            #                                     "borderRadius": "8px",
-            #                                     "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-            #                                     "backgroundColor": "rgba(255, 255, 255, 0.65)",
-            #                                 },
-            #                                 children=[
-            #                                     html.H5(dcc.Markdown(translation["exercise-0"], dangerously_allow_html=True), 
-            #                                             style={**TEXT_STYLE, "color": "black"}),
-            #                                     html.Div(style={"height": "10px"}),  # Spacer
-            #                                     html.Ol(
-            #                                         [
-            #                                             html.Li(translation['title_block_01'], 
-            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-            #                                             html.P(translation['description_block_01'], 
-            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-
-            #                                             html.Li(translation['title_block_02'], 
-            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-            #                                             html.P(translation['description_block_02'], 
-            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-
-            #                                             html.Li(translation['title_block_03'], 
-            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-            #                                             html.P(translation['description_block_03'], 
-            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-
-            #                                             html.Li(translation['title_block_04'], 
-            #                                                     style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-            #                                             html.P(translation['description_block_04'], 
-            #                                                 style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
-            #                                         ],
-            #                                     ),
-            #                                 ],
-            #                             ),
-            #                             md=6, xs=11  # ✅ Side-by-side on large screens, stacked on mobile
-            #                         ),
-
-            #                         # Video Section
-            #                         dbc.Col(
-            #                             html.Div(
-            #                                 html.Iframe(
-            #                                     src=translation["video_link_intro"],
-            #                                     style={
-            #                                         **VIDEO_STYLE,
-            #                                         "width": "94%",  # ✅ Makes it responsive
-            #                                         "height": "315px",  # ✅ Keeps correct aspect ratio
-            #                                         "borderRadius": "10px",
-            #                                     },
-            #                                 ),
-            #                                 style={
-            #                                     "padding": "15px",
-            #                                     "position": "relative",
-            #                                     "textAlign": "center",  # ✅ Centers the video on mobile
-            #                                 },
-            #                             ),
-            #                             md=6, xs=12  # ✅ Side-by-side on large screens, stacked on mobile
-            #                         ),
-            #                     ],
-            #                 ),
-            #             ],
-            #         ),
-            #     ],
-            # )
-
-            )
+    def video_iframe(src):
+        return html.Iframe(
+            src=src,
+            style={**VIDEO_STYLE, "width": "100%", "height": "315px", "borderRadius": "10px"}
+        )
     
+    suicide_prevention_message_block = html.Div()
 
-    if step == 1:
+    header = html.Div(style={**HEADER_STYLE, "height": "228px"})
+    if step != 1:
+        header = html.Div(style={**HEADER_STYLE, "height": "228px"})
+
+    progress = html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px", "padding": "0 5%"})
+    #divider = html.Hr(style={"marginLeft":"1.8%","width": "90%", "marginBottom": "2%", "marginTop": "4%"})
+    divider = html.Hr(style={"margin": "4% auto 2% auto","width": "90%"})
+
+
+    if step == 0:
+        left = styled_col([
+            html.H5(dcc.Markdown(translation["exercise-0"], dangerously_allow_html=True), style={**TEXT_STYLE, "color": "black"}),
+            html.Div(style={"height": "10px"}),
+            html.Ol([
+                html.Li(translation['title_block_01'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.P(translation['description_block_01'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.Li(translation['title_block_02'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.P(translation['description_block_02'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.Li(translation['title_block_03'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.P(translation['description_block_03'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.Li(translation['title_block_04'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"}),
+                html.P(translation['description_block_04'], style={"color": "grey", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "16px"})
+            ])
+        ])
+        # right = styled_col(video_iframe(translation["video_link_intro"]))
+        right = html.Div(video_iframe(translation["video_link_intro"]), style={"padding": "10px"})  # X = 1, 2, 3, etc.
+
+
+    elif step == 1:
         options = session_data.get('dropdowns', {}).get('initial-selection', {}).get('options', [])
         value = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
+        #suicide_prevention_message
         id = {'type': 'dynamic-dropdown', 'step': 1}
 
-        return html.Div(
-            html.Div(
-                style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-                children=[
-                    # Header Section
-                    html.Div(
-                        html.Div(
-                            id="suicide-prevention-hotline",
-                            children=[
-                                html.P(
-                                    translation['suicide-prevention'],
-                                    style={
-                                        'color': 'black',
-                                        'width': '100%',
-                                        'marginTop': '160px',
-                                        "marginLeft": "-300px",
-                                        "fontFamily": "Outfit",
-                                        "fontWeight": 300
-                                    },
-                                ),
-                            ],
-                            style={
-                                'position': 'fixed',
-                                'visibility': 'hidden',
-                                'zIndex': '1000',
-                            },
-                        ),
-                        style={**HEADER_STYLE, "height": "228px"},
-                    ),
+        selected_values = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
+        show_suicide_message = "suicidal thoughts" in [v.lower() for v in selected_values if isinstance(v, str)]
+        
+        left = styled_col([
+            html.H5(dcc.Markdown(translation["exercise-1"], dangerously_allow_html=True), style=TEXT_STYLE),
+            html.Div(create_dropdown(id=id, options=options, value=value, placeholder=translation["placeholder_dd_01"]), style={'padding':'0 30px 10px 0'}),
 
-                    html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
+            dbc.Button(
+                [html.I(className="fas fa-solid fa-question")], 
+                id='help-factors', 
+                color="light", 
+                className='delete-button',
+                style={
+                    'border': '2px solid #6F4CFF', 
+                    'padding' : '3px 10px 3px 10px',
+                    'borderRadius': "50px",
+                    "backgroundColor": "transparent",
+                    "color": "#6F4CFF",
+                    "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    'position': 'absolute', 'top': '90px', 'right': '10px', 'zIndex': '10'
+                     }
+                ),
 
-                    html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
-
-                    #html.Hr(style={"marginLeft": "100px", "width": "90%", "marginTop": "-10px"}),
-
-                    # Main Content Container
-                    html.Div(
-                        style={
-                            "display": "flex",
-                            "flexDirection": "row",
-                            "gap": "20px",
-                            "alignItems": "flex-start",
-                            "padding": "20px",
-                            "marginTop": "-25px"
-                        },
-                        children=[
-                            # Left Section: Fixed Text Block and Likert Scales
-                            html.Div(
-                                style={
-                                    "width": "40%",
-                                    "padding": "15px",
-                                    #"marginLeft": "100px",
-                                },
-                                children=[
-                                    # Exercise Description and Dropdown
-                                    html.Div(
-                                        style={
-                                            "position": "sticky",
-                                            "top": "20px",
-                                            "zIndex": "10",
-                                            #"backgroundColor": "white",
-                                            "padding": "15px",
-                                            "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                            "borderRadius": "8px",
-                                            #"backgroundColor": "#F4F3FE",
-                                            "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                            # "backgroundColor": "#e8eefc",
-                                            #"backgroundColor": "#f8f9fa"
-                                        },
-                                        children=[
-                                            html.H5(
-                                                dcc.Markdown(translation["exercise-1"], dangerously_allow_html=True),
-                                                style=TEXT_STYLE,
-                                            ),
-                                            html.Div(style={"height": "10px"}),
-                                            html.Div(
-                                                create_dropdown(
-                                                id=id,
-                                                options=options,
-                                                value=value,
-                                                placeholder=translation["placeholder_dd_01"],
-                                            ),
-                                            className="dynamic-dropdown",
-                                            style={'width': "90%"}
-                                            ),
-                                            dbc.Button(
-                                                [html.I(className="fas fa-solid fa-question")], 
-                                                id='help-factors', 
-                                                color="light", 
-                                                className='delete-button',
-                                                style={
-                                                    'border': '2px solid #6F4CFF', 
-                                                    'padding' : '3px 10px 3px 10px',
-                                                    'borderRadius': "50px",
-                                                    #'color': 'grey', 
-                                                    "backgroundColor": "transparent",
-                                                    "color": "#6F4CFF",
-                                                    "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                                                    'position': 'absolute', 'top': '87px', 'right': '15px', 'zIndex': '10'
-                                                }
-                                            ),
-
-                                            dbc.Tooltip(
-                                                translation['factor-description-btn'],
-                                                target='help-factors',  # Matches the button id
-                                                placement="top",
-                                                autohide=True, 
-                                                delay={"show": 200, "hide": 100}
-                                            ),
+            dbc.Tooltip(
+                translation['factor-description-btn'],
+                target='help-factors',  # Matches the button id
+                placement="top",
+                autohide=True, 
+                delay={"show": 200, "hide": 100}
+            ),
 
                                             dbc.Modal(
                                                 [
@@ -697,552 +486,231 @@ def generate_step_content(step, session_data, translation):
                                                     "fontSize": "18px",
                                                     "borderRadius": "15px",  # Optional: Rounded corners for the modal
                                                     "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",  # Subtle shadow for depth
-                                                },
-                                            )
+                                                },),
 
-                                        ],
-                                    ),
-                                    html.Br(),
+            # Likert Scales Section
+            html.Div(
+                id="likert-scales-container",
+                style={
+                    "marginTop": "0px",
+                    "overflowY": "auto",
+                    "maxHeight": "240px",
+                    "padding": "5px",
+                    "backgroundColor": "transparent",
+                    },
+                ),
+        ])
+        
+        #right = html.Div(video_iframe(translation["video_link_block_01"]), style={"padding": "10px"})  # X = 1, 2, 3, etc.
 
-                                    # Likert Scales Section
-                                    html.Div(
-                                        id="likert-scales-container",
-                                        style={
-                                            "marginTop": "0px",
-                                            "overflowY": "auto",
-                                            "maxHeight": "240px",
-                                            "padding": "5px",
-                                            #"backgroundColor": "#f8f9fa",
-                                            "backgroundColor": "transparent",
-                                            #"borderRadius": "8px",
-                                            #"boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                        },
-                                    ),
-                                ],
-                            ),
-
-                            # Right Section: Video
-                            html.Div(
-                                style={
-                                    "width": "48.5%",  # Adjusted to align with the left section
-                                    "padding": "15px",
-                                    "position": "relative",
-                                },
-                                children=[
-                                    html.Iframe(
-                                        src=translation["video_link_block_01"],
-                                        style={
-                                            **VIDEO_STYLE,
-                                            "marginTop": "0px",
-                                            "marginLeft": "0px",
-                                        },
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        )
-
-
-    if step == 2:
-        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
-        options = [{'label': factor, 'value': factor} for factor in selected_factors]
+        right = html.Div([
+                    html.Div([
+                        video_iframe(translation["video_link_block_01"]),
+                        html.Div(
+                            id="suicide-prevention-hotline",
+                            children=[
+                                html.P(
+                                    translation["suicide-prevention"],
+                                    style={
+                                        'color': 'black',
+                                        'fontFamily': 'Outfit',
+                                        'fontWeight': 300,
+                                        'fontSize': '14px',
+                                        'textAlign': 'center',
+                                        'maxWidth': '800px',
+                                        'margin': 'auto',
+                                        'padding': '5px',
+                                    },
+                                ),
+                            ],
+                            style={
+                                # Note: NO display: none!
+                                "opacity": "0",
+                                "transition": "opacity 0.5s ease",
+                                "width": "100%",
+                                "backgroundColor": "rgba(255, 255, 255, 0.65)",
+                                "boxShadow": "0 8px 16px rgba(0, 0, 0, 0.1)",
+                                "backdropFilter": "blur(6px)",
+                                "WebkitBackdropFilter": "blur(6px)",
+                                "fontFamily": "Outfit",
+                                "minHeight": "65px",         # ✅ Prevents shifting on toggle
+                                "position": "relative",      # ✅ Default positioning — no detachment!
+                            }
+                        )
+                    ], style={
+                        "display": "flex",
+                        "flexDirection": "column",
+                        "gap": "10px",
+                        "justifyContent": "flex-start",
+                        "alignItems": "flex-start",
+                    })
+                ], style={
+                    "padding": "10px",
+                    "alignSelf": "flex-start",
+                    "position": "sticky",     # ✅ PINS the entire right block to the top
+                    "top": "0px",             # ✅ Distance from top of viewport
+                    "zIndex": 1
+                })
+    
+    elif step == 2:
+        options = [{'label': f, 'value': f} for f in session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])]
         value_chain1 = session_data.get('dropdowns', {}).get('chain1', {}).get('value', [])
         value_chain2 = session_data.get('dropdowns', {}).get('chain2', {}).get('value', [])
-        id_chain1 = {'type': 'dynamic-dropdown', 
-                     'step': 2}
-        id_chain2 = {'type': 'dynamic-dropdown', 
-                     'step': 3}
-                     
-        return html.Div(
-            style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-            children=[
-                # Header with Welcome Message
-                 html.Div(
-                    style={
-                        **HEADER_STYLE,
-                        "height": "228px"  # Set a consistent height for the empty header
-                    }
-                ),
+        id_chain1 = {'type': 'dynamic-dropdown', 'step': 2}
+        id_chain2 = {'type': 'dynamic-dropdown', 'step': 3}
 
-                html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
+        left = styled_col([
+            html.H5(dcc.Markdown(translation["exercise-2"], dangerously_allow_html=True), style=TEXT_STYLE),
+            create_dropdown(id=id_chain1, options=options, value=value_chain1, placeholder=translation["placeholder_dd_02"]),
+            html.P(translation["example-2-1"], style={"color": "gray", "marginTop": "10px", "fontWeight": 200}),
+            create_dropdown(id=id_chain2, options=options, value=value_chain2, placeholder=translation["placeholder_dd_02"]),
+            html.P(translation["example-2-2"], style={"color": "gray", "marginTop": "10px", "fontWeight": 200})
+        ])
+        #right = styled_col(video_iframe(translation["video_link_block_02"]))
+        right = html.Div(video_iframe(translation["video_link_block_02"]), style={"padding": "10px"})  # X = 1, 2, 3, etc.
 
-                #html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "31px"}),
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
 
-                html.Div(
-                    style={
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "gap": "20px",
-                        "alignItems": "flex-start",
-                        "padding": "20px",
-                        "marginTop": "-25px"
-                    },
-                    children=[
-                        # Left Section: Fixed Text Block and Likert Scales
-                        html.Div(
-                            style={
-                                "width": "40%",
-                                "padding": "15px",
-                                #"marginLeft": "100px",
-                            },
-                            children=[
-                                # Exercise Description and Dropdown
-                                html.Div(
-                                    style={
-                                        "position": "sticky",
-                                        "top": "20px",
-                                        "zIndex": "10",
-                                        #"backgroundColor": "white",
-                                        "padding": "15px",
-                                        "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                        "borderRadius": "8px",
-                                        #"backgroundColor": "#F4F3FE",
-                                        "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                        # "backgroundColor": "#e8eefc",
-                                        #"backgroundColor": "#f8f9fa"
-                                    },
-                                    children=[
-                                        html.H5(dcc.Markdown(translation["exercise-2"], dangerously_allow_html=True),
-                                                style=TEXT_STYLE,
-                                                ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Div(
-                                            create_dropdown(
-                                            id=id_chain1,
-                                            options=options,
-                                            value=value_chain1,
-                                            placeholder=translation["placeholder_dd_02"],
-                                        ),
-                                        className="dynamic-dropdown",
-                                        ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.P(translation["example-2-1"], 
-                                            style={'width': '100%',
-                                                'fontFamily': 'Outfit',
-                                                "fontWeight": "200", 
-                                                'color': 'grey',
-                                                'fontSize': '16px'}),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Div(
-                                            create_dropdown(
-                                            id=id_chain2,
-                                            options=options,
-                                            value=value_chain2,
-                                            placeholder=translation["placeholder_dd_02"],
-                                        ),
-                                        className="dynamic-dropdown",
-                                        ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.P(translation['example-2-2'], 
-                                            style={'width': '100%',
-                                                'fontFamily': 'Outfit',
-                                                "fontWeight": "200", 
-                                                'color': 'grey',
-                                                'fontSize': '16px'}),
-                                    ],
-                                ),
-                            ],
-                        ),
-
-                        # Right Section: Video
-                        html.Div(
-                            style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "padding": "15px",
-                                "position": "relative",
-                            },
-                            children=[
-                                html.Iframe(
-                                    src=translation["video_link_block_02"],
-                                    style={
-                                        **VIDEO_STYLE,
-                                        "marginTop": "0px",
-                                        "marginLeft": "0px",
-                                    },
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-    
-    
-    if step == 3:
-        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
-        options = [{'label': factor, 'value': factor} for factor in selected_factors]
+    elif step == 3:
+        options = [{'label': f, 'value': f} for f in session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])]
         value_cycle1 = session_data.get('dropdowns', {}).get('cycle1', {}).get('value', [])
         value_cycle2 = session_data.get('dropdowns', {}).get('cycle2', {}).get('value', [])
-        id_cycle1 = {'type': 'dynamic-dropdown', 
-                     'step': 4}
-        id_cycle2 = {'type': 'dynamic-dropdown', 
-                     'step': 5}
-        return html.Div(
-            style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-            children=[
-                # Header with Welcome Message
-                 html.Div(
-                    style={
-                        **HEADER_STYLE,
-                        "height": "228px"  # Set a consistent height for the empty header
-                    }
-                ),
+        id_cycle1 = {'type': 'dynamic-dropdown', 'step': 4}
+        id_cycle2 = {'type': 'dynamic-dropdown', 'step': 5}
 
-                html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
+        left = styled_col([
+            html.H5(dcc.Markdown(translation["exercise-3"], dangerously_allow_html=True), style=TEXT_STYLE),
+            create_dropdown(id=id_cycle1, options=options, value=value_cycle1, placeholder=translation["placeholder_dd_03"]),
+            html.P(translation["example_block_03"], style={"color": "gray", "marginTop": "10px", "fontWeight": 200}),
+            create_dropdown(id=id_cycle2, options=options, value=value_cycle2, placeholder=translation["placeholder_dd_03"])
+        ])
+        #right = styled_col(video_iframe(translation["video_link_block_03"]))
+        right = html.Div(video_iframe(translation["video_link_block_03"]), style={"padding": "10px"})  # X = 1, 2, 3, etc.
 
-                #html.Hr(style={"marginLeft": "100px", "width": "90%", "marginTop": "31px"}),
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
 
-                #html.Hr(style={"marginLeft": "100px", "width": "90%", "marginTop": "-10px"}),
+    elif step == 4:
+        value = session_data.get('dropdowns', {}).get('target', {}).get('value', [])
+        options = [{'label': f, 'value': f} for f in session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])]
+        id = {'type': 'dynamic-dropdown', 'step': 4}
 
-                html.Div(
-                    style={
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "gap": "20px",
-                        "alignItems": "flex-start",
-                        "padding": "20px",
-                        "marginTop": "-25px"
-                    },
-                    children=[
-                        # Left Section: Fixed Text Block and Likert Scales
-                        html.Div(
-                            style={
-                                "width": "40%",
-                                "padding": "15px",
-                                #"marginLeft": "100px",
-                            },
-                            children=[
-                                # Exercise Description and Dropdown
-                                html.Div(
-                                    style={
-                                        "position": "sticky",
-                                        "top": "20px",
-                                        "zIndex": "10",
-                                        #"backgroundColor": "white",
-                                        "padding": "15px",
-                                        "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                        "borderRadius": "8px",
-                                        #"backgroundColor": "#F4F3FE",
-                                        "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                        # "backgroundColor": "#e8eefc",
-                                        #"backgroundColor": "#f8f9fa"
-                                    },
-                                    children=[
-                                        html.H5(dcc.Markdown(translation["exercise-3"], dangerously_allow_html=True),
-                                                style=TEXT_STYLE,
-                                                ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Div(
-                                            create_dropdown(
-                                            id=id_cycle1,
-                                            options=options,
-                                            value=value_cycle1,
-                                            placeholder=translation["placeholder_dd_03"],
-                                        ),
-                                        className="dynamic-dropdown",
-                                        ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.P(translation['example-3-1'], 
-                                            style={'width': '100%',
-                                                'fontFamily': 'Outfit',
-                                                "fontWeight": "200", 
-                                                'color': 'grey',
-                                                'fontSize': '16px'}),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Div(
-                                            create_dropdown(
-                                            id=id_cycle2,
-                                            options=options,
-                                            value=value_cycle2,
-                                            placeholder=translation["placeholder_dd_03"],
-                                        ),
-                                        className="dynamic-dropdown",
-                                        ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.P(translation['example-3-2'], 
-                                            style={'width': '100%',
-                                                'fontFamily': 'Outfit',
-                                                "fontWeight": "200", 
-                                                'color': 'grey',
-                                                'fontSize': '16px'}),
-                                    ],
-                                ),
-                            ],
-                        ),
+        left = styled_col([
+            html.H5(dcc.Markdown(translation["exercise-4"], dangerously_allow_html=True), style=TEXT_STYLE),
+            create_dropdown(id=id, options=options, value=value, placeholder=translation["placeholder_dd_04"]),
+            html.P(translation["example_block_04"], style={"color": "gray", "marginTop": "10px", "fontWeight": 200})
+        ])
+       #right = styled_col(video_iframe(translation["video_link_block_04"]))
+        right = html.Div(video_iframe(translation["video_link_block_04"]), style={"padding": "10px"})  # X = 1, 2, 3, etc.
 
-                        # Right Section: Video
-                        html.Div(
-                            style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "padding": "15px",
-                                "position": "relative",
-                            },
-                            children=[
-                                html.Iframe(
-                                    src=translation["video_link_block_03"],
-                                    style={
-                                        **VIDEO_STYLE,
-                                        "marginTop": "0px",
-                                        "marginLeft": "0px",
-                                    },
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-    
-    if step == 4:
-        selected_factors = session_data.get('dropdowns', {}).get('initial-selection', {}).get('value', [])
-        options = [{'label': factor, 'value': factor} for factor in selected_factors]
-        value_target = session_data.get('dropdowns', {}).get('target', {}).get('value', [])
-        id = {'type': 'dynamic-dropdown', 
-              'step': 6}
-        return html.Div(
-            style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-            children=[
-                # Header with Welcome Message
-                 html.Div(
-                    style={
-                        **HEADER_STYLE,
-                        "height": "228px"  # Set a consistent height for the empty header
-                    }
-                ),
 
-                html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
-
-                #html.Hr(style={"marginLeft": "100px", "width": "90%", "marginTop": "31px"}),
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
-
-                html.Div(
-                    style={
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "gap": "20px",
-                        "alignItems": "flex-start",
-                        "padding": "20px",
-                        "marginTop": "-25px"
-                    },
-                    children=[
-                        # Left Section: Fixed Text Block and Likert Scales
-                        html.Div(
-                            style={
-                                "width": "40%",
-                                "padding": "15px",
-                                #"marginLeft": "100px",
-                            },
-                            children=[
-                                # Exercise Description and Dropdown
-                                html.Div(
-                                    style={
-                                        "position": "sticky",
-                                        "top": "20px",
-                                        "zIndex": "10",
-                                        #"backgroundColor": "white",
-                                        "padding": "15px",
-                                        "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                        "borderRadius": "8px",
-                                        #"backgroundColor": "#F4F3FE",
-                                        "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                        # "backgroundColor": "#e8eefc",
-                                        #"backgroundColor": "#f8f9fa"
-                                    },
-                                    children=[
-                                        html.H5(dcc.Markdown(translation["exercise-4"], dangerously_allow_html=True),
-                                                style=TEXT_STYLE,
-                                                ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Div(
-                                            create_dropdown(
-                                            id=id,
-                                            options=options,
-                                            value=value_target,
-                                            placeholder=translation["placeholder_dd_04"],
-                                        ),
-                                        className="dynamic-dropdown",
-                                        ),
-                                        html.Div(style={"height": "10px"}),
-                                        html.P(translation['example_block_04'], 
-                                            style={'width': '100%',
-                                                'fontFamily': 'Outfit',
-                                                "fontWeight": "200", 
-                                                'color': 'grey',
-                                                'fontSize': '16px'}),
-                                    ],
-                                ),
-                            ],
-                        ),
-
-                        # Right Section: Video
-                        html.Div(
-                            style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "padding": "15px",
-                                "position": "relative",
-                            },
-                            children=[
-                                html.Iframe(
-                                    src=translation["video_link_block_04"],
-                                    style={
-                                        **VIDEO_STYLE,
-                                        "marginTop": "0px",
-                                        "marginLeft": "0px",
-                                    },
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-    
-    
-    if step == 5:
+    elif step == 5:
         elements = session_data.get('elements', [])
         selected_factors = session_data.get('add-nodes', [])
         options = [{'label': factor, 'value': factor} for factor in selected_factors]
-        return html.Div(
-            style={**COMMON_STYLE, 
-                            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-                            #"marginLeft": "-12px"
-                            },
-            children=[
-                # Header Section
 
-                html.Div(
-                    style={
-                        **HEADER_STYLE,
-                        "height": "228px"  # Set a consistent height for the empty header
-                    }
-                ),
+        left = styled_col([
+            dcc.Markdown(translation["feedback_text"], style={**TEXT_STYLE, "color": "black"}, dangerously_allow_html=True,),
+            html.Ul([
+                html.Li(translation["feedback_question_01"], style={**TEXT_STYLE, "color": "black"}),
+                html.Li(translation["feedback_question_02"], style={**TEXT_STYLE, "color": "black"}),
+                html.Li(translation["feedback_question_03"], style={**TEXT_STYLE, "color": "black"}),
+                html.Li(translation["feedback_question_04"], style={**TEXT_STYLE, "color": "black"}),
+            ], style={"paddingLeft": "20px"})
+        ])
 
-                html.Div(create_progress_bar(step, translation), style={"marginTop": "-100px"}),
-
-                #html.Hr(style={"marginLeft": "100px", "width": "90%", "marginTop": "31px"}),
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "70px"}),
-
-                # Main Content Container
-                html.Div(
-                    style={
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "gap": "20px",
-                        "alignItems": "flex-start",
-                        "padding": "20px",
-                        "marginTop": "-25px"
+        right = html.Div([
+            html.Div([  # <-- inner wrapper: THIS is now the positioned container
+                cyto.Cytoscape(
+                    id='graph-output',
+                    layout={
+                        'name': 'cose',
+                        "padding": 10,
+                        "nodeRepulsion": 3500,
+                        "idealEdgeLength": 10,
+                        "edgeElasticity": 5000,
+                        "nestingFactor": 1.2,
+                        "gravity": 1,
+                        "numIter": 1000,
+                        "initialTemp": 200,
+                        "coolingFactor": 0.95,
+                        "minTemp": 1.0,
+                        'fit': True
                     },
-                    children=[
-                        # Left Section: Fixed Text Block and Likert Scales
-                        html.Div(
-                            style={
-                                "width": "40%",
-                                "padding": "15px",
-                                #"marginLeft": "100px",
-                            },
-                            children=[
-                                # Exercise Description and Dropdown
-                                html.Div(
-                                    style={
-                                        "position": "sticky",
-                                        "top": "20px",
-                                        "zIndex": "10",
-                                        "padding": "15px",
-                                        "boxShadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                        "borderRadius": "8px",
-                                        #"backgroundColor": "#F4F3FE",
-                                        "backgroundColor": "rgba(255, 255, 255, 0.65)"
-                                    },
-                                    children=[
-                                        html.H5(dcc.Markdown(translation["feedback_text"], dangerously_allow_html=True), style={**TEXT_STYLE, "color": "black"}),
-                                        html.Div(style={"height": "10px"}),
-                                        html.Ol(
-                                            [
-                                                html.Li(translation['feedback_question_01'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "15px"}),
-                                                html.Li(translation['feedback_question_02'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "15px"}),
-                                                html.Li(translation['feedback_question_03'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "15px"}),
-                                                html.Li(translation['feedback_question_04'], style={"color": "black", "fontFamily": "Outfit", "fontWeight": 200, "fontSize": "15px"}),
-                                            ],
-                                        )
-                                    ],
-                                ),
-                            ],
-                        ),
-
-                        # Right Section: Video
-                        html.Div(
-                            style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "padding": "15px",
-                                "position": "relative",
-                            },
-                            children=[
-                                cyto.Cytoscape(
-                                    id='graph-output',
-                                    #elements=session_data['elements'],
-                                    elements = elements,
-                                    layout={'name': 'cose', 
-                                            "padding": 10, 
-                                            "nodeRepulsion": 3500,
-                                            "idealEdgeLength": 10, 
-                                            "edgeElasticity": 5000,
-                                            "nestingFactor": 1.2,
-                                            "gravity": 1,
-                                            "numIter": 1000,
-                                            "initialTemp": 200,
-                                            "coolingFactor": 0.95,
-                                            "minTemp": 1.0,
-                                            'fit': True
-                                            },
-                                    zoom=1,
-                                    pan={'x': 200, 'y': 200},
-                                    stylesheet = session_data.get('stylesheet', []),
-                                    style={**VIDEO_STYLE, "marginLeft": "0px", "marginTop": "0px"}
-                                ), 
-
-                                html.Div(
-                                    [
-                                        html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
-                                        html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
-                                    ],
-                                    style={
-                                        "position": "absolute",
-                                        "top": "25px",  # Position at bottom-right of graph
-                                        "right": "25px",
-                                        "font-size": "20px",  # Make it visible
-                                        "color": "#888",  # Subtle gray
-                                        "background": "rgba(255, 255, 255, 0.7)",  # Light background
-                                        "padding": "5px 10px",
-                                        "border-radius": "10px",
-                                        "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
-                                        "z-index": "1000",
-                                        "cursor": "pointer",
-                                        },
-                                    ),
-                            ],
-                        ),
-                    ],
+                    zoom=1,
+                    pan={'x': 200, 'y': 200},
+                    stylesheet=session_data.get('stylesheet', []),
+                    style={'width': '100%', 'height': '400px'},
+                    elements=elements
                 ),
-            ],
-        )
-    
-    else:
-        return None
-    
+                html.Div([
+                    html.I(className="fas fa-magnifying-glass-plus"),
+                    html.I(className="fas fa-hand-pointer", style={"marginLeft": "10px"})
+                ], style={
+                    "position": "absolute",
+                    'color': "#6F4CFF",
+                    "top": "10px",
+                    "right": "10px",
+                    "backgroundColor": "white",
+                    "borderRadius": "8px",
+                    "padding": "6px 10px",
+                    "boxShadow": "0 4px 8px rgba(0,0,0,0.1)",
+                    "zIndex": 10
+                })
+            ], style={
+                "position": "relative",     # <-- KEY: allows absolute icons to float over cytoscape
+                "width": "100%",
+                "height": "400px"
+            })
+        ], style={
+            "borderRadius": "12px",
+            "backgroundColor": "rgba(255, 255, 255, 0.65)",
+            "boxShadow": "0 8px 16px rgba(0, 0, 0, 0.1)",
+            "fontFamily": "Outfit",
+            "marginTop": "-10px"
+        })
+        
+    return html.Div(
+        style={
+            **COMMON_STYLE,
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
+        },
+        children=[
+            header,
+            html.Div(progress, style={"textAlign": "center"}),
+            divider,
+            suicide_prevention_message_block,
+
+            html.Div([
+                html.Div(left, style={
+                    "flex": "1 1 400px",    # ← More flexible
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    #"margin": "0 auto",     # ✅ Center when stacked!
+                    "display": "flex",
+                    "flexDirection": "column",
+                    "alignItems": "center",
+                }),
+                html.Div(right, style={
+                    "flex": "1 1 100%",
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    "margin": "10px",
+                    "alignItems": "center",
+                    "alignSelf": "flex-start",
+                    
+                }),
+            ], style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "gap": "50px",
+                "padding": "0 10%",    # ✅ Add left and right padding!
+                "boxSizing": "border-box",
+            }), 
+        ]
+    )
 
 # Function: Create my-mental-health-map editing tab
 def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme_data, custom_color_data, translation):   
@@ -1251,35 +719,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                   'value': element['data'].get('id')} for element in cytoscape_elements if 'data' in element and 'label' in element['data'] and 'id' in element['data']]
     color_schemes = [{'label': color, 'value': color} for color in translation['schemes']]
     sizing_schemes = [{'label': size, 'value': size} for size in translation['schemes']]
-    return html.Div(
-        style={**COMMON_STYLE, 
-               "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-               #"marginLeft": "-12px"
-               },
-            children=[
-                # Header with Welcome Message
-                html.Div(
-                    #style=HEADER_STYLE,
-                    children=[
-                        html.H2(
-                            translation['edit-map-title_01'],
-                            style={"fontFamily": "Outfit", 
-                                   #"fontWeight": "normal", 
-                                   #"color": "black", 
-                                   "fontSize": "36px",
-                                   "color": "#4A4A8D",
-                                   "fontWeight": 500,
-                                   "textAlign": "center",
-                                   "marginLeft": "-150px",
-                                   "marginTop": "-95px"},
-                        ),
-                    ],
-                ),
 
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "40px"}),
-
-                # Main content container (text and video)
-                html.Div(
+    left_content = html.Div(
                     style={**CONTENT_CONTAINER_STYLE},
                     children=[
                         # Plot section with question mark button
@@ -1512,11 +953,10 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                     id='back-btn', 
                                                                     color="light",
                                                                     className='delete-button', 
-                                                                    style={'marginTop': '-32px',
-                                                                           'marginLeft': '70px',
+                                                                    style={'marginTop': '-50px',
+                                                                           #'marginLeft': '540px',
                                                                             "backgroundColor": "#6F4CFF",
                                                                             "color": "white",
-                                                                            #"border": "2px solid #6F4CFF",
                                                                             "border": "none",
                                                                            'borderRadius': '50px',
                                                                             'padding' : '7px 11px 7px 11px',
@@ -1533,17 +973,16 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                         style={'display': 'flex', 
                                                                   'alignItems': 'center', 
                                                                   'marginTop': '55px', 
-                                                                  'marginLeft': '365px'}),
+                                                                  }),
                                                         
                                                         ]), 
 
                                                     ], 
                                                     id = 'editing-window', 
-                                                    style={'width': '500px', 
+                                                    style={'width': '100%',            # Make it fully responsive
+                                                           'maxWidth': '600px',
                                                            'height':"auto", 
                                                            'padding': '10px', 
-                                                           'marginTop': '-0px', 
-                                                           'marginLeft':'-290px', 
                                                            'backgroundColor': 'white', 
                                                            'borderRadius': '15px', 
                                                            'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 
@@ -1551,32 +990,35 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                            #"backgroundColor": "rgba(201, 226, 255, 0.4)",
                                                            "backgroundColor": "rgba(255, 255, 255, 0.65)"}),
 
-                        # Cytoscape graph section with vertically stacked controls
-                        html.Div(
+                    ],
+                )
+
+    
+    
+    right_content = html.Div(
                             style={
-                                "width": "48.5%",  # Adjusted to align with the left section
-                                "height": "50%",
-                                "padding": "15px",
-                                "position": "relative",
-                                "marginLeft": "-150px",
-                                "marginTop": "-10px"
+                                "position": "relative",     # <-- KEY: allows absolute icons to float over cytoscape
+                                "width": "100%",
+                                "height": "400px"
                             },
                             children=[
                                 cyto.Cytoscape(
                                     id='my-mental-health-map',
                                     elements=edit_map_data['elements'],
-                                    layout={'name': 'cose', 
-                                            "padding": 10,
-                                            "nodeRepulsion": 3500,
-                                            "idealEdgeLength": 10, 
-                                            "edgeElasticity": 5000,
-                                            "nestingFactor": 1.2,
-                                            "gravity": 1,
-                                            "numIter": 1000,
-                                            "initialTemp": 200,
-                                            "coolingFactor": 0.95,
-                                            "minTemp": 1.0,
-                                            'fit': True},
+                                    layout={
+                                        'name': 'cose',
+                                        "padding": 10,
+                                        "nodeRepulsion": 3500,
+                                        "idealEdgeLength": 10,
+                                        "edgeElasticity": 5000,
+                                        "nestingFactor": 1.2,
+                                        "gravity": 1,
+                                        "numIter": 1000,
+                                        "initialTemp": 200,
+                                        "coolingFactor": 0.95,
+                                        "minTemp": 1.0,
+                                        'fit': True
+                                    },
                                             zoom=1,
                                             pan={'x': 200, 'y': 200},
                                             stylesheet=edit_map_data['stylesheet'] + [
@@ -1610,32 +1052,37 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                 },
                                                             },
                                                         ],
-                                            style={**VIDEO_STYLE, "marginLeft": "-140px"},
+                                            style={**VIDEO_STYLE, 
+                                                "backgroundColor": "rgba(255, 255, 255, 0.65)",
+                                                "backdropFilter": "blur(6px)",
+                                                "WebkitBackdropFilter": "blur(6px)"
+                                                   },
                                             generateImage={'type': 'jpg', 'action': 'store'},
                                             ), 
-                                html.Div(
-                                    [
-                                        html.I(className="fas fa-magnifying-glass-plus"),  # Font Awesome Zoom Icon
-                                        html.I(className="fas fa-hand-pointer", style={"margin-left": "10px"}),  # Click Icon
-                                    ],
-                                    style={
-                                        "position": "absolute",
-                                        "top": "15px",  # Position at bottom-right of graph
-                                        "right": "165px",
-                                        "font-size": "20px",  # Make it visible
-                                        "color": "#888",  # Subtle gray
-                                        "background": "rgba(255, 255, 255, 0.7)",  # Light background
-                                        "padding": "5px 10px",
-                                        "border-radius": "10px",
-                                        "box-shadow": "0 2px 5px rgba(0, 0, 0, 0.2)",  # Soft shadow
-                                        "z-index": "1000",
-                                        "cursor": "pointer",
-                                        },
-                                    ),
+
+                                            html.Div([
+                                                html.I(className="fas fa-magnifying-glass-plus"),
+                                                html.I(className="fas fa-hand-pointer", style={"marginLeft": "10px"})
+                                            ], style={
+                                                "position": "absolute",
+                                                'color': "#6F4CFF",
+                                                "top": "10px",
+                                                "right": "10px",
+                                                "backgroundColor": "white",
+                                                "borderRadius": "8px",
+                                                "padding": "6px 10px",
+                                                "boxShadow": "0 4px 8px rgba(0,0,0,0.1)",
+                                                "zIndex": 10
+                                            }),
 
                                 html.Div(
-                                    style={'display': 'flex', 'justifyContent': 'center', 'gap': '10px', 
-                                           'marginTop': '40px', "marginLeft": "-300px"},
+                                    style={
+                                        "marginTop": "30px",
+                                        "display": "flex",
+                                        "justifyContent": "center",
+                                        "gap": "12px",
+                                        "flexWrap": "wrap"  # ✅ Allows wrapping on small screens
+                                    },
                                     children=[
                                         dbc.Button([
                                             html.I(
@@ -1644,14 +1091,9 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                 #className="me-2", 
                                                 className='delete-button',
                                                 style={'border': 'none',
-                                                        #'color': '#8793c9',
                                                        'color': "white",
-                                                        #'backgroundColor': 'lightgray',
-                                                        #"backgroundColor": "#6F4CFF",
-                                                        #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
                                                         "backgroundColor": "transparent",
                                                         "border": "2px solid white",
-                                                        #"border": "none",
                                                         'fontFamily': "Outfit",
                                                         'fontWeight': 300,
                                                         "borderRadius": "50px",
@@ -1667,16 +1109,10 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                         id='upload-map-btn',
                                                         className='delete-button',
                                                         style={'border': 'none',
-                                                            #    'color': '#8793c9',
-                                                            #    'backgroundColor': 'lightgray', 
                                                                'padding': '7px',
                                                                'color': "white",
-                                                                #'backgroundColor': 'lightgray',
-                                                                #"backgroundColor": "#6F4CFF",
                                                                 "backgroundColor": "transparent",
                                                                 "border": "2px solid white",
-                                                                #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
-                                                                #"border": "none",
                                                                 'fontFamily': "Outfit",
                                                                 'fontWeight': 300,
                                                                 "borderRadius": "50px",
@@ -1692,14 +1128,8 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     id='download-file-btn',
                                                     className='delete-button',
                                                     style={'border': 'none',
-                                                        #    'color': '#8793c9',
-                                                        #    'backgroundColor': 'lightgray', 
-                                                           'marginLeft':'8px',
                                                            'color': "white",
-                                                            #'backgroundColor': 'lightgray',
                                                             "backgroundColor": "#6F4CFF",
-                                                            #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
-                                                            #"border": "none",
                                                             "backgroundColor": "transparent",
                                                             "border": "2px solid white",
                                                             'fontFamily': "Outfit",
@@ -1712,21 +1142,14 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                     className='delete-button',
                                                     id='download-image-btn',
                                                     style={'border': 'none',
-                                                        #    'color': '#8793c9',
-                                                        #    'backgroundColor': 'lightgray', 
-                                                           'marginLeft':'8px', 
-                                                           'marginRight':'8px',
                                                            'color': "white",
-                                                            #'backgroundColor': 'lightgray',
                                                             "backgroundColor": "#6F4CFF",
-                                                            #"background": 'linear-gradient(90deg, #9B84FF, #6F4CFF, #5738C8)',
                                                             "backgroundColor": "transparent",
                                                             "border": "2px solid white",
                                                             'fontFamily': "Outfit",
                                                             'fontWeight': 300,
                                                             "borderRadius": "50px",
                                                             "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                                                            #"border": "none"
                                                             }),
 
                                             dbc.Button(
@@ -1806,9 +1229,7 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                 max=10, 
                                                                 step=1),
                                                         html.Br(),
-                                                        #    html.Div("Color:"),
-                                                        #    dcc.Dropdown(id='custom-node-color', options=["blue", "purple", "yellow", "green", "red", "orange"], value=None, placeholder='Select a custom color', multi=False, style={'width': '70%', 'borderRadius': '10px'}),
-                                                        #    html.Br(),
+
                                                         html.Div(translation['note']),
                                                         dcc.Textarea(
                                                             id='note-input',
@@ -1907,167 +1328,270 @@ def create_mental_health_map_tab(edit_map_data, color_scheme_data, sizing_scheme
                                                                      "fontWeight": 300,
                                                                      'fontSize': '18px'}),
 
-                                            ]
+                                            ],
                                         ),
                             ],
-                        ),
-                    ],
-                ),
-            ],
-        )
+                        )
 
-
-def create_tracking_tab(track_data, translation):
     return html.Div(
-            style= {**COMMON_STYLE, 
-               "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-               #"marginLeft": "-12px"
-               },
-            children=[
-                # Header with Welcome Message
-                html.Div(
-                    #style=HEADER_STYLE,
-                    children=[
-                        # Header with Welcome Message
-                        html.Div(
-                            #style=HEADER_STYLE,
-                            children=[
-                                html.H2(
-                                    translation['compare-map-title_01'],
-                                    style={"fontFamily": "Outfit", 
-                                        #"fontWeight": "normal", 
-                                        #"color": "black", 
-                                        "fontSize": "36px",
-                                        "color": "#4A4A8D",
-                                        "fontWeight": 500,
-                                        "textAlign": "center",
-                                        "marginLeft": "-150px",
-                                        "marginTop": "-95px"},
-                                ),
-                            ],
+        style={
+            **COMMON_STYLE,
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
+        },
+        children=[
+            html.Div(
+                children=[
+                    html.H2(
+                        translation['edit-map-title_01'],
+                        style={"fontFamily": "Outfit", 
+                               "fontSize": "36px",
+                               "color": "#4A4A8D",
+                               "fontWeight": 500,
+                               "textAlign": "center",
+                               "marginTop": "-120px",
+                               },
                         ),
+
+                    html.H4(
+                        translation['edit-map-title_02'],
+                        style={"fontFamily": "Outfit", 
+                               "fontSize": "20px",
+                               "color": "#4A4A8D",
+                               "fontWeight": 300,
+                               "textAlign": "center",
+                               "marginTop": "20px",
+                               'padding': '0 100px',
+                               "lineHeight": "1.8", 
+                               },
+                        ),
+
                     ],
                 ),
 
-                html.Hr(style={"marginLeft": "0px", "width": "90%", "marginTop": "40px"}),
+            html.Hr(style={"margin": "1.8% auto 0% auto","width": "90%"}),
 
-                # Navbar above the plot, overlapping with header
-                dbc.Navbar(
-                    dbc.Container([
-                        dbc.Nav(
-                            [
-                                dbc.NavItem(
-                                    dbc.NavLink(
-                                        translation['plot_01'], 
-                                        id="plot-current", 
-                                        href="#", 
-                                        active='exact',
-                                        style={"padding": "3px 10px"}
-                                    )
-                                ),
-                                dbc.NavItem(
-                                    dbc.NavLink(
-                                        translation['plot_02'], 
-                                        id="plot-overall", 
-                                        href="#", 
-                                        active='exact',
-                                        style={"padding": "3px 10px"}
-                                    )
-                                ),
-                            ],
-                            className="modes-plot", 
-                            navbar=True, 
-                            style={'width': '100%', 'justifyContent': 'space-between'}
-                        ),
-                    ]),
-                    id= 'plot-switch',
-                    color="light", 
-                    className="mb-2", 
-                    style={
-                        'width': '22%', 
-                        'position': 'fixed', 
-                        'top': '250px',   # Adjusted to overlap with header height
-                        'left': '14%',    # Adjust for horizontal centering
-                        'borderRadius': '50px',
-                        'zIndex': '2000',
-                        'fontFamily': "Outfit",
-                        "fontWeight": 300,
-                        "fontSize": "18px"
-                    }
-                ),
+            html.Div([
+                html.Div(left_content, style={
+                    "flex": "1 1 400px",    # ← More flexible
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    #"margin": "0 auto",     # ✅ Center when stacked!
+                    "display": "flex",
+                    "flexDirection": "column",
+                    "alignItems": "center",
+                }),
+                html.Div(right_content, style={
+                    "flex": "1 1 100%",
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    "marginTop": "48px",
+                    #"margin": "3% auto 0% auto",
+                    "alignItems": "center",
+                    "alignSelf": "flex-start",
+                    
+                }),
+            ], style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "gap": "50px",
+                "padding": "0 5%",    # ✅ Add left and right padding!
+                "boxSizing": "border-box",
+            })
+        ]
+    )
 
-                dbc.Tooltip(
-                    translation['hover-plots'],
-                    target="plot-switch",  # ID of the element to show the tooltip for
-                    placement="top",
-                    autohide=True,
-                    delay={"show": 500, "hide": 100}
-                ),
-                
-                # Main content container (text and video)
-                html.Div(
-                    style={**CONTENT_CONTAINER_STYLE},
+
+def create_tracking_tab(track_data, translation): 
+    print(track_data)
+
+    if 'map-names' not in track_data or not track_data['map-names']:
+        track_data['map-names'] = ['PsySys']
+    elif 'PsySys' not in track_data['map-names']:
+        track_data['map-names'].insert(0, 'PsySys')
+
+    left_content = html.Div(
+                    style={"display": "flex", "justifyContent": "center", "alignItems": "center", "flexDirection": "column", "width": "100%", 'padding':'10px'},
                     children=[
-                        # Plot section with question mark button
-                        html.Div(
-                            style={'position': 'relative', 'width': '500px', 'height': "61vh", 'padding': '10px', "backgroundColor": "rgba(255, 255, 255, 0.65)",
-                                   'borderRadius': '15px', 'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 'zIndex': '0', "marginLeft": "13px", "marginTop": "35px"},
-                            children=[
-                                dcc.Store(id='data-ready', data=False),
-                                html.Div([dcc.Graph(id='centrality-plot', 
-                                                    style={
-                                                        "backgroundColor": "transparent"
-                                                        })], 
-                                         id='graph-container',
-                                         style={'width': '90%', 'height': '90%', 'borderRadius': '15px'}),
-                                
-                                # Question Mark Button
-                                dbc.Button(
-                                    [html.I(className="fas fa-solid fa-question")], 
-                                    id='help-plot', 
-                                    color="light", 
-                                    className='delete-button',
+                        # Navbar (plot)
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.Navbar(
+                                    dbc.Container([
+                                        dbc.Nav([
+                                            dbc.NavItem(
+                                                dbc.NavLink(
+                                                    translation['plot_01'],
+                                                    id="plot-current",
+                                                    href="#",
+                                                    active='exact',
+                                                    style={"padding": "3px 10px"}
+                                                )
+                                            ),
+                                            dbc.NavItem(
+                                                dbc.NavLink(
+                                                    translation['plot_02'],
+                                                    id="plot-overall",
+                                                    href="#",
+                                                    active='exact',
+                                                    style={"padding": "3px 10px"}
+                                                )
+                                            ),
+                                        ], className="modes-plot", navbar=True),
+                                    ]),
+                                    color="secondary",
+                                    className="mb-2",
                                     style={
-                                        'border': '2px solid #6F4CFF', 
-                                        'padding' : '3px 10px 3px 10px',
-                                        'borderRadius': "50px",
-                                        #'color': 'grey', 
-                                        "backgroundColor": "transparent",
-                                        "color": "#6F4CFF",
-                                        "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                                        'position': 'absolute', 'top': '15px', 'right': '15px', 'zIndex': '10'
+                                        'width': '100%',
+                                        'borderRadius': '50px',
+                                        'zIndex': '2000',
+                                        'fontFamily': "Outfit",
+                                        "fontWeight": 300,
+                                        "fontSize": "18px",
+                                        'color': 'black'
                                     }
-                                ),
-                                dbc.Modal([
-                                    dbc.ModalHeader(
-                                        dbc.ModalTitle(translation['plot_modal_title'])),
-                                        dbc.ModalBody("", id='modal-plot-body')], 
-                                    id="modal-plot", is_open=False, backdrop=True, style={'fontFamily': "Outfit",
-                                                                           "fontWeight": 300,
-                                                                           'fontSize': '18px'}
-                                ),
-                            ]
+                                )
+                            ), justify="center"
                         ),
 
-                        # Cytoscape graph section with vertically stacked controls
-                        html.Div(
-                            style={**VIDEO_CONTAINER_STYLE, 'flexDirection': 'column', 'alignItems': 'center', "marginRight": "90px", "marginTop": "40px", "backgroundColor": "transparent"},
+                        dbc.Tooltip(
+                            translation['hover-plots'],
+                            target="plot-switch",
+                            placement="top",
+                            autohide=True,
+                            delay={"show": 500, "hide": 100}
+                        ),
+
+                        dbc.Row(
+                            dbc.Col(
+                                html.Div(
+                                    style={'display':'flex','position': 'relative', 'width': '100%', 'height': "500px", 'padding': '-20px', "backgroundColor": "rgba(255, 255, 255, 0.65)", 'borderRadius': '15px', 'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 'zIndex': '0'},
+                                    children=[
+                                        dcc.Store(id='data-ready', data=False),
+                                        html.Div([
+                                            dcc.Graph(id='centrality-plot', style={"backgroundColor": "transparent"})
+                                        ], id='graph-container', style={'width': 'auto', 'height': '100%', 'borderRadius': '15px'}),
+
+                                        # Question Mark Button
+                                        dbc.Button([
+                                            html.I(className="fas fa-solid fa-question")
+                                        ], id='help-plot', color="light", className='delete-button',
+                                        style={
+                                            'border': '2px solid #6F4CFF',
+                                            'padding': '3px 10px',
+                                            'borderRadius': "50px",
+                                            "backgroundColor": "transparent",
+                                            "color": "#6F4CFF",
+                                            "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                                            'position': 'absolute', 'top': '15px', 'right': '15px', 'zIndex': '10'
+                                        }),
+                                        dbc.Modal([
+                                            dbc.ModalHeader(dbc.ModalTitle(translation['plot_modal_title'])),
+                                            dbc.ModalBody("", id='modal-plot-body')
+                                        ], id="modal-plot", is_open=False, backdrop=True,
+                                        style={'fontFamily': "Outfit", "fontWeight": 300, 'fontSize': '18px'})
+                                    ]
+                                )
+                            ), justify="center"
+                        )
+                    ]
+                )
+                    
+    
+    right_content = html.Div(
+                            style={
+                                "position": "relative",     # <-- KEY: allows absolute icons to float over cytoscape
+                                "width": "100%",
+                                "height": "400px"
+                            },
                             children=[
                                 cyto.Cytoscape(
                                     id='track-graph',
                                     elements=track_data.get('elements', []),
-                                    layout={'name': 'cose', "padding": 10, "nodeRepulsion": 3500, "idealEdgeLength": 10, "edgeElasticity": 5000, "nestingFactor": 1.2,
-                                            "gravity": 1, "numIter": 1000, "initialTemp": 200, "coolingFactor": 0.95, "minTemp": 1.0, 'fit': True},
-                                    zoom=1,
-                                    pan={'x': 200, 'y': 200},
-                                    stylesheet=track_data['stylesheet'],
-                                    style=VIDEO_STYLE
-                                ),
+                                    layout={
+                                        'name': 'cose',
+                                        "padding": 10,
+                                        "nodeRepulsion": 3500,
+                                        "idealEdgeLength": 10,
+                                        "edgeElasticity": 5000,
+                                        "nestingFactor": 1.2,
+                                        "gravity": 1,
+                                        "numIter": 1000,
+                                        "initialTemp": 200,
+                                        "coolingFactor": 0.95,
+                                        "minTemp": 1.0,
+                                        'fit': True
+                                    },
+                                            zoom=1,
+                                            pan={'x': 200, 'y': 200},
+                                            stylesheet=track_data['stylesheet'] + [
+                                                           {
+                                                                "selector": "node",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "label": "data(label)",
+                                                                    "text-halign": "center",
+                                                                    "text-valign": "center",
+                                                                    "font-size": "14px",
+                                                                    "color": "#333333",  # Adjust text color if needed
+                                                                },
+                                                            },
+                                                            {
+                                                                "selector": "edge",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "font-size": "12px",
+                                                                    "text-opacity": 1,
+                                                                    "text-background-opacity": 0,
+                                                                    "text-background-color": "#ffffff",
+                                                                },
+                                                            },
+                                                            {
+                                                                "selector": "label",
+                                                                "style": {
+                                                                    "font-family": "Outfit",
+                                                                    "font-size": "16px",
+                                                                    "font-weight": "300",
+                                                                },
+                                                            },
+                                                        ],
+                                            style={**VIDEO_STYLE, 
+                                                "backgroundColor": "rgba(255, 255, 255, 0.65)",
+                                                "backdropFilter": "blur(6px)",
+                                                "WebkitBackdropFilter": "blur(6px)"
+                                                   },
+                                            generateImage={'type': 'jpg', 'action': 'store'},
+                                            ), 
 
-                                # Slider and Uniform Style Toggle Below Graph
+                                            html.Div([
+                                                html.I(className="fas fa-magnifying-glass-plus"),
+                                                html.I(className="fas fa-hand-pointer", style={"marginLeft": "10px"})
+                                            ], style={
+                                                "position": "absolute",
+                                                'color': "#6F4CFF",
+                                                "top": "10px",
+                                                "right": "10px",
+                                                "backgroundColor": "white",
+                                                "borderRadius": "8px",
+                                                "padding": "6px 10px",
+                                                "boxShadow": "0 4px 8px rgba(0,0,0,0.1)",
+                                                "zIndex": 10
+                                            }),
+
                                 html.Div(
-                                    style={'marginTop': '20px', 'width': '100%', 'textAlign': 'center', "backgroundColor": "transparent", "marginLeft": "-50px"},
+                                    style={
+                                        "marginTop": "30px",
+                                        "display": "flex",
+                                        "justifyContent": "center",
+                                        "gap": "12px",
+                                        "flexWrap": "wrap", # ✅ Allows wrapping on small screens
+                                    },
                                     children=[
+                                        html.Div([
                                         dcc.Slider(id='timeline-slider',
                                             marks=track_data['timeline-marks'],
                                             min=track_data['timeline-min'],
@@ -2075,16 +1599,26 @@ def create_tracking_tab(track_data, translation):
                                             value=track_data['timeline-value'],
                                             step=None,
                                             className='timeline-slider',
+                                        ),], style={'display': 'none'}),
+
+                                        dcc.Dropdown(
+                                            id='map-selection-dropdown',
+                                            placeholder='Select a map',
+                                            options=[{'label': value, 'value': value} for key, value in track_data.get('timeline-marks', {}).items()],
+                                            value='PsySys',
+                                            style={'width': '60%', 'margin': '10px', "fontFamily": "Outfit", 'justifyContent': 'center'},
                                         ),
+
                                         html.Div(
-                                            style={'display': 'flex', 'justifyContent': 'center', 'gap': '15px', 'marginTop': '25px'},
+                                            style={'display': 'flex', 'justifyContent': 'center', 'gap': '15px', 'marginTop': '0px', 'padding': '20px'},
                                             children=[
                                                 dbc.Checklist(
                                                     options=[{"label": "Uniform Style", "value": 0}],
                                                     value=[1],
                                                     id="uniform-switch",
                                                     switch=True,
-                                                    style={'marginRight': "330px",
+                                                    style={
+                                                        #'marginRight': "330px",
                                                            "fontFamily": "Outfit",
                                                            'whiteSpace': 'nowrap',
                                                            "width": "200px"}
@@ -2107,16 +1641,7 @@ def create_tracking_tab(track_data, translation):
                                                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}
                                                     )
                                                 ),
-                                                # dbc.Button(
-                                                #     html.I(className="fas fa-trash"), 
-                                                #     id='delete-tracking-map', 
-                                                #     color="danger", 
-                                                #     style={'border': 'none', 
-                                                #            'color': '#E57373', 
-                                                #            'backgroundColor': 'lightgray', 
-                                                #            'padding': '7px 15px 7px 15px',
-                                                #            "borderRadius": "50px"}
-                                                # ),
+                                
 
                                                 dbc.Button(
                                                     html.I(className="fas fa-trash"), 
@@ -2163,12 +1688,325 @@ def create_tracking_tab(track_data, translation):
 
                                     ]
                                 )
-                            ]
+                            ],
+                        )
+
+
+    return html.Div(
+        style={
+            **COMMON_STYLE,
+            "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
+        },
+        children=[
+            html.Div(
+                children=[
+                    html.H2(
+                        translation['compare-map-title_01'],
+                        style={"fontFamily": "Outfit", 
+                               "fontSize": "36px",
+                               "color": "#4A4A8D",
+                               "fontWeight": 500,
+                               "textAlign": "center",
+                               "marginTop": "-120px",
+                               },
+                        ),
+
+                        html.H4(
+                        translation['compare-map-title_02'],
+                        style={"fontFamily": "Outfit", 
+                               "fontSize": "20px",
+                               "color": "#4A4A8D",
+                               "fontWeight": 300,
+                               "textAlign": "center",
+                               "marginTop": "20px",
+                               'padding': '0 100px',
+                               "lineHeight": "1.8", 
+                               },
                         ),
                     ],
                 ),
-            ],
-        )
+
+            html.Hr(style={"margin": "1.8% auto 0% auto","width": "90%"}),
+
+            html.Div([
+                html.Div(left_content, style={
+                    "flex": "1 1 auto",    # ← More flexible
+                    "minWidth": "200px",
+                    "maxWidth": "600px",
+                    #'width': '60%',
+                    #"margin": "0 auto",     # ✅ Center when stacked!
+                    "display": "flex",
+                    "flexDirection": "column",
+                    "alignItems": "center",
+                }),
+                html.Div(right_content, style={
+                    "flex": "1 1 100%",
+                    "minWidth": "300px",
+                    "maxWidth": "600px",
+                    "marginTop": "48px",
+                    #"margin": "3% auto 0% auto",
+                    "alignItems": "center",
+                    "alignSelf": "flex-start",
+                    
+                }),
+            ], style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "gap": "70px",
+                "padding": "0 5%",    # ✅ Add left and right padding!
+                "boxSizing": "border-box",
+            })
+        ]
+    )
+
+# Function to create tracking tab
+# def create_tracking_tab(track_data, translation):
+#     return html.Div(
+#             style= {**COMMON_STYLE, 
+#                "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+#                },
+#             children=[
+#                 # Header with Welcome Message
+#                 html.Div(
+#                     #style=HEADER_STYLE,
+#                     children=[
+#                         # Header with Welcome Message
+#                         html.Div(
+#                             #style=HEADER_STYLE,
+#                             children=[
+#                                 html.H2(
+#                                     translation['compare-map-title_01'],
+#                                     style={"fontFamily": "Outfit", 
+#                                         #"fontWeight": "normal", 
+#                                         #"color": "black", 
+#                                         "fontSize": "36px",
+#                                         "color": "#4A4A8D",
+#                                         "fontWeight": 500,
+#                                         "textAlign": "center",
+#                                         "marginLeft": "-150px",
+#                                         "marginTop": "-95px"},
+#                                 ),
+#                             ],
+#                         ),
+#                     ],
+#                 ),
+
+#                 html.Hr(style={"margin": "4% auto 2% auto","width": "90%"}),
+
+#                 # Navbar above the plot, overlapping with header
+#                 dbc.Navbar(
+#                     dbc.Container([
+#                         dbc.Nav(
+#                             [
+#                                 dbc.NavItem(
+#                                     dbc.NavLink(
+#                                         translation['plot_01'], 
+#                                         id="plot-current", 
+#                                         href="#", 
+#                                         active='exact',
+#                                         style={"padding": "3px 10px"}
+#                                     )
+#                                 ),
+#                                 dbc.NavItem(
+#                                     dbc.NavLink(
+#                                         translation['plot_02'], 
+#                                         id="plot-overall", 
+#                                         href="#", 
+#                                         active='exact',
+#                                         style={"padding": "3px 10px"}
+#                                     )
+#                                 ),
+#                             ],
+#                             className="modes-plot", 
+#                             navbar=True, 
+#                             style={'width': '100%', 'justifyContent': 'space-between'}
+#                         ),
+#                     ]),
+#                     id= 'plot-switch',
+#                     color="light", 
+#                     className="mb-2", 
+#                     style={
+#                         'width': '22%', 
+#                         'position': 'fixed', 
+#                         'top': '250px',   # Adjusted to overlap with header height
+#                         'left': '14%',    # Adjust for horizontal centering
+#                         'borderRadius': '50px',
+#                         'zIndex': '2000',
+#                         'fontFamily': "Outfit",
+#                         "fontWeight": 300,
+#                         "fontSize": "18px"
+#                     }
+#                 ),
+
+#                 dbc.Tooltip(
+#                     translation['hover-plots'],
+#                     target="plot-switch",  # ID of the element to show the tooltip for
+#                     placement="top",
+#                     autohide=True,
+#                     delay={"show": 500, "hide": 100}
+#                 ),
+                
+#                 # Main content container (text and video)
+#                 html.Div(
+#                     style={**CONTENT_CONTAINER_STYLE},
+#                     children=[
+#                         # Plot section with question mark button
+#                         html.Div(
+#                             style={'position': 'relative', 'width': '500px', 'height': "61vh", 'padding': '10px', "backgroundColor": "rgba(255, 255, 255, 0.65)",
+#                                    'borderRadius': '15px', 'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.1)', 'zIndex': '0', "marginLeft": "13px", "marginTop": "35px"},
+#                             children=[
+#                                 dcc.Store(id='data-ready', data=False),
+#                                 html.Div([dcc.Graph(id='centrality-plot', 
+#                                                     style={
+#                                                         "backgroundColor": "transparent"
+#                                                         })], 
+#                                          id='graph-container',
+#                                          style={'width': '90%', 'height': '90%', 'borderRadius': '15px'}),
+                                
+#                                 # Question Mark Button
+#                                 dbc.Button(
+#                                     [html.I(className="fas fa-solid fa-question")], 
+#                                     id='help-plot', 
+#                                     color="light", 
+#                                     className='delete-button',
+#                                     style={
+#                                         'border': '2px solid #6F4CFF', 
+#                                         'padding' : '3px 10px 3px 10px',
+#                                         'borderRadius': "50px",
+#                                         #'color': 'grey', 
+#                                         "backgroundColor": "transparent",
+#                                         "color": "#6F4CFF",
+#                                         "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+#                                         'position': 'absolute', 'top': '15px', 'right': '15px', 'zIndex': '10'
+#                                     }
+#                                 ),
+#                                 dbc.Modal([
+#                                     dbc.ModalHeader(
+#                                         dbc.ModalTitle(translation['plot_modal_title'])),
+#                                         dbc.ModalBody("", id='modal-plot-body')], 
+#                                     id="modal-plot", is_open=False, backdrop=True, style={'fontFamily': "Outfit",
+#                                                                            "fontWeight": 300,
+#                                                                            'fontSize': '18px'}
+#                                 ),
+#                             ]
+#                         ),
+
+#                         # Cytoscape graph section with vertically stacked controls
+#                         html.Div(
+#                             style={**VIDEO_CONTAINER_STYLE, 'flexDirection': 'column', 'alignItems': 'center', "marginRight": "90px", "marginTop": "40px", "backgroundColor": "transparent"},
+#                             children=[
+#                                 cyto.Cytoscape(
+#                                     id='track-graph',
+#                                     elements=track_data.get('elements', []),
+#                                     layout={'name': 'cose', "padding": 10, "nodeRepulsion": 3500, "idealEdgeLength": 10, "edgeElasticity": 5000, "nestingFactor": 1.2,
+#                                             "gravity": 1, "numIter": 1000, "initialTemp": 200, "coolingFactor": 0.95, "minTemp": 1.0, 'fit': True},
+#                                     zoom=1,
+#                                     pan={'x': 200, 'y': 200},
+#                                     stylesheet=track_data['stylesheet'],
+#                                     style=VIDEO_STYLE
+#                                 ),
+
+#                                 # Slider and Uniform Style Toggle Below Graph
+#                                 html.Div(
+#                                     style={'marginTop': '20px', 'width': '100%', 'textAlign': 'center', "backgroundColor": "transparent", "marginLeft": "-50px"},
+#                                     children=[
+#                                         dcc.Slider(id='timeline-slider',
+#                                             marks=track_data['timeline-marks'],
+#                                             min=track_data['timeline-min'],
+#                                             max=track_data['timeline-max'],
+#                                             value=track_data['timeline-value'],
+#                                             step=None,
+#                                             className='timeline-slider',
+#                                         ),
+#                                         html.Div(
+#                                             style={'display': 'flex', 'justifyContent': 'center', 'gap': '15px', 'marginTop': '25px'},
+#                                             children=[
+#                                                 dbc.Checklist(
+#                                                     options=[{"label": "Uniform Style", "value": 0}],
+#                                                     value=[1],
+#                                                     id="uniform-switch",
+#                                                     switch=True,
+#                                                     style={'marginRight': "330px",
+#                                                            "fontFamily": "Outfit",
+#                                                            'whiteSpace': 'nowrap',
+#                                                            "width": "200px"}
+#                                                 ),
+#                                                 dcc.Upload(
+#                                                     id='upload-graph-tracking',
+#                                                     children=dbc.Button(
+#                                                         [html.I(className="fas fa-upload"), " ", "file"], 
+#                                                         className='delete-button',
+#                                                         style={
+#                                                             #'border': 'none', 
+#                                                                'color': 'white', 
+#                                                                #'backgroundColor': 'lightgray', 
+#                                                                'whiteSpace': 'nowrap',
+#                                                                'padding': '7px 10px 7px 10px',
+#                                                                "borderRadius": "50px",
+#                                                                "backgroundColor": "transparent",
+#                                                                "border": "2px solid white",
+#                                                                'fontFamily': "Outfit",
+#                                                                "boxShadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",}
+#                                                     )
+#                                                 ),
+                                
+
+#                                                 dbc.Button(
+#                                                     html.I(className="fas fa-trash"), 
+#                                                     id='delete-tracking-map', 
+#                                                     style={
+#                                                         'border': 'none', 
+#                                                         'color': 'white',  # White icon color for consistency
+#                                                         'background': 'linear-gradient(to right, #FF6F61, #FF9C91)',  # Subtle gradient for the button
+#                                                         'padding': '10px 15px',  # Larger padding for better spacing
+#                                                         'borderRadius': '50px',  # Fully rounded corners
+#                                                         'boxShadow': '0px 4px 8px rgba(0, 0, 0, 0.1)',  # Subtle shadow for depth
+#                                                         'fontSize': '16px',  # Slightly larger icon size
+#                                                         'transition': 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out'  # Smooth hover effect
+#                                                     },
+#                                                     className='delete-button',  # Optional: add a class for easier styling later
+#                                                     n_clicks=0  # Optional: initialize with zero clicks
+#                                                 )
+
+#                                             ]
+#                                         ),
+#                                         dbc.Tooltip(
+#                                             translation['hover-uniform'],
+#                                             target="uniform-switch",  # ID of the element to show the tooltip for
+#                                             placement="top",
+#                                             autohide=True,
+#                                             delay={"show": 500, "hide": 100}
+#                                         ),
+
+#                                         dbc.Tooltip(
+#                                             translation['hover-upload-tracking'],  # Tooltip text
+#                                             target='upload-graph-tracking',  # ID of the element to show the tooltip for
+#                                             placement="top",
+#                                             autohide=True, 
+#                                             delay={"show": 500, "hide": 100}
+#                                         ),
+
+#                                         dbc.Tooltip(
+#                                             translation['hover-delete-tracking'],  # Tooltip text
+#                                             target="delete-tracking-map",  # ID of the element to show the tooltip for
+#                                             placement="top",
+#                                             autohide=True, 
+#                                             delay={"show": 500, "hide": 100}  # Set delay for show and hide (milliseconds) # Adjust placement as needed (top, bottom, left, right)
+#                                         ),
+
+#                                     ]
+#                                 )
+#                             ]
+#                         ),
+#                     ],
+#                 ),
+#             ],
+#         )
 
 # Function: Create demo page
 def create_demo_page(translation):
@@ -2404,6 +2242,19 @@ def create_learn_more_page(translation):
             "color": "#333333",  # Dark text for readability
             "marginLeft": "-12px"
         },
+        # style={
+        #     **COMMON_STYLE,
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "minHeight": "100vh",
+        #     "height": "100%",
+        #     "overflowX": "hidden",
+        #     "overflowY": "auto", 
+        #     "fontFamily": "Outfit",
+        #     "flexDirection": "column",
+        #     "alignItems": "center",
+        #     "padding": "50px 20px",
+        #     #"display": "flex",
+        # },
         children=[
             # Page Title
             html.H1(
@@ -2435,6 +2286,7 @@ def create_learn_more_page(translation):
                     "borderRadius": "15px",
                     #"boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
                     "textAlign": "left",
+                    "alignItems": "center",
                 },
                 children=[
                     html.H4(translation["about-1-1"],
@@ -2725,19 +2577,26 @@ def create_landing_page(translation):
 
 def create_about(app, translation):
     return html.Div(
+        # style={
+        #     "minHeight": "100vh",
+        #     "width": "100vw",
+        #     #"background": "linear-gradient(to right, white 190px, #f4f4f9 250px, #d6ccff 600px, #9b84ff 70%, #6F4CFF)",
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "fontFamily": "Outfit",
+        #     "padding": "50px 20px",
+        #     "overflow": "hidden",  # Prevent horizontal scrolling
+        #     "marginLeft": "-12px"
+        # },
         style={
-            "minHeight": "100vh",
-            "width": "100vw",
-            #"background": "linear-gradient(to right, white 190px, #f4f4f9 250px, #d6ccff 600px, #9b84ff 70%, #6F4CFF)",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
             "fontFamily": "Outfit",
-            "padding": "50px 20px",
-            "overflowX": "hidden",  # Prevent horizontal scrolling
-            "marginLeft": "-12px"
         },
         children=[
-
-            html.Div(style={"height": "105px"}),
 
             # Team Section
             html.Div(
@@ -2752,6 +2611,7 @@ def create_about(app, translation):
                             "color": "#4A4A8D",
                             #"color": "#6F4CFF",
                             "marginBottom": "30px",
+                            "marginTop": "-6.5%",
                         },
                     ),
                     dbc.Row(
@@ -2886,7 +2746,9 @@ def create_about(app, translation):
                             "fontSize": "18px",
                             "fontWeight": "500",
                             "border": "2px solid white",
+                            'marginBottom': '30px',
                             "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                            
                         },
                     ),
                 ],
@@ -2896,35 +2758,6 @@ def create_about(app, translation):
 
 
 # Helper Function for Team Member
-# def create_team_member(app, name, img, institution, role):
-#     return dbc.Col(
-#         html.Div(
-#             style={
-#                 "textAlign": "center",
-#                 "width": "200px",  # Fixed width ensures uniform spacing
-#                 "margin": "0 auto",
-#             },
-#             children=[
-#                 html.Img(
-#                     src=app.get_asset_url(img),
-#                     style={
-#                         "width": "160px",  # Increased size
-#                         "height": "160px",
-#                         "borderRadius": "50%",  # Circle images
-#                         "marginBottom": "10px",
-#                     },
-#                 ),
-#                 html.P(
-#                     name,
-#                     style={"fontWeight": 500, "color": "#4A4A8D", "fontSize": "19px"},
-#                 ),
-#                 html.P(institution, style={"color": "#black", "fontSize": "16px", "fontWeight": 300}),
-#                 # html.P(role, style={"color": "#6c757d", "fontSize": "14px"}),
-#             ],
-#         ),
-#         width="auto",  # Dynamically adjust to fit content
-#     )
-
 def create_team_member(app, name, img, institution, role, link):
     return dbc.Col(
         html.A(  # Wrap the entire block with an anchor tag to make it clickable
@@ -2967,42 +2800,6 @@ def create_team_member(app, name, img, institution, role, link):
         ),
         width="auto",  # Dynamically adjust to fit content
     )
-
-
-# Helper Function for Supporter with Logo and Text
-# def create_supporter(app, img, description):
-#     return dbc.Col(
-#         html.Div(
-#             style={
-#                 "textAlign": "center",
-#                 "width": "230px",  # Consistent width for each supporter
-#                 "margin": "0 auto",
-#             },
-#             children=[
-#                 html.Img(
-#                     src=app.get_asset_url(img),
-#                     style={
-#                         "width": "200px",  # Adjust logo size
-#                         #"height": "130px",  # Maintain aspect ratio
-#                         "height": "120px",
-#                         "borderRadius": "15px",  # Rounded edges
-#                         "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)",  # Optional shadow
-#                         "marginBottom": "10px",
-#                     },
-#                 ),
-#                 html.P(
-#                     description,
-#                     style={
-#                         "fontSize": "16px",
-#                         "fontWeight": 300,
-#                         "color": "#black",  # Subtle gray text color
-#                         "marginTop": "5px",
-#                     },
-#                 ),
-#             ],
-#         ),
-#         width="auto",  # Dynamically adjust to fit content
-#     )
 
 def create_supporter(app, img, description, link):
     return dbc.Col(
@@ -3066,96 +2863,6 @@ from dash import html
 
 def create_output_page(translation):
     # Helper function to create a single output box
-    # def create_output_box(image, tag, title, action, action_link):
-    #     return html.A(  # Make the entire box a clickable link
-    #         href=action_link,  # The URL to redirect to
-    #         style={
-    #             "textDecoration": "none",  # Remove underline from link
-    #             "color": "inherit",  # Inherit text color for hover consistency
-    #         },
-    #         children=html.Div(
-    #             style={
-    #                 "width": "400px",
-    #                 "backgroundColor": "white",
-    #                 "borderRadius": "15px",
-    #                 "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    #                 "overflow": "hidden",
-    #                 "display": "flex",
-    #                 "flexDirection": "column",
-    #                 "transition": "transform 0.2s ease-in-out",  # Smooth hover animation
-    #             },
-    #             children=[
-    #                 # Image Section
-    #                 html.Div(
-    #                     style={"position": "relative"},
-    #                     children=[
-    #                         html.Img(
-    #                             src=image,
-    #                             style={
-    #                                 "width": "100%",
-    #                                 "height": "200px",
-    #                                 "objectFit": "cover",
-    #                             },
-    #                         ),
-    #                         # Tag
-    #                         html.Div(
-    #                             tag,
-    #                             style={
-    #                                 "position": "absolute",
-    #                                 "top": "10px",
-    #                                 "right": "10px",
-    #                                 "backgroundColor": "#6F4CFF",
-    #                                 "color": "white",
-    #                                 "padding": "5px 10px",
-    #                                 "borderRadius": "20px",
-    #                                 "fontSize": "12px",
-    #                                 "fontWeight": "bold",
-    #                             },
-    #                         ),
-    #                     ],
-    #                 ),
-    #                 # Content Section
-    #                 html.Div(
-    #                     style={
-    #                         "padding": "30px",
-    #                         "flex": "1",  # Ensure content takes up remaining space
-    #                         "display": "flex",
-    #                         "flexDirection": "column",
-    #                         "justifyContent": "space-between",
-    #                     },
-    #                     children=[
-    #                         # html.Br(),
-    #                         html.Div(style={"height": "-20px"}),
-    #                         # Title
-    #                         html.H4(
-    #                             title,
-    #                             style={
-    #                                 "marginBottom": "10px",
-    #                                 "color": "black",
-    #                                 "fontSize": "20px",
-    #                                 "fontWeight": 500,
-    #                             },
-    #                         ),
-    #                         # html.Br(),
-    #                         html.Div(style={"height": "-20px"}),
-    #                         # Action Link (kept for semantics but redundant since the box is clickable)
-    #                         html.A(
-    #                             action,
-    #                             href=action_link,
-    #                             style={
-    #                                 "fontSize": "16px",
-    #                                 "color": "#6F4CFF",
-    #                                 "fontWeight": 300,
-    #                                 "fontStyle": "italic",
-    #                                 "textDecoration": "none",
-    #                             },
-    #                         ),
-    #                     ],
-    #                 ),
-    #             ],
-    #         ),
-    #     )
-
     def create_output_box(image, tag, title, action, action_link, language_flag):
         return html.A(  # Make the entire box a clickable link
             href=action_link,  # The URL to redirect to
@@ -3165,7 +2872,9 @@ def create_output_page(translation):
             },
             children=html.Div(
                 style={
-                    "width": "400px",
+                    #"width": "400px",
+                    "width": "100%",
+                    "maxWidth": "400px",
                     "backgroundColor": "white",
                     "borderRadius": "15px",
                     "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
@@ -3265,18 +2974,26 @@ def create_output_page(translation):
 
     # Main Page Layout
     return html.Div(
+        # style={
+        #     "width": "100vw",
+        #     "minHeight": "100vh",
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "padding": "50px",
+        #     "fontFamily": "Outfit",
+        #     'overflow':'hidden',
+        #     "marginLeft": "-12px"
+        # },
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px",
+            "minHeight": "100vh",
+            "height": "100%",
+            "overflowX": "hidden",
+            "overflowY": "auto", 
             "fontFamily": "Outfit",
-            "marginLeft": "-12px"
         },
         children=[
             # Header Section
-            # html.Div(style={"height": "150px"}),
-            html.Div(style={"height": "100px"}),
 
             html.Div(
                 "Output",
@@ -3287,6 +3004,7 @@ def create_output_page(translation):
                     #"color":"black",
                     "marginBottom": "40px",
                     "fontWeight": "500",
+                    'marginTop': '-8.4%'
                     #"fontWeight": "bold"
                 },
             ),
@@ -3307,9 +3025,10 @@ def create_output_page(translation):
                                     "/thesis",
                                     "/assets/us.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
-                                style={"transition": "transform 0.2s ease-in-out"},
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
                             dbc.Col(
                                 create_output_box(
@@ -3321,9 +3040,10 @@ def create_output_page(translation):
                                     "/article",
                                     "/assets/de.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
-                                style={"transition": "transform 0.2s ease-in-out"},
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
                             dbc.Col(
                                 create_output_box(
@@ -3334,17 +3054,12 @@ def create_output_page(translation):
                                     "/press",
                                     "/assets/de.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
-                                style={"transition": "transform 0.2s ease-in-out"},
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
-                        ],
-                        justify="center",
-                        className="mb-4",
-                    ),
-                    # Second Row
-                    dbc.Row(
-                        [   dbc.Col(
+                            dbc.Col(
                                 create_output_box(
                                     "/assets/blog.jpg",
                                     "BLOG",
@@ -3353,9 +3068,10 @@ def create_output_page(translation):
                                     "/blog",
                                     "/assets/us.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
-                                style={"transition": "transform 0.2s ease-in-out"},
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
                             dbc.Col(
                                 create_output_box(
@@ -3366,8 +3082,10 @@ def create_output_page(translation):
                                     "/systems-thinking",
                                     "/assets/us.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
                             dbc.Col(
                                 create_output_box(
@@ -3378,11 +3096,14 @@ def create_output_page(translation):
                                     "/complexity",
                                     "/assets/us.png",
                                 ),
-                                width=4,
+                                #width=4,
+                                xs=12, sm=12, md=6, lg=4,
                                 className="feature-box",
+                                style={"transition": "transform 0.2s ease-in-out", 'padding': '20px'},
                             ),
                         ],
                         justify="center",
+                        className="mb-4",
                     ),
                 ]
             ),
@@ -3392,15 +3113,24 @@ def create_output_page(translation):
 def create_blog_page(translation):
 # Main Blog Page Layout
     return html.Div(
+        # style={
+        #     "width": "100vw",
+        #     "minHeight": "100vh",
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "padding": "50px 20px",
+        #     "fontFamily": "Outfit",
+        #     "color": "#333333",
+        #     "overflowX": "hidden",
+        #     "marginLeft": "-12px"
+        # },
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -3408,7 +3138,7 @@ def create_blog_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -3429,7 +3159,7 @@ def create_blog_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
@@ -3439,34 +3169,33 @@ def create_blog_page(translation):
                             #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
                             "maxWidth": "950px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
+
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
+                            html.Div(
                                 "Blogpost for Center of Survival, Berlin · November 2024",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Author: Emily Campos Sindermann",
                                 style={
                                     "fontSize": "18px",
@@ -3474,8 +3203,7 @@ def create_blog_page(translation):
                                 },
                             ),
                         ],
-                    ),
-
+                    )
                 ],
             ),
             # Blog Sections
@@ -3596,7 +3324,6 @@ def create_blog_page(translation):
                                     "fontSize": "20px",  # Larger subtitle
                                     "color": "black",
                                     "fontWeight": "300",
-                                    "marginBottom": "25px",
                                 },
                             ),
                         ],
@@ -3625,7 +3352,8 @@ def create_blog_page(translation):
                             "fontSize": "18px",
                             "fontWeight": "500",
                             "border": "none",
-                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
+                            'marginBottom': '30px',
                         },
                     ),
                 ],
@@ -3637,15 +3365,24 @@ def create_blog_page(translation):
 def create_complexity_page(translation):
 # Main Blog Page Layout
     return html.Div(
+        # style={
+        #     "width": "100vw",
+        #     "minHeight": "100vh",
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "padding": "50px 20px",
+        #     "fontFamily": "Outfit",
+        #     "color": "#333333",
+        #     "overflowX": "hidden",
+        #     "marginLeft": "-12px"
+        # },
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -3653,7 +3390,7 @@ def create_complexity_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -3674,7 +3411,7 @@ def create_complexity_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
@@ -3684,34 +3421,32 @@ def create_complexity_page(translation):
                             #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "890px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "maxWidth": "950px",  # Restrict width for better readability
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
-                                "Blogpost · March 2025",
+                            html.Div(
+                                "Blogpost · April 2025",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Author: Emily Campos Sindermann",
                                 style={
                                     "fontSize": "18px",
@@ -3720,7 +3455,6 @@ def create_complexity_page(translation):
                             ),
                         ],
                     ),
-
                 ],
             ),
             # Blog Sections
@@ -3984,7 +3718,8 @@ def create_complexity_page(translation):
                             "fontSize": "18px",
                             "fontWeight": "500",
                             "border": "none",
-                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
+                            'marginBottom': '30px'
                         },
                     ),
                 ],
@@ -3996,15 +3731,24 @@ def create_complexity_page(translation):
 def create_systemsthinking_page(translation):
 # Main Blog Page Layout
     return html.Div(
+        # style={
+        #     "width": "100vw",
+        #     "minHeight": "100vh",
+        #     "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
+        #     "padding": "50px 20px",
+        #     "fontFamily": "Outfit",
+        #     "color": "#333333",
+        #     "overflowX": "hidden",
+        #     "marginLeft": "-12px"
+        # },
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -4012,7 +3756,7 @@ def create_systemsthinking_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -4033,44 +3777,41 @@ def create_systemsthinking_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
                         "From Parts to Patterns: The Power of Systems Thinking",
                         style={
                             "fontSize": "45px",
-                            #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "890px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "maxWidth": "950px",  # Restrict width for better readability
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
-                                "Blogpost · April 2025",
+                            html.Div(
+                                "Blogpost · March 2025",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Author: Emily Campos Sindermann",
                                 style={
                                     "fontSize": "18px",
@@ -4079,7 +3820,6 @@ def create_systemsthinking_page(translation):
                             ),
                         ],
                     ),
-
                 ],
             ),
             # Blog Sections
@@ -4477,7 +4217,8 @@ def create_systemsthinking_page(translation):
                             "fontSize": "18px",
                             "fontWeight": "500",
                             "border": "none",
-                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                            "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
+                            'marginBottom': '30px'
                         },
                     ),
                 ],
@@ -4490,14 +4231,13 @@ def create_thesis_page(translation):
 # Main Blog Page Layout
     return html.Div(
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -4505,7 +4245,7 @@ def create_thesis_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -4526,44 +4266,41 @@ def create_thesis_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
                         "It's All About Perspective: Introducing PsySys as a Digital Network-Informed Psychoeducation for Depression",
                         style={
                             "fontSize": "45px",
-                            #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "900px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "maxWidth": "950px",  # Restrict width for better readability
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
+                            html.Div(
                                 "Psychology Research Master Thesis, University of Amsterdam · August 2023",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Author: Emily Campos Sindermann",
                                 style={
                                     "fontSize": "18px",
@@ -4572,7 +4309,6 @@ def create_thesis_page(translation):
                             ),
                         ],
                     ),
-
                 ],
             ),
             # Blog Sections
@@ -4628,8 +4364,7 @@ def create_thesis_page(translation):
                         translation['back'],
                         className='delete-button',
                         href="/output",
-                        style={
-                            "backgroundColor": "#6F4CFF",
+                        style={"backgroundColor": "#6F4CFF",
                             "color": "white",
                             "padding": "15px 30px",
                             "borderRadius": "50px",
@@ -4637,7 +4372,8 @@ def create_thesis_page(translation):
                             "fontWeight": "500",
                             "border": "none",
                             "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
-                        },
+                            'marginBottom': '30px'
+                            },
                     ),
                     # Download Button
                     html.A(
@@ -4658,7 +4394,7 @@ def create_thesis_page(translation):
                         href="https://www.dptv.de/fileadmin/Redaktion/Bilder_und_Dokumente/Im_Fokus/Wissenschaft_und_Forschung/Masterarbeit_Emily_Campos_Sindermann.pdf",
                         download="Masterarbeit_Emily_Campos_Sindermann.pdf",  # Enables file download
                         target="_blank",  # Opens in a new tab
-                        style={"textDecoration": "none"},  # Remove underline from link
+                        style={"textDecoration": "none", 'marginBottom': '30px',},  # Remove underline from link
                     ),
                 ],
             )
@@ -4670,14 +4406,13 @@ def create_article_page(translation):
 # Main Blog Page Layout
     return html.Div(
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -4685,7 +4420,7 @@ def create_article_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -4706,44 +4441,41 @@ def create_article_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
                         "PsySys: Wirksamkeit einer netzwerkbasierten Online-Psychoedukation bei Depression",
                         style={
                             "fontSize": "45px",
-                            #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "900px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "maxWidth": "950px",  # Restrict width for better readability
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
+                            html.Div(
                                 "Fachartikel für das Magazin Psychotherapie Aktuell der Deutschen Psychotherapeuten Vereinigung · Juli 2024",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Autorin: Emily Campos Sindermann",
                                 style={
                                     "fontSize": "18px",
@@ -4752,7 +4484,6 @@ def create_article_page(translation):
                             ),
                         ],
                     ),
-
                 ],
             ),
             # Blog Sections
@@ -4808,8 +4539,7 @@ def create_article_page(translation):
                         translation['back'],
                         className='delete-button',
                         href="/output",
-                        style={
-                            "backgroundColor": "#6F4CFF",
+                        style={"backgroundColor": "#6F4CFF",
                             "color": "white",
                             "padding": "15px 30px",
                             "borderRadius": "50px",
@@ -4817,7 +4547,8 @@ def create_article_page(translation):
                             "fontWeight": "500",
                             "border": "none",
                             "boxShadow": "0px 4px 6px rgba(0, 0, 0, 0.2)",
-                        },
+                            'marginBottom': '30px'
+                            },
                     ),
                     # Download Button
                     html.A(
@@ -4838,7 +4569,7 @@ def create_article_page(translation):
                         href="/assets/PsySys-article-dptv.pdf",
                         download="PsySys-article-dptv.pdf",  # Enables file download
                         target="_blank",  # Opens in a new tab
-                        style={"textDecoration": "none"},  # Remove underline from link
+                        style={"textDecoration": "none", 'marginBottom': '30px'},  # Remove underline from link
                     ),
                 ],
             )
@@ -4850,14 +4581,13 @@ def create_press_page(translation):
 # Main Blog Page Layout
     return html.Div(
         style={
-            "width": "100vw",
-            "minHeight": "100vh",
+            **COMMON_STYLE,
             "background": "linear-gradient(to bottom, white, #f4f4f9, #d6ccff, #9b84ff, #6F4CFF)",
-            "padding": "50px 20px",
-            "fontFamily": "Outfit",
-            "color": "#333333",
+            "minHeight": "100vh",
+            "height": "100%",
             "overflowX": "hidden",
-            "marginLeft": "-12px"
+            "overflowY": "auto", 
+            "fontFamily": "Outfit",
         },
         children=[
             # Image at the Top with Rounded Edges
@@ -4865,7 +4595,7 @@ def create_press_page(translation):
                 style={
                     "textAlign": "center",
                     "marginBottom": "30px",
-                    "marginTop": "60px"
+                    "marginTop": "-8%"
                 },
                 children=[
                     html.Img(
@@ -4886,44 +4616,41 @@ def create_press_page(translation):
             html.Div(
                 style={
                     "textAlign": "center",
-                    "marginBottom": "50px",
+                    "marginBottom": "20px",
                 },
                 children=[
                     html.H1(
                         "Depressionen besser verstehen: Entwicklung eines Netzwerkansatzes",
                         style={
                             "fontSize": "45px",
-                            #"color": "#4A4A8D",
                             "color": "black",
                             "fontWeight": "600",
-                            "marginBottom": "10px",
                             "textAlign": "left",  # Aligns text to the left
-                            "maxWidth": "900px",  # Restrict width for better readability
-                            "marginLeft": "250px",
+                            "maxWidth": "950px",  # Restrict width for better readability
+                            "margin": "0 auto",
+                            "padding": "0 0px 20px 20px",  # Small padding for mobile screens
+                            "textAlign": "left",
                         },
                     ),
                     html.Div(
                         style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "alignItems": "flex-start",
-                            "color": "grey",
-                            "fontSize": "16px",
-                            "fontWeight": "300",
-                            "marginTop": "10px",
-                            "marginBottom": "20px",
                             "maxWidth": "900px",
-                            "marginLeft": "250px",  # Align to the left
+                            "margin": "0 auto",
+                            "textAlign": "left",
+                            "color": "black",
+                            "fontSize": "clamp(14px, 2vw, 18px)",
+                            "fontWeight": "300",
+                            "padding": "0 20px",
                         },
                         children=[
-                            html.Span(
+                            html.Div(
                                 "Pressemitteilung zum DPtV Masterforschungspreis 2024 · Juni 2024",
                                 style={
                                     "marginBottom": "5px",
                                     "fontSize": "18px",
                                 },
                             ),
-                            html.Span(
+                            html.Div(
                                 "Pressesprecher: Hans Strömsdörfer",
                                 style={
                                     "fontSize": "18px",
@@ -4931,8 +4658,7 @@ def create_press_page(translation):
                                 },
                             ),
                         ],
-                    ),
-
+                    ), 
                 ],
             ),
             # Blog Sections
@@ -5019,7 +4745,7 @@ def create_press_page(translation):
                         href="https://www.dptv.de/fileadmin/Redaktion/Bilder_und_Dokumente/Aktuelles_News/Pressemitteilungen/2024/2024-06-05-Masterpreis_2024.pdf",
                         download="Pressemitteilung-preis.pdf",  # Enables file download
                         target="_blank",  # Opens in a new tab
-                        style={"textDecoration": "none"},  # Remove underline from link
+                        style={"textDecoration": "none", 'marginBottom': '30px'},  # Remove underline from link
                     ),
 
                     html.A(
